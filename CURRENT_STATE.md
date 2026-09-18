@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 31  
+State document version: 32  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,10 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-03 — real database and native-path verification.  
 **Active checkpoint:** CP-04 — content job queue and AI normalization.  
-**Active task:** T-040 — dedicated content-job schema and repository (`READY`).  
+**Active task:** T-040 — dedicated content-job schema and repository (`IN_PROGRESS`).  
 **Last completed task:** T-033 — foundation deployment/rollback guide, commit `7931350d13c89a6ed3f5e0ad5157d5f7079295ca`.  
 **Last verification:** PHP regression run `35350022475` passed after the reviewed deployment guide; CP-03 database and native-path evidence is recorded in `tasks.md` and `docs/development/upstream-baseline.md`.  
-**Next action:** read the CP-04 plan for T-040, add a failing content-job schema/repository contract, and keep member reward `task` tables untouched.
+**Starting commit:** `ddd103478eb95766e2448e2cfdd46465d391ed16`.  
+**Next action:** verify the failing content-job schema/repository contract, then implement only the T-040 migration, models, and enqueue/find repository boundary.
 
 ## 1. Confirmed product direction
 

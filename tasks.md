@@ -476,7 +476,7 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 
 ## CP-04 — Content job queue and AI normalization
 
-### T-040 Dedicated content-job schema and repository — `READY`
+### T-040 Dedicated content-job schema and repository — `IN_PROGRESS`
 ### T-041 Atomic claim, lease recovery, retry and idempotency — `TODO`
 ### T-042 Cron/CLI worker budgets and heartbeat — `TODO`
 ### T-043 Hardened external HTTP boundary — `TODO`

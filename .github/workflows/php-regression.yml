@@ -37,6 +37,8 @@ jobs:
           php -l tests/regression/vod_extension_contract.php
           php -l tests/regression/vod_extension_hook.php
           php -l tests/regression/run_foundation.php
+          php -l tests/regression/content_job_contract.php
+          php -l tests/regression/run_ai_jobs.php
           php -l tests/integration/mysql_foundation.php
           php -l tests/integration/native_vod_paths.php
           php -l application/common/util/SchemaMigrationService.php
@@ -59,3 +61,5 @@ jobs:
         run: php tests/regression/run_baseline.php
       - name: Foundation regression suite
         run: php tests/regression/run_foundation.php
+      - name: AI jobs regression suite
+        run: php tests/regression/run_ai_jobs.php
