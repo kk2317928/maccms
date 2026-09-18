@@ -434,7 +434,7 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - GREEN: PHP 8.1 run `35348806445`, MySQL 8.0 run `35348806475`, and MySQL 5.7 regression run `35348806492` all passed.
 - The MySQL 8.0 run verified first-run `applied=1, skipped=0`, second-run `applied=0, skipped=1`, the checksummed ledger row, and all four InnoDB/utf8mb4 tables and indexes.
 
-### T-032 Verify admin/collection writes and playback round trip — `READY`
+### T-032 Verify admin/collection writes and playback round trip — `IN_PROGRESS`
 
 - Create one draft via admin and one via collection.
 - Verify one extension row per video, distinct IDs, and byte-identical playback round trip.

@@ -1,0 +1,58 @@
+name: Native video foundation
+
+on:
+  push:
+    branches:
+      - feature/headless-ai-v1
+    paths:
+      - '.github/workflows/native-vod-foundation.yml'
+      - 'application/install/sql/install.sql'
+      - 'application/common/model/Vod.php'
+      - 'application/common/model/Collect.php'
+      - 'application/common/model/VodExt.php'
+      - 'application/common/util/VodExtensionService.php'
+      - 'application/common/util/VodPlaybackCodec.php'
+      - 'application/data/migrations/**'
+      - 'tests/integration/native_vod_paths.php'
+      - 'think'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-vod:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: maccms_ci_native
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      MACCMS_TEST_DATABASE: maccms_ci_native
+      MYSQL_PWD: root
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: pdo_mysql, mbstring
+          coverage: none
+      - name: Configure disposable database
+        run: sed -i "s/'database'        => 'maccms10'/'database'        => 'maccms_ci_native'/" application/database.php
+      - name: PHP syntax
+        run: php -l tests/integration/native_vod_paths.php
+      - name: Install native schema
+        run: mysql --protocol=tcp --host=127.0.0.1 --port=3306 --user=root --database=maccms_ci_native < application/install/sql/install.sql
+      - name: Apply foundation migration
+        run: php think maccms:migrate
+      - name: Verify native video paths
+        run: php tests/integration/native_vod_paths.php
