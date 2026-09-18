@@ -19,7 +19,7 @@ Do not mark a task `DONE` with a future or local-only SHA. A checkpoint complete
 | CP-00 | Reset repository and establish architecture/master plan | DONE | — |
 | CP-01 | Reconcile existing capabilities and establish regression baseline | DONE | CP-00 |
 | CP-02 | Add migrations, extension data, public IDs, workflow, playback codec | DONE | CP-01 |
-| CP-03 | Verify foundation on real MySQL and native write paths | READY | CP-02 |
+| CP-03 | Verify foundation on real MySQL and native write paths | IN_PROGRESS | CP-02 |
 | CP-04 | Add content job queue, AI normalization, provenance and locks | TODO | CP-03 |
 | CP-05 | Add duplicate review, reversible merge and TMDB workflow | TODO | CP-04 |
 | CP-06 | Add intelligent-content admin workspace and permissions | TODO | CP-05 |
@@ -418,12 +418,23 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - GREEN: PHP 8.1 regression run `35348332053` and MySQL 5.7 run `35348332012` passed.
 - The database run verified first-run `applied=1, skipped=0`, second-run `applied=0, skipped=1`, one checksummed ledger row, and all four InnoDB/utf8mb4 extension tables and indexes.
 
-### T-031 Verify migrations on MySQL 8.0 — `IN_PROGRESS`
+### T-031 Verify migrations on MySQL 8.0 — `DONE`
 
 - Requires a separate explicitly named disposable database.
 - Commit evidence: `test: verify foundation on mysql 8.0`
 
-### T-032 Verify admin/collection writes and playback round trip — `TODO`
+**Implementation commits:**
+
+- `85d2437982a169aba1fa11594c40468e8a406187` — add the separate MySQL 8.0 service workflow and disposable `maccms_ci_80` database.
+- `3c517f1fe34034127e1e21cdc1a386450574a6a1` — parameterize the shared exact-family assertion and verify both supported MySQL families together.
+
+**Verification evidence:**
+
+- RED: run `35348585866` applied the migration, passed the second-run no-op, and failed only because the invariant script still required MySQL 5.7; actual server version was `8.0.46`.
+- GREEN: PHP 8.1 run `35348806445`, MySQL 8.0 run `35348806475`, and MySQL 5.7 regression run `35348806492` all passed.
+- The MySQL 8.0 run verified first-run `applied=1, skipped=0`, second-run `applied=0, skipped=1`, the checksummed ledger row, and all four InnoDB/utf8mb4 tables and indexes.
+
+### T-032 Verify admin/collection writes and playback round trip — `READY`
 
 - Create one draft via admin and one via collection.
 - Verify one extension row per video, distinct IDs, and byte-identical playback round trip.

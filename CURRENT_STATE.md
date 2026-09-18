@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 26  
+State document version: 27  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,10 +12,10 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-02 — foundation data and compatibility code.  
 **Active checkpoint:** CP-03 — real database and native-path verification.  
-**Active task:** T-031 — verify migrations on MySQL 8.0.  
-**Last completed task:** T-030 — MySQL 5.7 migration verification, implementation commit `a24acb7dd716bb4284c5db4c8506c0496857f4ec`.  
-**Last verification:** GitHub Actions PHP 8.1 run `35348332053` and MySQL 5.7 run `35348332012` passed; the real database run covered first apply, second-run no-op, ledger checksum, and schema invariants.  
-**Next action:** run the new `maccms_ci_80` MySQL 8.0 workflow to obtain the RED compatibility result, then parameterize the shared version assertion without weakening either database-family check.
+**Active task:** T-032 — verify admin/collection writes and playback round trip.  
+**Last completed task:** T-031 — MySQL 8.0 migration verification, commit `3c517f1fe34034127e1e21cdc1a386450574a6a1`.  
+**Last verification:** GitHub Actions PHP 8.1 run `35348806445`, MySQL 8.0 run `35348806475`, and MySQL 5.7 run `35348806492` all passed with first apply, second-run no-op, ledger checksum, and schema invariants.  
+**Next action:** add a disposable-database integration harness that exercises `Vod::saveData()`, collection insert/update, extension-row uniqueness/public IDs, and byte-identical playback codec round trips.
 
 ## 1. Confirmed product direction
 
@@ -145,7 +145,7 @@ Absence was established by repository text search against the pinned snapshot. I
 | Video workflow state machine | PASS | PHP 8.1 run `35344911819`; exhaustive transition matrix passed |
 | Lossless native playback codec | PASS | PHP 8.1 run `35345369100`; record-form, validation, round-trip and merge contracts passed |
 | Fresh install MySQL 5.7 | PASS | Disposable `maccms_ci_57`, MySQL 5.7.44; Actions run `35348332012` |
-| Fresh install MySQL 8.0 | UNVERIFIED | CP-02/CP-03 gate |
+| Fresh install MySQL 8.0 | PASS | Disposable `maccms_ci_80`, MySQL 8.0.46; Actions run `35348806475` |
 | Native admin video write | UNVERIFIED | CP-01 baseline task |
 | Native collection insert/update | UNVERIFIED | CP-01 baseline task |
 | No prohibited outbound request | FAIL by static inspection | `static_new/js/admin_common.js` update check remains |
