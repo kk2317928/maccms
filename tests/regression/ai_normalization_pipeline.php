@@ -32,6 +32,11 @@ $runs->budget = false;
 try { $pipeline->handle(['vod_id' => 42, 'title' => 'Example'], ['job_id' => 8]); } catch (RuntimeException $exception) {}
 if ($calls !== 1) { fwrite(STDERR, "FAIL: exhausted budget must prevent the provider call.\n"); exit(1); }
 
+$unlimitedCalls = 0; $unlimitedRuns = new PipelineRuns(); $unlimitedRuns->budget = false;
+$unlimited = new AiNormalizationPipeline(static function () use (&$unlimitedCalls, $valid): array { $unlimitedCalls++; return ['raw_response' => $valid, 'input_tokens' => 1, 'output_tokens' => 1, 'estimated_cost_micros' => 1]; }, new AiNormalizationValidator(), $unlimitedRuns, new PipelineFields(), ['provider' => 'compatible', 'model' => 'model-x', 'prompt_version' => 'normalize-v1', 'daily_budget_micros' => 0], static fn (): int => 1726704000);
+$unlimited->handle(['vod_id' => 42, 'title' => 'Example'], ['job_id' => 10]);
+if ($unlimitedCalls !== 1) { fwrite(STDERR, "FAIL: zero daily budget must allow the provider call without a budget gate.\n"); exit(1); }
+
 $badRuns = new PipelineRuns(); $badFields = new PipelineFields();
 $bad = new AiNormalizationPipeline(static fn (): array => ['raw_response' => '{}', 'input_tokens' => 1, 'output_tokens' => 1, 'estimated_cost_micros' => 1], new AiNormalizationValidator(), $badRuns, $badFields, ['provider' => 'compatible', 'model' => 'model-x', 'prompt_version' => 'normalize-v1', 'daily_budget_micros' => 1000], static fn (): int => 1726704000);
 try { $bad->handle(['vod_id' => 42, 'title' => 'Example'], ['job_id' => 9]); } catch (InvalidArgumentException $exception) {}

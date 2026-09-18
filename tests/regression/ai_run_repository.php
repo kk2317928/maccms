@@ -38,6 +38,7 @@ if ($id !== 1 || $repo->rows[0]['total_tokens'] !== 120 || $repo->rows[0]['respo
 $usage = $repo->dailyUsage(1726704000);
 if ($usage !== ['cost_micros' => 900, 'total_tokens' => 120]) { fwrite(STDERR, "FAIL: daily usage aggregate is incorrect.\n"); exit(1); }
 if (!$repo->withinDailyBudget(1000, 1726704000) || $repo->withinDailyBudget(900, 1726704000)) { fwrite(STDERR, "FAIL: daily budget boundary is incorrect.\n"); exit(1); }
+if (!$repo->withinDailyBudget(0, 1726704000)) { fwrite(STDERR, "FAIL: zero daily budget must mean unlimited.\n"); exit(1); }
 
 try { $repo->record(['vod_id' => 0]); } catch (InvalidArgumentException $exception) { fwrite(STDOUT, "OK: immutable AI run and usage contract passed.\n"); exit(0); }
 fwrite(STDERR, "FAIL: invalid AI run must be rejected.\n"); exit(1);
