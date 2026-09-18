@@ -18,17 +18,22 @@ function canonical_public_id_assert($condition, $message)
     }
 }
 
+canonical_public_id_assert(
+    method_exists(\app\common\model\VodExt::class, 'resolvePublicId'),
+    'VodExt must expose the storage-backed public-ID resolver.'
+);
+
 $rowsByPublicId = [
-    'ALIAS2' => ['vod_id' => 10, 'public_id' => 'ALIAS2', 'merged_into_vod_id' => 20],
+    'ALAS22' => ['vod_id' => 10, 'public_id' => 'ALAS22', 'merged_into_vod_id' => 20],
 ];
 $rowsByVodId = [
-    10 => $rowsByPublicId['ALIAS2'],
+    10 => $rowsByPublicId['ALAS22'],
     20 => ['vod_id' => 20, 'public_id' => 'MIDDLE', 'merged_into_vod_id' => 30],
     30 => ['vod_id' => 30, 'public_id' => 'MASTER', 'merged_into_vod_id' => 0],
 ];
 
 $resolved = \app\common\model\VodExt::resolvePublicIdWithLookups(
-    ' alias2 ',
+    ' alas22 ',
     function ($publicId) use ($rowsByPublicId) {
         return $rowsByPublicId[$publicId] ?? null;
     },
@@ -38,7 +43,7 @@ $resolved = \app\common\model\VodExt::resolvePublicIdWithLookups(
 );
 
 canonical_public_id_assert($resolved === [
-    'requested_public_id' => 'ALIAS2',
+    'requested_public_id' => 'ALAS22',
     'canonical_public_id' => 'MASTER',
     'is_alias' => true,
 ], 'a secondary public ID must resolve to the terminal canonical public ID.');

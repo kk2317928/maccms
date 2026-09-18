@@ -68,6 +68,61 @@ class VodExt extends Base
         return $row ?: null;
     }
 
+    public static function resolvePublicId(string $publicId): ?array
+    {
+        return self::resolvePublicIdWithLookups(
+            $publicId,
+            function ($candidate) {
+                return self::findByPublicId($candidate);
+            },
+            function ($vodId) {
+                return self::findByVodId($vodId);
+            }
+        );
+    }
+
+    public static function resolvePublicIdWithLookups(
+        string $publicId,
+        callable $findByPublicId,
+        callable $findByVodId
+    ): ?array {
+        $requestedPublicId = strtoupper(trim($publicId));
+        if (!preg_match('/^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$/', $requestedPublicId)) {
+            return null;
+        }
+
+        $requestedRow = $findByPublicId($requestedPublicId);
+        if (!is_array($requestedRow)) {
+            return null;
+        }
+
+        $requestedVodId = isset($requestedRow['vod_id']) ? (int) $requestedRow['vod_id'] : 0;
+        self::assertVodId($requestedVodId);
+        $canonicalVodId = self::resolveCanonical($requestedVodId, function ($currentVodId) use ($findByVodId) {
+            $row = $findByVodId($currentVodId);
+            if (!is_array($row)) {
+                return null;
+            }
+            return isset($row['merged_into_vod_id']) ? (int) $row['merged_into_vod_id'] : null;
+        });
+
+        $canonicalRow = $canonicalVodId === $requestedVodId
+            ? $requestedRow
+            : $findByVodId($canonicalVodId);
+        $canonicalPublicId = is_array($canonicalRow) && isset($canonicalRow['public_id'])
+            ? strtoupper(trim((string) $canonicalRow['public_id']))
+            : '';
+        if (!preg_match('/^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$/', $canonicalPublicId)) {
+            throw new RuntimeException('Canonical video public ID is missing or invalid.');
+        }
+
+        return [
+            'requested_public_id' => $requestedPublicId,
+            'canonical_public_id' => $canonicalPublicId,
+            'is_alias' => $requestedPublicId !== $canonicalPublicId,
+        ];
+    }
+
     public static function canonicalVodId(int $vodId): int
     {
         return self::resolveCanonical($vodId, function ($currentVodId) {
