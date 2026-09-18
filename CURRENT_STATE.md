@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-04 — content job queue and AI normalization.  
 **Active checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.  
-**Active task:** T-053 — canonical public-ID resolution (`READY`).
+**Active task:** T-053 — canonical public-ID resolution (`IN_PROGRESS`).
 **Starting commit:** T-052 bookkeeping commit following `78dea91470d8450623973f5632c33ca1ca57114c`.
 **Last completed task:** T-052 — transactional merge snapshots and playback merge, commit `78dea91470d8450623973f5632c33ca1ca57114c`.
 **Last verification:** PHP regression `35384542597`, MySQL 5.7 `35384542565`, MySQL 8.0 `35384542812`, and native video `35384542591` passed for T-052.
-**Next action:** define the failing canonical public-ID resolution and merged-alias redirect contract for T-053.
+**Next action:** make the canonical public-ID resolution contract pass without exposing numeric IDs.
 
 ## 1. Confirmed product direction
 

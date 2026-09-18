@@ -48,6 +48,7 @@ jobs:
           php -l tests/regression/duplicate_candidate_scoring.php
           php -l tests/regression/duplicate_candidate_decisions.php
           php -l tests/regression/duplicate_merge.php
+          php -l tests/regression/canonical_public_id.php
           php -l tests/regression/run_duplicate_tmdb.php
           php -l tests/regression/run_ai_jobs.php
           php -l tests/integration/mysql_foundation.php

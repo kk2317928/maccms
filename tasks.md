@@ -544,7 +544,9 @@ Each task requires failing tests, implementation, focused verification, an immed
 - Added an explicit reviewer-triggered transactional merge service with immutable pre-merge snapshots for native video, extension/aliases, multilingual overlays, taxonomy, field states, external mappings, and Ulog relations. Playback is merged only through `VodPlaybackCodec`, retaining primary order and metadata while deduplicating normalized URLs; any failure rolls back snapshot and mutations.
 - RED commit: `8b8752ebaeae608338fe260969c7851530de758e`; GREEN commit: `78dea91470d8450623973f5632c33ca1ca57114c`; PHP run `35384542597`, MySQL 5.7 run `35384542565`, MySQL 8.0 run `35384542812`, and native video run `35384542591` passed.
 
-### T-053 Canonical public-ID resolution — `READY`
+### T-053 Canonical public-ID resolution — `IN_PROGRESS`
+
+- RED: define alias-to-canonical public-ID resolution, public numeric-ID privacy, invalid/missing lookup, and canonical identity contracts.
 ### T-054 Authorized conflict-aware restoration — `TODO`
 ### T-055 TMDB search/candidate scoring/manual ID/no-match — `TODO`
 ### T-056 TMDB field import with provenance and locks — `TODO`
