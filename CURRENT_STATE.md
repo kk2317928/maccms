@@ -12,7 +12,7 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-01 — capability reconciliation and regression baseline.  
 **Active checkpoint:** CP-02 — foundation data and compatibility code.  
-**Active task:** none; T-022 is the next `READY` implementation task.  
+**Active task:** T-022 — add stable public IDs.  
 **Last completed task:** T-021 — foundation extension schema commit `5add8f640e6825b3aaf8f78d5b500672b92dbe9f`.  
 **Last verification:** GitHub Actions PHP 8.1 run `35343905926` passed the complete baseline and foundation suites.  
 **Next action:** execute T-022 test-first: implement stable six-character public IDs, collision exhaustion and canonical traversal cycle protection.

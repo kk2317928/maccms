@@ -302,7 +302,7 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - GREEN: GitHub Actions run `35343905926` passed the schema contract and complete PHP 8.1 baseline/foundation suites.
 - Contract confirms four InnoDB/utf8mb4 tables, literal `__PREFIX__`, required unique/query indexes, no foreign keys, and no competing `content_lang` table.
 
-### T-022 Add stable public IDs — `READY`
+### T-022 Add stable public IDs — `IN_PROGRESS`
 
 - Pure collision/retry/exhaustion tests first.
 - Add `VodExt` persistence and canonical traversal cycle protection.

@@ -6,6 +6,8 @@ $tests = [
     'migration_cli_contract.php',
     'migration_discovery.php',
     'migration_contract.php',
+    'public_id_generator.php',
+    'vod_ext_public_id.php',
 ];
 
 foreach ($tests as $test) {
