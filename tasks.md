@@ -19,8 +19,8 @@ Do not mark a task `DONE` with a future or local-only SHA. A checkpoint complete
 | CP-00 | Reset repository and establish architecture/master plan | DONE | — |
 | CP-01 | Reconcile existing capabilities and establish regression baseline | DONE | CP-00 |
 | CP-02 | Add migrations, extension data, public IDs, workflow, playback codec | DONE | CP-01 |
-| CP-03 | Verify foundation on real MySQL and native write paths | IN_PROGRESS | CP-02 |
-| CP-04 | Add content job queue, AI normalization, provenance and locks | TODO | CP-03 |
+| CP-03 | Verify foundation on real MySQL and native write paths | DONE | CP-02 |
+| CP-04 | Add content job queue, AI normalization, provenance and locks | READY | CP-03 |
 | CP-05 | Add duplicate review, reversible merge and TMDB workflow | TODO | CP-04 |
 | CP-06 | Add intelligent-content admin workspace and permissions | TODO | CP-05 |
 | CP-07 | Add versioned Headless API, sessions, favorites and progress | TODO | CP-06 |
@@ -452,23 +452,31 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - The native run imported the complete install schema, applied migration `20260918000100`, called `Vod::saveData()`, exercised `Collect::vod_data()` insert and update, and verified two native rows, exactly two extension rows, distinct valid public IDs, no collection duplicate, persisted update remarks, and byte-identical playback round trips.
 - This automated model-boundary verification does not claim the browser/admin-form manual smoke case; that remains `NOT_RUN` in `docs/testing/native-smoke-checklist.md`.
 
-### T-033 Publish foundation deployment/rollback guide — `IN_PROGRESS`
+### T-033 Publish foundation deployment/rollback guide — `DONE`
 
 - Exact backup, migration, verification, application rollback, and database restore procedure.
 - Commit: `docs: add foundation deployment and rollback guide`
 
+**Implementation commit:** `7931350d13c89a6ed3f5e0ad5157d5f7079295ca`
+
+**Verification evidence:**
+
+- `git diff --check`, required-file checks, and static coverage checks for runtime requirements, exact named backup, migration, schema verification, application rollback, full database restore, and Cron status passed before push.
+- GitHub Actions PHP 8.1 regression run `35350022475` passed after the guide was pushed.
+- Review against design sections 3, 4, 9, 11, 12, and 14 found the foundation keeps `mac_vod`/`vod_play_*` authoritative, isolates extension state, adds no queue/Cron or outbound request, uses versioned migrations, and provides MySQL 5.7/8.0 plus native-path evidence. Remaining queue/outbound enforcement work stays in CP-04/CP-09.
+
 ### CP-03 gate
 
-- [ ] Both MySQL versions verified.
-- [ ] Native admin and collection flows verified.
-- [ ] Backup/restore procedure reviewed.
-- [ ] Foundation release checkpoint tagged only after all evidence is committed and pushed.
+- [x] Both MySQL versions verified — runs `35348332012`, `35348806475`, and cross-family run `35348806492`.
+- [x] Native admin and collection persistence boundaries verified — run `35349617886`; manual browser smoke remains separately `NOT_RUN`.
+- [x] Backup/restore procedure reviewed — `docs/deployment/foundation-data.md`, commit `7931350d13c89a6ed3f5e0ad5157d5f7079295ca`.
+- [x] No premature release tag was created; all CP-03 evidence is committed and pushed. A deployment release tag remains an operator release action after manual acceptance, as required by the runbook.
 
 ---
 
 ## CP-04 — Content job queue and AI normalization
 
-### T-040 Dedicated content-job schema and repository — `TODO`
+### T-040 Dedicated content-job schema and repository — `READY`
 ### T-041 Atomic claim, lease recovery, retry and idempotency — `TODO`
 ### T-042 Cron/CLI worker budgets and heartbeat — `TODO`
 ### T-043 Hardened external HTTP boundary — `TODO`

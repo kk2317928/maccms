@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 30  
+State document version: 31  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -10,12 +10,12 @@ Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
 
 Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to the pinned upstream and the design/implementation documents have been added. No Headless AI programme feature has been implemented yet.
 
-**Last completed checkpoint:** CP-02 — foundation data and compatibility code.  
-**Active checkpoint:** CP-03 — real database and native-path verification.  
-**Active task:** T-033 — publish the foundation deployment/rollback guide.  
-**Last completed task:** T-032 — native video persistence and playback verification, commit `48ff96c0721bce1de1791b7373db3e06665864a6`.  
-**Last verification:** Native integration run `35349617886` passed on disposable `maccms_ci_native`, PHP 8.1, and MySQL 5.7.44; PHP regression run `35349617888` also passed.  
-**Next action:** publish exact backup, migration, invariant-check, application rollback, and database restore instructions, then run the complete CP-03 gate.
+**Last completed checkpoint:** CP-03 — real database and native-path verification.  
+**Active checkpoint:** CP-04 — content job queue and AI normalization.  
+**Active task:** T-040 — dedicated content-job schema and repository (`READY`).  
+**Last completed task:** T-033 — foundation deployment/rollback guide, commit `7931350d13c89a6ed3f5e0ad5157d5f7079295ca`.  
+**Last verification:** PHP regression run `35350022475` passed after the reviewed deployment guide; CP-03 database and native-path evidence is recorded in `tasks.md` and `docs/development/upstream-baseline.md`.  
+**Next action:** read the CP-04 plan for T-040, add a failing content-job schema/repository contract, and keep member reward `task` tables untouched.
 
 ## 1. Confirmed product direction
 

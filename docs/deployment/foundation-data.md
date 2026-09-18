@@ -4,7 +4,7 @@ This runbook deploys migration `20260918000100_foundation.sql` and the PHP code 
 
 ## Supported environment
 
-- PHP 8.1 CLI and FPM with `pdo_mysql`, `mbstring`, JSON, fileinfo, and the extensions already required by the installed MACCMS features.
+- PHP 8.1 CLI and FPM with `curl`, `mbstring`, `openssl`, `pdo_mysql`, JSON, fileinfo, and the extensions already required by the installed MACCMS features.
 - MySQL 5.7.x or MySQL 8.0.x.
 - A database user allowed to create and alter tables and indexes and to read/write `mac_schema_migration` (replace `mac_` below when the configured prefix differs).
 - Enough disk space for an uncompressed logical backup plus application release files.
@@ -24,7 +24,7 @@ Example preflight (replace every example value):
 ```bash
 cd /srv/maccms/releases/RELEASE_SHA
 php -v
-php -m | grep -E '^(PDO|pdo_mysql|mbstring|json|fileinfo)$'
+php -m | grep -E '^(curl|mbstring|openssl|PDO|pdo_mysql|json|fileinfo)$'
 git rev-parse --verify HEAD
 php -r '$c=require "application/database.php"; printf("host=%s database=%s prefix=%s\n", $c["hostname"], $c["database"], $c["prefix"]);'
 ```
