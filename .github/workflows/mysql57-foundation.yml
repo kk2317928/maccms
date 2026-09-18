@@ -48,7 +48,9 @@ jobs:
       - name: Configure disposable database
         run: sed -i "s/'database'        => 'maccms10'/'database'        => 'maccms_ci_57'/" application/database.php
       - name: PHP syntax
-        run: php -l tests/integration/mysql_foundation.php
+        run: |
+          php -l think
+          php -l tests/integration/mysql_foundation.php
       - name: First migration run
         run: |
           set +e

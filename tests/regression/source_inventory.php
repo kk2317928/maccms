@@ -28,6 +28,7 @@ $requiredFiles = [
     'api.php',
     'admin.php',
     'install.php',
+    'think',
     'application/command.php',
     'application/common/model/Vod.php',
     'application/common/model/Collect.php',

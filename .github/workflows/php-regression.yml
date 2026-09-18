@@ -20,6 +20,7 @@ jobs:
           coverage: none
       - name: PHP syntax
         run: |
+          php -l think
           php -l tests/regression/source_inventory.php
           php -l tests/regression/baseline_runner_contract.php
           php -l tests/regression/outbound_inventory_contract.php
