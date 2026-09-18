@@ -78,6 +78,9 @@ class AiRunRepository
         if ($budgetMicros < 0) {
             throw new InvalidArgumentException('Daily budget cannot be negative.');
         }
+        if ($budgetMicros === 0) {
+            return true;
+        }
         return $this->dailyUsage($timestamp)['cost_micros'] < $budgetMicros;
     }
 

@@ -23,8 +23,8 @@ class AiNormalizationPipeline
                 throw new InvalidArgumentException('Missing AI pipeline configuration: ' . $key);
             }
         }
-        if ((int) $config['daily_budget_micros'] < 1) {
-            throw new InvalidArgumentException('AI daily budget must be positive.');
+        if ((int) $config['daily_budget_micros'] < 0) {
+            throw new InvalidArgumentException('AI daily budget cannot be negative.');
         }
         $this->provider = $provider;
         $this->validator = $validator;
@@ -43,7 +43,7 @@ class AiNormalizationPipeline
         }
         $now = (int) call_user_func($this->clock);
         $budget = (int) $this->config['daily_budget_micros'];
-        if (!$this->runs->withinDailyBudget($budget, $now)) {
+        if ($budget > 0 && !$this->runs->withinDailyBudget($budget, $now)) {
             throw new RuntimeException('AI daily budget is exhausted.');
         }
         try {
