@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 7  
+State document version: 8  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,10 +12,10 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-01 — capability reconciliation and regression baseline.  
 **Active checkpoint:** CP-02 — foundation data and compatibility code.  
-**Active task:** T-021 — add foundation extension schema.  
-**Last completed task:** T-020 — migration ledger/CLI implementation commit `4099ea796a245f13aadd89cc39ce5bdb4c9c6577`, with source-inventory reconciliation at `d127bc853070f06ef92d8d642914d83b4882fbb9`.  
-**Last verification:** GitHub Actions PHP 8.1 run `35342212142` and a fresh `git diff --check` passed.  
-**Next action:** verify the foundation migration contract fails because the versioned SQL is absent, then implement only the extension schema defined by T-021.
+**Active task:** none; T-022 is the next `READY` implementation task.  
+**Last completed task:** T-021 — foundation extension schema commit `5add8f640e6825b3aaf8f78d5b500672b92dbe9f`.  
+**Last verification:** GitHub Actions PHP 8.1 run `35343905926` passed the complete baseline and foundation suites.  
+**Next action:** execute T-022 test-first: implement stable six-character public IDs, collision exhaustion and canonical traversal cycle protection.
 
 ## 1. Confirmed product direction
 

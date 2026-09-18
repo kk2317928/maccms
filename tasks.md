@@ -285,13 +285,24 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - GREEN: GitHub Actions run `35342212142` passed PHP syntax, baseline/outbound contracts, migration discovery/checksum, CLI registration and the foundation suite.
 - Fresh `git diff --check` returned exit code 0 after the GREEN run.
 
-### T-021 Add foundation extension schema — `IN_PROGRESS`
+### T-021 Add foundation extension schema — `DONE`
 
 - Add video extension, taxonomy relation, field-state, and migration tables.
 - Resolve reuse of `ContentLang` explicitly; do not create a competing multilingual system without T-012 evidence.
 - Commit: `feat: add video extension schema`
 
-### T-022 Add stable public IDs — `TODO`
+**Implementation commits:**
+
+- `2b5091632395f43c23b5d8d20cbff577e5956f9b` — add the foundation schema RED contract.
+- `5add8f640e6825b3aaf8f78d5b500672b92dbe9f` — add the versioned four-table extension schema.
+
+**Verification evidence:**
+
+- RED: GitHub Actions run `35343803947` passed syntax and baseline checks, then failed in the foundation suite because the migration SQL was absent.
+- GREEN: GitHub Actions run `35343905926` passed the schema contract and complete PHP 8.1 baseline/foundation suites.
+- Contract confirms four InnoDB/utf8mb4 tables, literal `__PREFIX__`, required unique/query indexes, no foreign keys, and no competing `content_lang` table.
+
+### T-022 Add stable public IDs — `READY`
 
 - Pure collision/retry/exhaustion tests first.
 - Add `VodExt` persistence and canonical traversal cycle protection.
