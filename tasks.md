@@ -397,7 +397,7 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 
 ## CP-03 — Real database and native-path verification
 
-### T-030 Verify migrations on MySQL 5.7 — `READY`
+### T-030 Verify migrations on MySQL 5.7 — `IN_PROGRESS`
 
 - Requires an explicitly named disposable database and recorded version.
 - Commit evidence: `test: verify foundation on mysql 5.7`

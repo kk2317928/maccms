@@ -1,0 +1,63 @@
+name: MySQL 5.7 foundation
+
+on:
+  push:
+    branches:
+      - feature/headless-ai-v1
+    paths:
+      - '.github/workflows/mysql57-foundation.yml'
+      - 'application/command.php'
+      - 'application/command/MaccmsMigrate.php'
+      - 'application/common/util/SchemaMigrationService.php'
+      - 'application/data/migrations/**'
+      - 'tests/integration/mysql_foundation.php'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mysql57:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: maccms_ci_57
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      MACCMS_TEST_DATABASE: maccms_ci_57
+      MACCMS_TEST_HOST: 127.0.0.1
+      MACCMS_TEST_PORT: 3306
+      MACCMS_TEST_USER: root
+      MACCMS_TEST_PASSWORD: root
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: pdo_mysql
+          coverage: none
+      - name: Configure disposable database
+        run: sed -i "s/'database'        => 'maccms10'/'database'        => 'maccms_ci_57'/" application/database.php
+      - name: PHP syntax
+        run: php -l tests/integration/mysql_foundation.php
+      - name: First migration run
+        run: |
+          output=$(php think maccms:migrate)
+          echo "$output"
+          grep -q 'done, applied=1, skipped=0' <<< "$output"
+      - name: Second migration run is a no-op
+        run: |
+          output=$(php think maccms:migrate)
+          echo "$output"
+          grep -q 'done, applied=0, skipped=1' <<< "$output"
+      - name: Verify MySQL 5.7 schema invariants
+        run: php tests/integration/mysql_foundation.php
