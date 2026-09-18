@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 52
+State document version: 53
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -10,13 +10,13 @@ Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
 
 Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to the approved upstream while the programme is implemented incrementally on the integration branch.
 
-**Last completed checkpoint:** CP-04 — content job queue and AI normalization.  
-**Active checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.  
-**Active task:** T-057 — end-to-end duplicate/TMDB regression suite (`IN_PROGRESS`).
-**Starting commit:** T-056 bookkeeping commit following `4f563a596ce45d22e26244a116d2d8244606d02f`.
-**Last completed task:** T-056 — reviewed TMDB field import with provenance and locks, commit `4f563a596ce45d22e26244a116d2d8244606d02f`.
-**Last verification:** PHP regression `35388048661` passed for T-056.
-**Next action:** make the fail-closed end-to-end duplicate/TMDB suite contract pass in deterministic order.
+**Last completed checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.
+**Active checkpoint:** CP-06 — intelligent-content administration.
+**Active task:** T-060 — granular permissions and audit events (`READY`).
+**Starting commit:** CP-05 bookkeeping commit following `2fb42c9a7d8e69b367f37a406d12c93cda38da88`.
+**Last completed task:** T-057 — end-to-end duplicate/TMDB regression suite, commit `2fb42c9a7d8e69b367f37a406d12c93cda38da88`.
+**Last verification:** PHP regression `35388283844` passed for the full CP-05 lifecycle suite; prior CP-05 schema migrations passed MySQL 5.7 and 8.0.
+**Next action:** define granular intelligent-content permissions and immutable audit-event contracts for T-060.
 
 ## 1. Confirmed product direction
 
@@ -147,6 +147,7 @@ Absence was established by repository text search against the pinned snapshot. I
 | Conflict-aware duplicate restoration | PASS | PHP 8.1 run `35387273739`; authorization, confirmation, integrity, conflict, rollback and audit contracts passed |
 | Deterministic TMDB matching | PASS | PHP 8.1 run `35387700115`; ordered search, scoring, manual-ID, no-match and review-only preselection contracts passed |
 | Reviewed TMDB field import | PASS | PHP 8.1 run `35388048661`; preview, provenance, missing-locale and manual-lock contracts passed |
+| CP-05 duplicate/TMDB lifecycle suite | PASS | PHP 8.1 run `35388283844`; deterministic fail-closed suite passed all eight lifecycle contracts |
 | Video workflow state machine | PASS | PHP 8.1 run `35344911819`; exhaustive transition matrix passed |
 | Lossless native playback codec | PASS | PHP 8.1 run `35345369100`; record-form, validation, round-trip and merge contracts passed |
 | Foundation migration MySQL 5.7 | PASS | Disposable `maccms_ci_57`, MySQL 5.7.44; Actions run `35348332012` |

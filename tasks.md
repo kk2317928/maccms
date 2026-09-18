@@ -21,8 +21,8 @@ Do not mark a task `DONE` with a future or local-only SHA. A checkpoint complete
 | CP-02 | Add migrations, extension data, public IDs, workflow, playback codec | DONE | CP-01 |
 | CP-03 | Verify foundation on real MySQL and native write paths | DONE | CP-02 |
 | CP-04 | Add content job queue, AI normalization, provenance and locks | DONE | CP-03 |
-| CP-05 | Add duplicate review, reversible merge and TMDB workflow | READY | CP-04 |
-| CP-06 | Add intelligent-content admin workspace and permissions | TODO | CP-05 |
+| CP-05 | Add duplicate review, reversible merge and TMDB workflow | DONE | CP-04 |
+| CP-06 | Add intelligent-content admin workspace and permissions | READY | CP-05 |
 | CP-07 | Add versioned Headless API, sessions, favorites and progress | TODO | CP-06 |
 | CP-08 | Add event deduplication, rankings and recommendations | TODO | CP-07 |
 | CP-09 | Remove prohibited communication and complete release hardening | TODO | CP-08 |
@@ -564,9 +564,10 @@ Each task requires failing tests, implementation, focused verification, an immed
 - Added field-level current/candidate/lock previews, reviewed allowlisted application, exact TMDB/reviewer provenance, missing-locale preservation for AI fallback, manual-lock blocking, and explicit reviewed override behavior.
 - RED commit: `b41dcaf8c7e15ad187dc355a1e25a35adc4491a5`; GREEN commit: `4f563a596ce45d22e26244a116d2d8244606d02f`; PHP run `35388048661` passed.
 
-### T-057 End-to-end duplicate/TMDB regression suite — `IN_PROGRESS`
+### T-057 End-to-end duplicate/TMDB regression suite — `DONE`
 
-- RED: require a fail-closed suite contract covering scoring, decisions, merge, canonical resolution, restore, TMDB matching, and reviewed import in deterministic order.
+- Added a fail-closed lifecycle suite contract and deterministic CI order covering scoring, different-work decisions, transactional merge, canonical public IDs, authorized restoration, TMDB matching, and reviewed field import. The runner propagates the first failure and no component permits automatic merge or unreviewed TMDB application.
+- RED commit: `f560042a7bc4d46debe06cebf27b0faa3cb85c44`; GREEN commit: `2fb42c9a7d8e69b367f37a406d12c93cda38da88`; PHP run `35388283844` passed.
 
 No task may introduce automatic merge.
 
@@ -574,7 +575,7 @@ No task may introduce automatic merge.
 
 ## CP-06 — Intelligent-content administration
 
-### T-060 Define granular permissions and audit events — `TODO`
+### T-060 Define granular permissions and audit events — `READY`
 ### T-061 Dashboard metrics, queue health and Cron heartbeat — `TODO`
 ### T-062 AI field review UI — `TODO`
 ### T-063 Duplicate comparison, merge and restore UI — `TODO`
