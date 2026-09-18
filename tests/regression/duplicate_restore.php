@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 $root = dirname(__DIR__, 2);
-foreach (['VodPlaybackCodec.php', 'DuplicateRestoreService.php'] as $file) {
+foreach (['VodPlaybackCodec.php', 'VodWorkflow.php', 'DuplicateRestoreService.php'] as $file) {
     $path = $root . '/application/common/util/' . $file;
     if (!is_file($path)) { fwrite(STDERR, "FAIL: {$file} is missing.\n"); exit(1); }
     require_once $path;
