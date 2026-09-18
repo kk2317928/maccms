@@ -452,7 +452,7 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - The native run imported the complete install schema, applied migration `20260918000100`, called `Vod::saveData()`, exercised `Collect::vod_data()` insert and update, and verified two native rows, exactly two extension rows, distinct valid public IDs, no collection duplicate, persisted update remarks, and byte-identical playback round trips.
 - This automated model-boundary verification does not claim the browser/admin-form manual smoke case; that remains `NOT_RUN` in `docs/testing/native-smoke-checklist.md`.
 
-### T-033 Publish foundation deployment/rollback guide — `READY`
+### T-033 Publish foundation deployment/rollback guide — `IN_PROGRESS`
 
 - Exact backup, migration, verification, application rollback, and database restore procedure.
 - Commit: `docs: add foundation deployment and rollback guide`
