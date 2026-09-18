@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 35  
+State document version: 36  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,10 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-03 — real database and native-path verification.  
 **Active checkpoint:** CP-04 — content job queue and AI normalization.  
-**Active task:** T-043 — hardened external HTTP boundary (`IN_PROGRESS`).  
-**Starting commit:** `88de442f70ddf31006ffd326540fd35c2c0dd495`.  
-**Last completed task:** T-042 — bounded Cron/CLI worker and heartbeat, commit `190fd1199a374b5c8216f216eac346e34de444a7`.  
-**Last verification:** PHP `35358498991`, MySQL 5.7 `35358499027`, MySQL 8.0 `35358499003`, and native foundation `35358499120` passed for T-042.  
-**Next action:** define failing URL, DNS/IP, redirect, timeout, response-size, allowlist, and secret-redaction contracts for T-043.
+**Active task:** T-044 — AI JSON schema and validation (`READY`).  
+**Last completed task:** T-043 — hardened external HTTP boundary, commit `db9fca5ade0dd6cdb419ea55de2990b985aa61e4`.  
+**Last verification:** PHP regression `35367531362` passed for T-043.  
+**Next action:** define the failing normalized-title, aliases, year, type, TMDB clues, taxonomy, confidence, and reason validation contract.
 
 ## 1. Confirmed product direction
 
@@ -54,7 +53,7 @@ Upstream Composer metadata declares PHP `>=7.0`; the new programme's primary sup
 | Legacy/broad API | `application/api/controller/` | 39 controllers |
 | Public web | `application/index/controller/` | 24 controllers |
 | Shared models | `application/common/model/` | 65 models after T-040 added two content-job models |
-| Shared services/utilities | `application/common/util/` | 80 utility/service classes after T-042 added `ContentJobWorker` |
+| Shared services/utilities | `application/common/util/` | 82 utility/service classes after T-043 added the shared outbound policy/client |
 | Request behaviors | `application/common/behavior/` | Security, audit, monitoring, preview and initialization hooks |
 | Upgrade schema | `application/data/update/database.php` | Large monolithic legacy upgrade script |
 | Tests | `tests/regression/` | Only `user_register_validate.php` currently exists |

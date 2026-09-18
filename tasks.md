@@ -498,8 +498,12 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - RED commit: `e2da691d96155fdf7e8fbe2a1fa954303daadc46`; implementation commit: `190fd1199a374b5c8216f216eac346e34de444a7`.
 - GREEN evidence: PHP `35358498991`, MySQL 5.7 `35358499027`, MySQL 8.0 `35358499003`, native foundation `35358499120`.
 
-### T-043 Hardened external HTTP boundary — `IN_PROGRESS`
-### T-044 AI JSON schema and validation — `TODO`
+### T-043 Hardened external HTTP boundary — `DONE`
+
+- Added shared HTTPS/allowlist/DNS public-IP policy, DNS pinning, redirect revalidation, timeout and response-size limits, header validation, and secret redaction.
+- RED commit: `5a9892d2de18ba71a52299fe00be708e5feccf93`; GREEN commit: `db9fca5ade0dd6cdb419ea55de2990b985aa61e4`; PHP run `35367531362` passed.
+
+### T-044 AI JSON schema and validation — `READY`
 ### T-045 AI run provenance, prompt version and usage — `TODO`
 ### T-046 Field precedence and manual locks — `TODO`
 ### T-047 AI pipeline integration tests — `TODO`
