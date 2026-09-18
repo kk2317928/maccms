@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 53
+State document version: 54
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.
 **Active checkpoint:** CP-06 — intelligent-content administration.
-**Active task:** T-060 — granular permissions and audit events (`IN_PROGRESS`).
-**Starting commit:** CP-05 bookkeeping commit following `2fb42c9a7d8e69b367f37a406d12c93cda38da88`.
-**Last completed task:** T-057 — end-to-end duplicate/TMDB regression suite, commit `2fb42c9a7d8e69b367f37a406d12c93cda38da88`.
-**Last verification:** PHP regression `35388283844` passed for the full CP-05 lifecycle suite; prior CP-05 schema migrations passed MySQL 5.7 and 8.0.
-**Next action:** make exact content-admin permission and immutable audit-event contracts pass.
+**Active task:** T-061 — dashboard metrics, queue health and Cron heartbeat (`READY`).
+**Starting commit:** T-060 bookkeeping commit following `a9d072693f5a4078810cdebb05ced1c7cc7fe0cc`.
+**Last completed task:** T-060 — granular permissions and immutable audit events, commit `a9d072693f5a4078810cdebb05ced1c7cc7fe0cc`.
+**Last verification:** PHP regression `35391110548`, MySQL 5.7 `35391110547`, MySQL 8.0 `35391110450`, and native video `35390914302` passed for T-060.
+**Next action:** define dashboard counts, queue age/depth, success/failure rate, budget usage, rate-limit and Cron-heartbeat contracts for T-061.
 
 ## 1. Confirmed product direction
 
@@ -54,7 +54,7 @@ Upstream Composer metadata declares PHP `>=7.0`; the new programme's primary sup
 | Legacy/broad API | `application/api/controller/` | 39 controllers |
 | Public web | `application/index/controller/` | 24 controllers |
 | Shared models | `application/common/model/` | 68 models after T-052 added immutable merge snapshots |
-| Shared services/utilities | `application/common/util/` | 91 utility/service classes after T-052 added transactional duplicate merging |
+| Shared services/utilities | `application/common/util/` | 96 utility/service classes after T-060 added content-admin policy and immutable audit services |
 | Request behaviors | `application/common/behavior/` | Security, audit, monitoring, preview and initialization hooks |
 | Upgrade schema | `application/data/update/database.php` | Large monolithic legacy upgrade script |
 | Tests | `tests/regression/` | Only `user_register_validate.php` currently exists |
@@ -148,6 +148,7 @@ Absence was established by repository text search against the pinned snapshot. I
 | Deterministic TMDB matching | PASS | PHP 8.1 run `35387700115`; ordered search, scoring, manual-ID, no-match and review-only preselection contracts passed |
 | Reviewed TMDB field import | PASS | PHP 8.1 run `35388048661`; preview, provenance, missing-locale and manual-lock contracts passed |
 | CP-05 duplicate/TMDB lifecycle suite | PASS | PHP 8.1 run `35388283844`; deterministic fail-closed suite passed all eight lifecycle contracts |
+| Granular admin permissions and immutable audit | PASS | PHP `35391110548`, MySQL 5.7 `35391110547`, MySQL 8.0 `35391110450`, native video `35390914302` |
 | Video workflow state machine | PASS | PHP 8.1 run `35344911819`; exhaustive transition matrix passed |
 | Lossless native playback codec | PASS | PHP 8.1 run `35345369100`; record-form, validation, round-trip and merge contracts passed |
 | Foundation migration MySQL 5.7 | PASS | Disposable `maccms_ci_57`, MySQL 5.7.44; Actions run `35348332012` |

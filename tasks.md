@@ -575,10 +575,12 @@ No task may introduce automatic merge.
 
 ## CP-06 — Intelligent-content administration
 
-### T-060 Define granular permissions and audit events — `IN_PROGRESS`
+### T-060 Define granular permissions and audit events — `DONE`
 
-- RED: define exact default-deny permissions, high-risk confirmation gates, immutable before/after event hashes, recursive secret redaction, and fail-closed audit persistence.
-### T-061 Dashboard metrics, queue health and Cron heartbeat — `TODO`
+- Extended native `admin_auth` with eight exact intelligent-content permissions. Added default-deny policy checks, confirmation gates for merge/restore, publication, bulk overwrite and security changes, plus an immutable InnoDB domain-event ledger with deterministic before/after hashes, recursive secret redaction and fail-closed persistence.
+- RED commit: `75be542cba08e3853d440c43720205e5831540f0`; GREEN commit: `a9d072693f5a4078810cdebb05ced1c7cc7fe0cc`; PHP run `35391110548`, MySQL 5.7 run `35391110547`, MySQL 8.0 run `35391110450`, and native video run `35390914302` passed.
+
+### T-061 Dashboard metrics, queue health and Cron heartbeat — `READY`
 ### T-062 AI field review UI — `TODO`
 ### T-063 Duplicate comparison, merge and restore UI — `TODO`
 ### T-064 TMDB candidate and manual-match UI — `TODO`
