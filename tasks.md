@@ -336,12 +336,22 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - RED: GitHub Actions run `35344769008` passed syntax and all pre-existing suites, then failed at the missing workflow implementation as expected.
 - GREEN: GitHub Actions run `35344911819` passed all 81 state-pair checks, unknown-state/retry rejection, PHP syntax, and the complete baseline/foundation suites.
 
-### T-024 Add lossless playback codec — `IN_PROGRESS`
+### T-024 Add lossless playback codec — `DONE`
 
 - Test all native delimiters, empty records, unsafe schemes, round trip, and deterministic merge.
 - Commit: `feat: add lossless video playback codec`
 
-### T-025 Add taxonomy/provenance/lock services — `TODO`
+**Implementation commits:**
+
+- `3e13cd9b0edaaf3648327f5338c7ddd2e75588fb` — add the lossless decode/encode/merge RED contract.
+- `75428a041563cadd4569458b7d3a480f6126ea09` — add the codec, validation boundaries, deterministic merge, and inventory update.
+
+**Verification evidence:**
+
+- RED: GitHub Actions run `35345156553` passed syntax and all pre-existing suites, then failed at the missing codec as expected.
+- GREEN: GitHub Actions run `35345369100` passed lossless record-form, delimiter, unsafe-input, merge, PHP syntax, and complete baseline/foundation checks.
+
+### T-025 Add taxonomy/provenance/lock services — `READY`
 
 - Reconcile with existing AI annotation and `ContentLang` behavior.
 - Sync only native compatibility taxonomy fields.
