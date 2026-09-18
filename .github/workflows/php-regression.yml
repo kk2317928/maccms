@@ -51,6 +51,8 @@ jobs:
           php -l application/common/util/VodExtensionService.php
           php -l application/common/util/ContentJobRepository.php
           php -l application/common/util/ContentJobWorker.php
+          php -l application/common/util/ExternalHttpPolicy.php
+          php -l application/common/util/HardenedHttpClient.php
           php -l application/common/model/VodExt.php
           php -l application/common/model/MetaTerm.php
           php -l application/common/model/VodMetaTerm.php
