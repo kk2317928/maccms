@@ -10,6 +10,7 @@ $tests = [
     'vod_ext_public_id.php',
     'vod_workflow.php',
     'vod_playback_codec.php',
+    'vod_extension_contract.php',
 ];
 
 foreach ($tests as $test) {

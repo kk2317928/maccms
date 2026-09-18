@@ -351,7 +351,7 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - RED: GitHub Actions run `35345156553` passed syntax and all pre-existing suites, then failed at the missing codec as expected.
 - GREEN: GitHub Actions run `35345369100` passed lossless record-form, delimiter, unsafe-input, merge, PHP syntax, and complete baseline/foundation checks.
 
-### T-025 Add taxonomy/provenance/lock services — `READY`
+### T-025 Add taxonomy/provenance/lock services — `IN_PROGRESS`
 
 - Reconcile with existing AI annotation and `ContentLang` behavior.
 - Sync only native compatibility taxonomy fields.

@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 16  
+State document version: 17  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,10 +12,10 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-01 — capability reconciliation and regression baseline.  
 **Active checkpoint:** CP-02 — foundation data and compatibility code.  
-**Active task:** none; T-025 is READY.  
+**Active task:** T-025 — add taxonomy/provenance/lock services.  
 **Last completed task:** T-024 — lossless video playback codec commit `75428a041563cadd4569458b7d3a480f6126ea09`.  
 **Last verification:** GitHub Actions PHP 8.1 run `35345369100` passed syntax and the complete baseline/foundation suites.  
-**Next action:** start T-025 test-first with taxonomy kind, provenance source, lock, service interface, and native compatibility mapping contracts.
+**Next action:** push the T-025 RED extension-service source contract, confirm its expected failure, then implement the focused models and service.
 
 ## 1. Confirmed product direction
 
