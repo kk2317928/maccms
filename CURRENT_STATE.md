@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 37  
+State document version: 38  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-03 — real database and native-path verification.  
 **Active checkpoint:** CP-04 — content job queue and AI normalization.  
-**Active task:** T-045 — AI run provenance, prompt version and usage (`IN_PROGRESS`).  
-**Starting commit:** `bcd5e6f3abc6748acdc21c4e6ffaf3917b9e9501`.  
-**Last completed task:** T-044 — strict AI normalization validation, commit `3103631ab3ba6317b07db0561d9478bb49b23655`.  
-**Last verification:** PHP regression `35367850824` passed for T-044.  
-**Next action:** define the failing immutable AI run, response fingerprint, validation decision, token usage, and daily-budget contract.
+**Active task:** T-046 — field precedence and manual locks (`READY`).  
+**Starting commit:** T-045 bookkeeping commit following `d7615bf893877de21af5f3928c8bf7958db7565b`.  
+**Last completed task:** T-045 — immutable AI-run provenance and daily usage, commit `d7615bf893877de21af5f3928c8bf7958db7565b`.  
+**Last verification:** PHP regression `35372769277`, MySQL 5.7 `35372770568`, MySQL 8.0 `35372769449`, and native video `35372769363` passed for T-045.  
+**Next action:** define the failing field-source precedence and manual-lock contract.
 
 ## 1. Confirmed product direction
 
@@ -53,8 +53,8 @@ Upstream Composer metadata declares PHP `>=7.0`; the new programme's primary sup
 | Admin templates | `application/admin/view_new/` | Current admin UI templates; not `view/` |
 | Legacy/broad API | `application/api/controller/` | 39 controllers |
 | Public web | `application/index/controller/` | 24 controllers |
-| Shared models | `application/common/model/` | 65 models after T-040 added two content-job models |
-| Shared services/utilities | `application/common/util/` | 83 utility/service classes after T-044 added strict AI response validation |
+| Shared models | `application/common/model/` | 66 models after T-045 added immutable AI-run provenance |
+| Shared services/utilities | `application/common/util/` | 84 utility/service classes after T-045 added AI-run usage accounting |
 | Request behaviors | `application/common/behavior/` | Security, audit, monitoring, preview and initialization hooks |
 | Upgrade schema | `application/data/update/database.php` | Large monolithic legacy upgrade script |
 | Tests | `tests/regression/` | Only `user_register_validate.php` currently exists |

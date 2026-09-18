@@ -508,8 +508,12 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - Added strict bounded schema validation for titles, aliases, year/type, TMDB clues, taxonomy suggestions, confidence, and reason; malformed, missing, unknown, and wrongly typed values are rejected.
 - RED commit: `46a9c192c4cd6412dfc605d5caf1f94025959dbc`; GREEN commit: `3103631ab3ba6317b07db0561d9478bb49b23655`; PHP run `35367850824` passed.
 
-### T-045 AI run provenance, prompt version and usage — `IN_PROGRESS`
-### T-046 Field precedence and manual locks — `TODO`
+### T-045 AI run provenance, prompt version and usage — `DONE`
+
+- Added immutable AI-run provenance with prompt/request/response fingerprints, validation and decision statuses, token/cost accounting, UTC daily usage, and a strict daily-budget boundary.
+- RED commit: `fe3b606357a41a517c011c01c5a2a16ed53cab21`; GREEN commit: `d7615bf893877de21af5f3928c8bf7958db7565b`; PHP run `35372769277`, MySQL 5.7 run `35372770568`, MySQL 8.0 run `35372769449`, and native video run `35372769363` passed.
+
+### T-046 Field precedence and manual locks — `READY`
 ### T-047 AI pipeline integration tests — `TODO`
 
 Each task requires failing tests, implementation, focused verification, an immediate commit, and immediate push. CP-04 cannot reuse member `task` tables.
