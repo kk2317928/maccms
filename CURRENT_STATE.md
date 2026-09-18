@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 46
+State document version: 47
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-04 — content job queue and AI normalization.  
 **Active checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.  
-**Active task:** T-052 — merge snapshots and playback merge (`READY`).
-**Starting commit:** T-051 bookkeeping commit following `9696b267a6db7f2e54cf1e28bbd8fc6e03c5d7c5`.
+**Active task:** T-052 — merge snapshots and playback merge (`IN_PROGRESS`).
+**Starting commit:** `fe6cc07d00434d2fca4ded08937c39e089ced5ce`.
 **Last completed task:** T-051 — permanent different-work decisions and stale candidate invalidation, commit `9696b267a6db7f2e54cf1e28bbd8fc6e03c5d7c5`.
 **Last verification:** PHP regression `35381357761`, MySQL 5.7 `35381357697`, MySQL 8.0 `35381357765`, and native video `35381357708` passed for T-051.
-**Next action:** define the failing transactional merge snapshot and playback URL-deduplication contract for T-052.
+**Next action:** verify the failing transactional merge snapshot and playback URL-deduplication contract, then implement it.
 
 ## 1. Confirmed product direction
 

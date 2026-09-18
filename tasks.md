@@ -539,7 +539,7 @@ Each task requires failing tests, implementation, focused verification, an immed
 - Added canonical content fingerprints, permanent reviewed `different` decisions, pair-level suppression lookup, and atomic stale invalidation for pending candidates only. Permanent decisions survive later content changes; invalid candidates cannot silently remain reviewable.
 - RED commit: `7b04a844c340d1df4994010c9e8eac3534e4df2d`; GREEN commit: `9696b267a6db7f2e54cf1e28bbd8fc6e03c5d7c5`; PHP run `35381357761`, MySQL 5.7 run `35381357697`, MySQL 8.0 run `35381357765`, and native video run `35381357708` passed.
 
-### T-052 Merge snapshots and playback merge — `READY`
+### T-052 Merge snapshots and playback merge — `IN_PROGRESS`
 ### T-053 Canonical public-ID resolution — `TODO`
 ### T-054 Authorized conflict-aware restoration — `TODO`
 ### T-055 TMDB search/candidate scoring/manual ID/no-match — `TODO`
