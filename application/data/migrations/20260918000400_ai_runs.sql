@@ -1,0 +1,22 @@
+CREATE TABLE IF NOT EXISTS `__PREFIX__content_ai_run` (
+  `ai_run_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `vod_id` int(10) unsigned NOT NULL,
+  `job_id` bigint(20) unsigned NOT NULL,
+  `provider` varchar(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  `model` varchar(128) NOT NULL,
+  `prompt_version` varchar(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  `request_fingerprint` char(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  `response_fingerprint` char(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  `validation_status` varchar(16) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  `decision_status` varchar(16) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  `input_tokens` int(10) unsigned NOT NULL DEFAULT '0',
+  `output_tokens` int(10) unsigned NOT NULL DEFAULT '0',
+  `total_tokens` int(10) unsigned NOT NULL DEFAULT '0',
+  `estimated_cost_micros` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `raw_response_json` mediumtext NOT NULL,
+  `created_at` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`ai_run_id`),
+  KEY `idx_vod_created` (`vod_id`,`created_at`),
+  KEY `idx_job_id` (`job_id`),
+  KEY `idx_daily_usage` (`created_at`,`estimated_cost_micros`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

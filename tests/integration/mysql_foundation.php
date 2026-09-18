@@ -31,13 +31,15 @@ if (strpos($version, $expectedFamily . '.') !== 0) {
 }
 
 $ledger = $pdo->query('SELECT version, checksum FROM mac_schema_migration ORDER BY version')->fetchAll(PDO::FETCH_ASSOC);
-if (count($ledger) !== 3
+if (count($ledger) !== 4
     || $ledger[0]['version'] !== '20260918000100'
     || $ledger[1]['version'] !== '20260918000200'
     || $ledger[2]['version'] !== '20260918000300'
+    || $ledger[3]['version'] !== '20260918000400'
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[0]['checksum'])
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[1]['checksum'])
-    || !preg_match('/^[a-f0-9]{64}$/', $ledger[2]['checksum'])) {
+    || !preg_match('/^[a-f0-9]{64}$/', $ledger[2]['checksum'])
+    || !preg_match('/^[a-f0-9]{64}$/', $ledger[3]['checksum'])) {
     fwrite(STDERR, "FAIL: migration ledger does not contain all expected checksummed versions.\n");
     exit(1);
 }
@@ -50,6 +52,7 @@ $requiredIndexes = [
     'mac_content_job' => ['PRIMARY', 'uk_type_idempotency', 'idx_claim', 'idx_lock'],
     'mac_content_job_run' => ['PRIMARY', 'uk_job_attempt', 'idx_job_status'],
     'mac_content_worker_heartbeat' => ['PRIMARY', 'idx_seen'],
+    'mac_content_ai_run' => ['PRIMARY', 'idx_vod_created', 'idx_job_id', 'idx_daily_usage'],
 ];
 $tableStatement = $pdo->prepare(
     'SELECT ENGINE, TABLE_COLLATION FROM information_schema.TABLES WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?'
