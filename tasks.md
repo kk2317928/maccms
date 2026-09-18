@@ -128,7 +128,7 @@ git diff --check
 - RED: GitHub Actions run `35338906406` passed PHP syntax and failed at `Baseline runner contract` before the runner existed.
 - GREEN: GitHub Actions run `35339024233` passed the runner contract and the complete PHP 8.1 baseline suite.
 
-### T-012 Inventory overlapping subsystems — `IN_PROGRESS`
+### T-012 Inventory overlapping subsystems — `DONE`
 
 **Depends on:** T-011
 
@@ -166,7 +166,16 @@ git diff --check
 
 **Commit:** `docs: reconcile existing maccms capabilities`
 
-### T-013 Inventory and classify outbound communication — `TODO`
+**Implementation commit:** `6128c771788586b18b13632f6f4d75947e654ee5`
+
+**Verification evidence:**
+
+- All 11 required area keywords were present and no placeholder terms were found.
+- The decision summary contained exactly 12 subsystem rows, each with one `reuse`, `extend`, `replace`, or `retire` decision.
+- Referenced primary entrypoint files existed and `git diff --check` passed.
+- GitHub Actions PHP 8.1 baseline run `35340449661` passed.
+
+### T-013 Inventory and classify outbound communication — `READY`
 
 **Depends on:** T-012
 

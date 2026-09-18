@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 3  
+State document version: 4  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,10 +12,10 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-00 — repository reset and master planning.  
 **Active checkpoint:** CP-01 — existing-capability reconciliation and regression baseline.  
-**Active task:** T-012 — inventory overlapping subsystems.  
-**Last completed task:** T-011 — baseline runner implementation commit `cdc337d73c889ee334129c01183aff3b39d055c5`.  
-**Last verification:** GitHub Actions PHP 8.1 run `35339024233` passed the runner contract and complete database-free baseline suite.  
-**Next action:** complete and verify `docs/development/capability-reconciliation.md`, then close T-012 with source-backed decisions.
+**Active task:** none; T-013 is the next `READY` task.  
+**Last completed task:** T-012 — capability reconciliation commit `6128c771788586b18b13632f6f4d75947e654ee5`.  
+**Last verification:** GitHub Actions PHP 8.1 run `35340449661` passed after the capability reconciliation; its source-contract checks also passed locally.  
+**Next action:** execute T-013 and inventory/classify all outbound communication, including the known official update request.
 
 ## 1. Confirmed product direction
 
@@ -79,27 +79,28 @@ Counts describe the pinned source snapshot and are not architectural limits.
 
 - Existing installs/upgrades use `application/data/update/database.php` and installer SQL/config injection.
 - The programme's versioned/checksummed migration runner does not exist yet.
-- Existing `task` and `task_log` tables are member reward/sign-in tasks, not a general background job queue.
+- Existing `task` and `task_log` tables are member reward/sign-in tasks. `ext_sync_job` and `ext_sync_log` schedule external-provider feeds. Neither is a general leased/idempotent content queue.
 
 ## 4. Existing capabilities that overlap the design
 
-These are verified as present, but suitability and test coverage still require CP-01 decisions.
+These are verified as present. T-012 decisions are recorded in `docs/development/capability-reconciliation.md`; test coverage still expands through later checkpoints.
 
 | Planned area | Existing code/data | Current assessment |
 |---|---|---|
-| AI provider | `AiProvider`, `SeoAi`, `ContentAnnotator`, `addons/aicontent` | Reuse candidate; planned JSON schema/provenance/budget behavior not yet proven |
-| AI review | `ContentAiAnnotation`, `AnnotationAdopter`, admin `AiAnnotation` | Extend or replace decision required |
-| TMDB | `TmdbExternalSourceProvider` and external-source registry/sync classes | Reuse candidate; candidate scoring/manual review workflow incomplete for target design |
+| AI provider | `AiProvider`, `SeoAi`, `ContentAnnotator`, `addons/aicontent` | Extend; consolidate transport/security/budget behavior behind `AiProvider` |
+| AI review | `ContentAiAnnotation`, `AnnotationAdopter`, admin `AiAnnotation` | Extend with immutable runs, field governance, provenance and locks |
+| TMDB | `TmdbExternalSourceProvider` and external-source registry/sync classes | Extend; candidate scoring/manual review workflow remains incomplete for target design |
 | Other metadata | IMDb and Douban providers | Optional clues; must not bypass source/provenance rules |
-| Multilingual data | `ContentLang` and overlay helpers | Reuse candidate; target locales/fallback and high-frequency title fields need design reconciliation |
-| API | Broad `application/api` module | Keep for compatibility; planned `/api/v1` needs a stable DTO boundary |
-| API docs | `OpenApiSpec` and admin API docs | Extend or version; currently documents existing API rather than final `/api/v1` contract |
-| Authentication | `JwtService`, API user login/logout | Existing HS256 access token only; rotating hashed refresh sessions are absent |
-| Favorites/history/progress | `Ulog` model and API controller | Reuse candidate; anonymous merge and target DTO contract need verification |
-| Recommendations | `application/api/controller/Recommend.php`, profiles/quality tools | Reuse candidate; target deterministic rule set and exclusion rules need verification |
-| Analytics | analytics controllers, tables, aggregators | Reuse selectively; ranking event semantics differ from generic analytics |
-| Audit/security | admin audit, safety checks, CSRF/XSS/security behaviors | Reuse and extend; high-risk target actions still require explicit audit coverage |
-| S3/media | S3 upload admin configuration, `vod_pic_original`, AI cover service | Reuse candidate; `old_poster_s3` and `poster_s3` target fields are absent |
+| Multilingual data | `ContentLang` and overlay helpers | Extend with target locale/fallback, indexed titles, provenance and locks |
+| API | Broad `application/api` module | Extend by keeping legacy compatibility and adding a separate `/api/v1` DTO boundary |
+| API docs | `OpenApiSpec` and admin API docs | Extend with a separate versioned v1 specification |
+| Authentication | `JwtService`, API user login/logout | Replace the frontend token/session boundary; retain native user accounts |
+| Favorites/history/progress | `Ulog` model and API controller | Extend with public-ID DTOs and anonymous reconciliation |
+| Recommendations | `application/api/controller/Recommend.php`, profiles/quality tools | Extend with canonical availability filters and target signals |
+| Analytics | analytics controllers, tables, aggregators | Extend with deduplicated playback events and ranking windows |
+| Audit/security | admin audit, safety checks, CSRF/XSS/security behaviors | Extend; high-risk target actions still require explicit audit coverage |
+| S3/media | S3 upload admin configuration, `vod_pic_original`, AI cover service | Extend; `old_poster_s3` and `poster_s3` target fields remain absent |
+| Queue | reward task tables and provider-specific external sync jobs | Extend with separate leased/idempotent content-job tables |
 
 ## 5. Planned capabilities verified as absent
 
@@ -148,7 +149,6 @@ Absence was established by repository text search against the pinned snapshot. I
 
 ## 8. Open decisions
 
-- For each overlapping subsystem, choose reuse/extend/replace/retire during CP-01 and record migration impact.
 - Decide whether the legacy API remains indefinitely or receives a documented deprecation window after `/api/v1` is operational.
 - Confirm the exact PHP compatibility floor for all new code after baseline syntax and dependency checks.
 - Real MySQL verification requires explicitly named disposable databases and available test environments.
