@@ -351,13 +351,23 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - RED: GitHub Actions run `35345156553` passed syntax and all pre-existing suites, then failed at the missing codec as expected.
 - GREEN: GitHub Actions run `35345369100` passed lossless record-form, delimiter, unsafe-input, merge, PHP syntax, and complete baseline/foundation checks.
 
-### T-025 Add taxonomy/provenance/lock services — `IN_PROGRESS`
+### T-025 Add taxonomy/provenance/lock services — `DONE`
 
 - Reconcile with existing AI annotation and `ContentLang` behavior.
 - Sync only native compatibility taxonomy fields.
 - Commit: `feat: add video metadata extension services`
 
-### T-026 Hook both native video write paths — `TODO`
+**Implementation commits:**
+
+- `42c644f8efea5deb96b3a1abce8bf8d040dbb154` — add the extension models/service RED source contract.
+- `76321134eaaa04d42d1f767a0caad736916257ce` — add taxonomy, provenance/lock models and native compatibility synchronization.
+
+**Verification evidence:**
+
+- RED: GitHub Actions run `35345571249` passed syntax and all pre-existing suites, then failed because the extension sources were absent.
+- GREEN: GitHub Actions run `35345760601` passed model bindings, exact kind/source allowlists, service interfaces, deterministic taxonomy ordering/mapping, and all suites.
+
+### T-026 Hook both native video write paths — `READY`
 
 - Cover `Vod::saveData()` and collection insert/update paths in `Collect::vod_data()`.
 - Preserve existing return values and transaction semantics.
