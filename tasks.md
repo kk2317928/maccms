@@ -580,8 +580,12 @@ No task may introduce automatic merge.
 - Extended native `admin_auth` with eight exact intelligent-content permissions. Added default-deny policy checks, confirmation gates for merge/restore, publication, bulk overwrite and security changes, plus an immutable InnoDB domain-event ledger with deterministic before/after hashes, recursive secret redaction and fail-closed persistence.
 - RED commit: `75be542cba08e3853d440c43720205e5831540f0`; GREEN commit: `a9d072693f5a4078810cdebb05ced1c7cc7fe0cc`; PHP run `35391110548`, MySQL 5.7 run `35391110547`, MySQL 8.0 run `35391110450`, and native video run `35390914302` passed.
 
-### T-061 Dashboard metrics, queue health and Cron heartbeat — `IN_PROGRESS`
-### T-062 AI field review UI — `TODO`
+### T-061 Dashboard metrics, queue health and Cron heartbeat — `DONE`
+
+- Extended the existing workflow, content-job, AI-run and worker-heartbeat stores with a read-only intelligent-content dashboard. It reports all workflow-state counts, runnable queue depth/age including expired leases, 24-hour success/failure and provider-rate-limit metrics, UTC daily token/cost budget health, and active Cron heartbeat health. The native `content_workspace/view` permission controls a visible `view_new` entry; AI budget configuration and zero-as-unlimited enforcement now share one persisted contract, while provider HTTP 429 failures remain redacted and observable.
+- RED commit: `e2fa8d972b909c94ce4abf2a125c5f7e3029766c`; GREEN/final fix commit: `c00ea9dfe58e3c88cd707ef7a05b77c58b7f7ddd`; PHP run `35394733235` passed. Reuse decision: extend the existing queue, AI-run, workflow and heartbeat tables; no parallel dashboard schema or migration was added.
+
+### T-062 AI field review UI — `READY`
 ### T-063 Duplicate comparison, merge and restore UI — `TODO`
 ### T-064 TMDB candidate and manual-match UI — `TODO`
 ### T-065 Final validation/publication UI — `TODO`

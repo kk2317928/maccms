@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 54
+State document version: 55
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.
 **Active checkpoint:** CP-06 — intelligent-content administration.
-**Active task:** T-061 — dashboard metrics, queue health and Cron heartbeat (`IN_PROGRESS`).
-**Starting commit:** `d6a7008720514d00453dce36f3068ec9b10469e7`.
-**Last completed task:** T-060 — granular permissions and immutable audit events, commit `a9d072693f5a4078810cdebb05ced1c7cc7fe0cc`.
-**Last verification:** PHP regression `35391110548`, MySQL 5.7 `35391110547`, MySQL 8.0 `35391110450`, and native video `35390914302` passed for T-060.
-**Next action:** define dashboard counts, queue age/depth, success/failure rate, budget usage, rate-limit and Cron-heartbeat contracts for T-061.
+**Active task:** T-062 — AI field review UI (`READY`).
+**Starting commit:** T-061 final implementation commit `c00ea9dfe58e3c88cd707ef7a05b77c58b7f7ddd`.
+**Last completed task:** T-061 — dashboard metrics, queue health and Cron heartbeat, commit `c00ea9dfe58e3c88cd707ef7a05b77c58b7f7ddd`.
+**Last verification:** PHP regression `35394733235` passed for T-061. MySQL 5.7 `35391110547`, MySQL 8.0 `35391110450`, and native video `35390914302` remain the latest database/native evidence; T-061 added no schema or native video-path changes.
+**Next action:** define field-level before/after review, accept/edit/reject/lock, provenance and conflict-warning contracts for T-062.
 
 ## 1. Confirmed product direction
 
@@ -49,12 +49,12 @@ Upstream Composer metadata declares PHP `>=7.0`; the new programme's primary sup
 
 | Layer | Location | Snapshot |
 |---|---|---|
-| Admin controllers | `application/admin/controller/` | 70 PHP controllers |
+| Admin controllers | `application/admin/controller/` | 71 PHP controllers after T-061 added the intelligent-content workspace dashboard |
 | Admin templates | `application/admin/view_new/` | Current admin UI templates; not `view/` |
 | Legacy/broad API | `application/api/controller/` | 39 controllers |
 | Public web | `application/index/controller/` | 24 controllers |
 | Shared models | `application/common/model/` | 68 models after T-052 added immutable merge snapshots |
-| Shared services/utilities | `application/common/util/` | 96 utility/service classes after T-060 added content-admin policy and immutable audit services |
+| Shared services/utilities | `application/common/util/` | 98 utility/service classes after T-061 added dashboard aggregation and typed observable job failures |
 | Request behaviors | `application/common/behavior/` | Security, audit, monitoring, preview and initialization hooks |
 | Upgrade schema | `application/data/update/database.php` | Large monolithic legacy upgrade script |
 | Tests | `tests/regression/` | Only `user_register_validate.php` currently exists |
