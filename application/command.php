@@ -12,4 +12,5 @@
 return [
     'app\\command\\SeoAiGenerate',
     'app\\command\\MaccmsMigrate',
+    'app\\command\\MaccmsJobs',
 ];

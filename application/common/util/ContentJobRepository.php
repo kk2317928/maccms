@@ -146,6 +146,21 @@ class ContentJobRepository
         return $this->failOne($jobId, $workerId, $now, $errorClass, $summary);
     }
 
+    public function heartbeat(string $workerId, string $status, int $processed, int $now = 0): void
+    {
+        $this->assertWorkerId($workerId);
+        if (!in_array($status, ['running', 'idle', 'stopped'], true) || $processed < 0) {
+            throw new InvalidArgumentException('Invalid worker heartbeat.');
+        }
+        $now = $now ?: (int) call_user_func($this->clock);
+        $table = $this->tableName('content_worker_heartbeat');
+        Db::execute(
+            'INSERT INTO `' . $table . '` (`worker_id`,`status`,`processed`,`last_seen_at`) VALUES (?,?,?,?) '
+            . 'ON DUPLICATE KEY UPDATE `status`=VALUES(`status`),`processed`=VALUES(`processed`),`last_seen_at`=VALUES(`last_seen_at`)',
+            [$workerId, $status, $processed, $now]
+        );
+    }
+
     protected function lookupById(int $jobId): ?array
     {
         $row = Db::name('content_job')->where('job_id', $jobId)->find();

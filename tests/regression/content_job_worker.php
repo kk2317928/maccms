@@ -75,7 +75,7 @@ workerAssert($repository->failed[0][1] === 'handler_error' && $repository->faile
 workerAssert($repository->heartbeats[0][0] === 'running' && end($repository->heartbeats)[0] === 'idle', 'worker must emit running and idle heartbeats.');
 
 $command = @file_get_contents($root . '/application/command/MaccmsJobs.php') ?: '';
-foreach (['maccms:jobs', '--max-jobs', '--max-seconds', '--lease-seconds', '--worker'] as $needle) {
+foreach (['maccms:jobs', "'max-jobs'", "'max-seconds'", "'lease-seconds'", "'worker'"] as $needle) {
     if (strpos($command, $needle) === false) {
         fwrite(STDERR, "FAIL: jobs CLI missing {$needle}\n");
         exit(1);

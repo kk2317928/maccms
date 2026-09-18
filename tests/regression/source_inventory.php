@@ -59,7 +59,7 @@ $expectedCounts = [
     'api_controllers' => 39,
     'index_controllers' => 24,
     'common_models' => 65,
-    'common_utilities' => 79,
+    'common_utilities' => 80,
 ];
 
 foreach ($expectedCounts as $name => $expected) {
@@ -80,6 +80,7 @@ foreach ($lineCounts as $relativePath => $expected) {
 
 $commandConfig = @file_get_contents($root . '/application/command.php');
 inventory_assert(is_string($commandConfig) && strpos($commandConfig, "app\\\\command\\\\SeoAiGenerate") !== false, 'SeoAiGenerate is not registered.');
+inventory_assert(is_string($commandConfig) && strpos($commandConfig, "app\\\\command\\\\MaccmsJobs") !== false, 'MaccmsJobs is not registered.');
 
 $inventoryDocument = $root . '/docs/development/source-inventory.md';
 inventory_assert(is_file($inventoryDocument), 'Source inventory document is missing.');
