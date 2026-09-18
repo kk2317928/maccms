@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 45
+State document version: 46
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-04 — content job queue and AI normalization.  
 **Active checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.  
-**Active task:** T-051 — different-work decisions and candidate invalidation (`IN_PROGRESS`).
-**Starting commit:** `16154e5482c812e4caef2a5d2816afbdcac382f3`.
-**Last completed task:** T-050 — duplicate candidate schema and deterministic scoring, commit `8ac4a1951458cdcf21395c604efdcb20cfd41112`.
-**Last verification:** PHP regression `35377005776`, MySQL 5.7 `35377005526`, MySQL 8.0 `35377005625`, and native video `35377005595` passed for T-050.
-**Next action:** verify the failing permanent different-work decision and stale-candidate invalidation contract, then implement it.
+**Active task:** T-052 — merge snapshots and playback merge (`READY`).
+**Starting commit:** T-051 bookkeeping commit following `9696b267a6db7f2e54cf1e28bbd8fc6e03c5d7c5`.
+**Last completed task:** T-051 — permanent different-work decisions and stale candidate invalidation, commit `9696b267a6db7f2e54cf1e28bbd8fc6e03c5d7c5`.
+**Last verification:** PHP regression `35381357761`, MySQL 5.7 `35381357697`, MySQL 8.0 `35381357765`, and native video `35381357708` passed for T-051.
+**Next action:** define the failing transactional merge snapshot and playback URL-deduplication contract for T-052.
 
 ## 1. Confirmed product direction
 
@@ -54,7 +54,7 @@ Upstream Composer metadata declares PHP `>=7.0`; the new programme's primary sup
 | Legacy/broad API | `application/api/controller/` | 39 controllers |
 | Public web | `application/index/controller/` | 24 controllers |
 | Shared models | `application/common/model/` | 67 models after T-050 added duplicate-candidate persistence |
-| Shared services/utilities | `application/common/util/` | 89 utility/service classes after T-050 added deterministic duplicate scoring and persistence |
+| Shared services/utilities | `application/common/util/` | 90 utility/service classes after T-051 added permanent duplicate decisions and stale invalidation |
 | Request behaviors | `application/common/behavior/` | Security, audit, monitoring, preview and initialization hooks |
 | Upgrade schema | `application/data/update/database.php` | Large monolithic legacy upgrade script |
 | Tests | `tests/regression/` | Only `user_register_validate.php` currently exists |

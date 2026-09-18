@@ -534,8 +534,12 @@ Each task requires failing tests, implementation, focused verification, an immed
 - Added canonical unordered candidate-pair persistence with evidence, bounded score, pending decision/reviewer timestamps, and MySQL 5.7/8.0 indexes. Added symmetric five-tier scoring for exact TMDB ID, original title/year/type, multilingual title or alias/year, title plus people, weak title-only evidence, and explicit year-conflict downgrading. No path performs an automatic merge.
 - RED commit: `b625a269e57cf7263c262c38db8cea5c5553e2f7`; GREEN commit: `8ac4a1951458cdcf21395c604efdcb20cfd41112`; PHP run `35377005776`, MySQL 5.7 run `35377005526`, MySQL 8.0 run `35377005625`, and native video run `35377005595` passed.
 
-### T-051 Different-work decisions and candidate invalidation — `IN_PROGRESS`
-### T-052 Merge snapshots and playback merge — `TODO`
+### T-051 Different-work decisions and candidate invalidation — `DONE`
+
+- Added canonical content fingerprints, permanent reviewed `different` decisions, pair-level suppression lookup, and atomic stale invalidation for pending candidates only. Permanent decisions survive later content changes; invalid candidates cannot silently remain reviewable.
+- RED commit: `7b04a844c340d1df4994010c9e8eac3534e4df2d`; GREEN commit: `9696b267a6db7f2e54cf1e28bbd8fc6e03c5d7c5`; PHP run `35381357761`, MySQL 5.7 run `35381357697`, MySQL 8.0 run `35381357765`, and native video run `35381357708` passed.
+
+### T-052 Merge snapshots and playback merge — `READY`
 ### T-053 Canonical public-ID resolution — `TODO`
 ### T-054 Authorized conflict-aware restoration — `TODO`
 ### T-055 TMDB search/candidate scoring/manual ID/no-match — `TODO`
