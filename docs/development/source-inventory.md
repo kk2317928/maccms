@@ -23,8 +23,8 @@ This document is a compact navigation baseline for implementation sessions. The 
 | `admin_controllers` | 70 |
 | `api_controllers` | 39 |
 | `index_controllers` | 24 |
-| `common_models` | 67 |
-| `common_utilities` | 90 |
+| `common_models` | 68 |
+| `common_utilities` | 91 |
 
 Counting rule: direct `*.php` children only. Nested templates, validation classes, behaviors, extensions, vendor code, and framework code are intentionally excluded from these five figures.
 
