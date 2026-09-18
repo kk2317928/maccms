@@ -484,7 +484,7 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - Implementation commit: `06c809d47cf5de07e3a46c3892f2ee56c4612fc0`.
 - GREEN evidence: PHP regression `35355631036`, MySQL 5.7 `35355630985`, MySQL 8.0 `35355630926`, and native video foundation `35355630932` all passed.
 
-### T-041 Atomic claim, lease recovery, retry and idempotency — `READY`
+### T-041 Atomic claim, lease recovery, retry and idempotency — `IN_PROGRESS`
 ### T-042 Cron/CLI worker budgets and heartbeat — `TODO`
 ### T-043 Hardened external HTTP boundary — `TODO`
 ### T-044 AI JSON schema and validation — `TODO`
@@ -569,11 +569,11 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 ## Current execution pointer
 
 ```text
-Checkpoint: CP-01
-Next task: T-011
-Task status: READY
-Required starting state: clean feature/headless-ai-v1 at latest remote commit
-First command after checkout: php -v
-Task commit: test: add repeatable baseline regression runner
+Checkpoint: CP-04
+Next task: T-041
+Task status: IN_PROGRESS
+Required starting state: feature/headless-ai-v1 at `8a2c3433e55a1b5e59c1db649546df3ce704ba75`
+First verification: PHP regression plus MySQL 5.7/8.0 content-job lifecycle
+Task commit: test: define content job lifecycle contract
 Push required: yes, immediately after task verification
 ```

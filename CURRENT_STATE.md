@@ -12,10 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-03 — real database and native-path verification.  
 **Active checkpoint:** CP-04 — content job queue and AI normalization.  
-**Active task:** T-041 — atomic claim, lease recovery, retry and idempotency (`READY`).  
+**Active task:** T-041 — atomic claim, lease recovery, retry and idempotency (`IN_PROGRESS`).  
 **Last completed task:** T-040 — dedicated content-job schema and repository, commit `06c809d47cf5de07e3a46c3892f2ee56c4612fc0`.  
 **Last verification:** PHP regression `35355631036`, MySQL 5.7 `35355630985`, MySQL 8.0 `35355630926`, and native video foundation `35355630932` passed for T-040.  
-**Next action:** add failing T-041 concurrency/state-transition contracts for atomic claim, expired lease recovery, completion/failure recording, and retry scheduling.
+**Starting commit:** `8a2c3433e55a1b5e59c1db649546df3ce704ba75`.  
+**Next action:** verify the failing T-041 lifecycle and MySQL exclusion contracts, then add the minimum atomic queue transitions.
 
 ## 1. Confirmed product direction
 

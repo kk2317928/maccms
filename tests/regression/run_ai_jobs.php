@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 $tests = [
     'content_job_contract.php',
+    'content_job_lifecycle.php',
 ];
 
 foreach ($tests as $test) {
