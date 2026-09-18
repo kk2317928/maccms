@@ -559,10 +559,12 @@ Each task requires failing tests, implementation, focused verification, an immed
 - Added ordered and deduplicated original/English/Traditional/Simplified/alias searches, deterministic title/year/type/region/people scoring, review-only unique high-confidence preselection, exact manual-ID fetch, and explicit no-match results.
 - RED commit: `0e26b77ab134e0ddda99ee2801ef6355f723d71c`; GREEN commit: `9e7bf04aaab0870386b9dd075515cdb60244b3d6`; PHP run `35387700115` passed.
 
-### T-056 TMDB field import with provenance and locks — `IN_PROGRESS`
+### T-056 TMDB field import with provenance and locks — `DONE`
 
-- RED: define field-level difference preview, reviewed selection, exact TMDB/reviewer provenance, missing-locale preservation, manual-lock blocking, and explicit override contracts.
-### T-057 End-to-end duplicate/TMDB regression suite — `TODO`
+- Added field-level current/candidate/lock previews, reviewed allowlisted application, exact TMDB/reviewer provenance, missing-locale preservation for AI fallback, manual-lock blocking, and explicit reviewed override behavior.
+- RED commit: `b41dcaf8c7e15ad187dc355a1e25a35adc4491a5`; GREEN commit: `4f563a596ce45d22e26244a116d2d8244606d02f`; PHP run `35388048661` passed.
+
+### T-057 End-to-end duplicate/TMDB regression suite — `READY`
 
 No task may introduce automatic merge.
 
