@@ -12,7 +12,8 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-03 — real database and native-path verification.  
 **Active checkpoint:** CP-04 — content job queue and AI normalization.  
-**Active task:** T-045 — AI run provenance, prompt version and usage (`READY`).  
+**Active task:** T-045 — AI run provenance, prompt version and usage (`IN_PROGRESS`).  
+**Starting commit:** `bcd5e6f3abc6748acdc21c4e6ffaf3917b9e9501`.  
 **Last completed task:** T-044 — strict AI normalization validation, commit `3103631ab3ba6317b07db0561d9478bb49b23655`.  
 **Last verification:** PHP regression `35367850824` passed for T-044.  
 **Next action:** define the failing immutable AI run, response fingerprint, validation decision, token usage, and daily-budget contract.

@@ -508,7 +508,7 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - Added strict bounded schema validation for titles, aliases, year/type, TMDB clues, taxonomy suggestions, confidence, and reason; malformed, missing, unknown, and wrongly typed values are rejected.
 - RED commit: `46a9c192c4cd6412dfc605d5caf1f94025959dbc`; GREEN commit: `3103631ab3ba6317b07db0561d9478bb49b23655`; PHP run `35367850824` passed.
 
-### T-045 AI run provenance, prompt version and usage — `READY`
+### T-045 AI run provenance, prompt version and usage — `IN_PROGRESS`
 ### T-046 Field precedence and manual locks — `TODO`
 ### T-047 AI pipeline integration tests — `TODO`
 
