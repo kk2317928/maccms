@@ -71,6 +71,13 @@ try {
     $remaining = (new DiscoveryMigrationService($directory, 'mac_', $applied))->pending();
     migration_assert(count($remaining) === 1 && $remaining[0]['version'] === '20260918000200', 'matching applied migration must be skipped.');
 
+    $allApplied = [
+        '20260918000100' => $pending[0]['checksum'],
+        '20260918000200' => $pending[1]['checksum'],
+    ];
+    $secondRun = (new DiscoveryMigrationService($directory, 'mac_', $allApplied))->pending();
+    migration_assert($secondRun === [], 'a second run with matching ledger rows must be a no-op.');
+
     $checksumRejected = false;
     try {
         (new DiscoveryMigrationService($directory, 'mac_', ['20260918000100' => str_repeat('0', 64)]))->pending();
