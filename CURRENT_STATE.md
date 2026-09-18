@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.
 **Active checkpoint:** CP-06 — intelligent-content administration.
-**Active task:** T-060 — granular permissions and audit events (`READY`).
+**Active task:** T-060 — granular permissions and audit events (`IN_PROGRESS`).
 **Starting commit:** CP-05 bookkeeping commit following `2fb42c9a7d8e69b367f37a406d12c93cda38da88`.
 **Last completed task:** T-057 — end-to-end duplicate/TMDB regression suite, commit `2fb42c9a7d8e69b367f37a406d12c93cda38da88`.
 **Last verification:** PHP regression `35388283844` passed for the full CP-05 lifecycle suite; prior CP-05 schema migrations passed MySQL 5.7 and 8.0.
-**Next action:** define granular intelligent-content permissions and immutable audit-event contracts for T-060.
+**Next action:** make exact content-admin permission and immutable audit-event contracts pass.
 
 ## 1. Confirmed product direction
 

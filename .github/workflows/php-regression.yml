@@ -54,6 +54,8 @@ jobs:
           php -l tests/regression/tmdb_import.php
           php -l tests/regression/duplicate_tmdb_suite_contract.php
           php -l tests/regression/run_duplicate_tmdb.php
+          php -l tests/regression/content_admin_security.php
+          php -l tests/regression/run_admin.php
           php -l tests/regression/run_ai_jobs.php
           php -l tests/integration/mysql_foundation.php
           php -l tests/integration/native_vod_paths.php
@@ -78,6 +80,8 @@ jobs:
           php -l application/common/util/DuplicateRestoreService.php
           php -l application/common/util/TmdbMatchService.php
           php -l application/common/util/TmdbImportService.php
+          php -l application/common/util/ContentAdminPolicy.php
+          php -l application/common/util/ContentAdminAudit.php
           php -l application/common/model/VodExt.php
           php -l application/common/model/MetaTerm.php
           php -l application/common/model/VodMetaTerm.php
@@ -103,3 +107,5 @@ jobs:
         run: php tests/regression/run_ai_jobs.php
       - name: Duplicate and TMDB regression suite
         run: php tests/regression/run_duplicate_tmdb.php
+      - name: Intelligent-content admin regression suite
+        run: php tests/regression/run_admin.php

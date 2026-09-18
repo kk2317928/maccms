@@ -575,7 +575,9 @@ No task may introduce automatic merge.
 
 ## CP-06 — Intelligent-content administration
 
-### T-060 Define granular permissions and audit events — `READY`
+### T-060 Define granular permissions and audit events — `IN_PROGRESS`
+
+- RED: define exact default-deny permissions, high-risk confirmation gates, immutable before/after event hashes, recursive secret redaction, and fail-closed audit persistence.
 ### T-061 Dashboard metrics, queue health and Cron heartbeat — `TODO`
 ### T-062 AI field review UI — `TODO`
 ### T-063 Duplicate comparison, merge and restore UI — `TODO`
