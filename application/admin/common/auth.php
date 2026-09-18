@@ -2561,4 +2561,20 @@ return array (
       ),
     ),
   ),
+  16 =>
+  array (
+    'name' => '智能內容',
+    'icon' => 'xe62a',
+    'sub' =>
+    array (
+      160 => array ('show' => 0, 'name' => '--查看工作區', 'controller' => 'content_workspace', 'action' => 'view'),
+      161 => array ('show' => 0, 'name' => '--執行 AI', 'controller' => 'content_workspace', 'action' => 'run_ai'),
+      162 => array ('show' => 0, 'name' => '--執行 TMDB', 'controller' => 'content_workspace', 'action' => 'run_tmdb'),
+      163 => array ('show' => 0, 'name' => '--內容審核', 'controller' => 'content_workspace', 'action' => 'review'),
+      164 => array ('show' => 0, 'name' => '--合併與復原', 'controller' => 'content_workspace', 'action' => 'merge_restore'),
+      165 => array ('show' => 0, 'name' => '--內容發布', 'controller' => 'content_workspace', 'action' => 'publish'),
+      166 => array ('show' => 0, 'name' => '--批量覆寫', 'controller' => 'content_workspace', 'action' => 'bulk_overwrite'),
+      167 => array ('show' => 0, 'name' => '--安全設定', 'controller' => 'content_workspace', 'action' => 'security'),
+    ),
+  ),
 );
