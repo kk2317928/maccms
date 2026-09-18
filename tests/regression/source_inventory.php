@@ -59,7 +59,7 @@ $expectedCounts = [
     'api_controllers' => 39,
     'index_controllers' => 24,
     'common_models' => 67,
-    'common_utilities' => 89,
+    'common_utilities' => 90,
 ];
 
 foreach ($expectedCounts as $name => $expected) {
