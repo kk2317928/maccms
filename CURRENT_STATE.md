@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 12  
+State document version: 13  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,10 +12,10 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-01 — capability reconciliation and regression baseline.  
 **Active checkpoint:** CP-02 — foundation data and compatibility code.  
-**Active task:** T-023 — add workflow state machine.  
-**Last completed task:** T-022 — stable public IDs, ending at syntax-fix commit `14405a0b68ce8d6efb78d78a81d4e4d554d85347`.  
-**Last verification:** T-023 RED run `35344769008` passed syntax and all pre-existing suites, then failed at the missing workflow implementation as expected.  
-**Next action:** verify and push the T-023 GREEN workflow state machine and updated source inventory.
+**Active task:** none; T-024 is READY.  
+**Last completed task:** T-023 — workflow state machine commit `30fe98116456ad5b9ae2898fa18e0eda5198565c`.  
+**Last verification:** GitHub Actions PHP 8.1 run `35344911819` passed syntax and the complete baseline/foundation suites.  
+**Next action:** start T-024 test-first with lossless native playback decode/encode/merge fixtures and validation boundaries.
 
 ## 1. Confirmed product direction
 
@@ -142,6 +142,7 @@ Absence was established by repository text search against the pinned snapshot. I
 | Source inventory regression | PASS | PHP 8.1 run `35339024233` |
 | Existing registration regression | PASS | PHP 8.1 run `35339024233` |
 | Stable public ID foundation | PASS | PHP 8.1 run `35344501044`; generator and canonical traversal contracts passed |
+| Video workflow state machine | PASS | PHP 8.1 run `35344911819`; exhaustive transition matrix passed |
 | Fresh install MySQL 5.7 | UNVERIFIED | CP-02/CP-03 gate |
 | Fresh install MySQL 8.0 | UNVERIFIED | CP-02/CP-03 gate |
 | Native admin video write | UNVERIFIED | CP-01 baseline task |

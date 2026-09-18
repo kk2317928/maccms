@@ -320,13 +320,23 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - Initial GREEN run `35344396710` exposed a parser error before tests; the isolated syntax fix was committed separately.
 - GREEN: GitHub Actions run `35344501044` passed PHP syntax, collision/retry/exhaustion, canonical chain/cycle/depth, and all baseline/foundation suites.
 
-### T-023 Add workflow state machine — `IN_PROGRESS`
+### T-023 Add workflow state machine — `DONE`
 
 - Keep it separate from `vod_status`.
 - Test every allowed and forbidden transition.
 - Commit: `feat: define video processing workflow`
 
-### T-024 Add lossless playback codec — `TODO`
+**Implementation commits:**
+
+- `47a38f49b744b93bd82793b9224c20af730f9adc` — add the exhaustive workflow transition RED contract.
+- `30fe98116456ad5b9ae2898fa18e0eda5198565c` — add the pure `VodWorkflow` state machine and inventory update.
+
+**Verification evidence:**
+
+- RED: GitHub Actions run `35344769008` passed syntax and all pre-existing suites, then failed at the missing workflow implementation as expected.
+- GREEN: GitHub Actions run `35344911819` passed all 81 state-pair checks, unknown-state/retry rejection, PHP syntax, and the complete baseline/foundation suites.
+
+### T-024 Add lossless playback codec — `READY`
 
 - Test all native delimiters, empty records, unsafe schemes, round trip, and deterministic merge.
 - Commit: `feat: add lossless video playback codec`
