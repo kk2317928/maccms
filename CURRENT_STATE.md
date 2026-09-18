@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 34  
+State document version: 35  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,10 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-03 — real database and native-path verification.  
 **Active checkpoint:** CP-04 — content job queue and AI normalization.  
-**Active task:** T-042 — Cron/CLI worker budgets and heartbeat (`IN_PROGRESS`).  
-**Starting commit:** `65786d700d22b6cdd0b0e01a7aff9340d79d795b`.  
-**Last completed task:** T-041 — atomic claim, lease recovery, retry and idempotency, commits `6a47bbbae42e345dac1a208db8c8db589cb8c027` and `149b01760c9639d121fe253106a1a48dc7aa4c73`.  
-**Last verification:** PHP `35357937169`, MySQL 5.7 `35357937449`, and MySQL 8.0 `35357937262` passed for T-041.  
-**Next action:** define the failing T-042 worker budget, handler dispatch, CLI option, and heartbeat contract.
+**Active task:** T-043 — hardened external HTTP boundary (`READY`).  
+**Last completed task:** T-042 — bounded Cron/CLI worker and heartbeat, commit `190fd1199a374b5c8216f216eac346e34de444a7`.  
+**Last verification:** PHP `35358498991`, MySQL 5.7 `35358499027`, MySQL 8.0 `35358499003`, and native foundation `35358499120` passed for T-042.  
+**Next action:** define failing URL, DNS/IP, redirect, timeout, response-size, allowlist, and secret-redaction contracts for T-043.
 
 ## 1. Confirmed product direction
 
@@ -54,7 +53,7 @@ Upstream Composer metadata declares PHP `>=7.0`; the new programme's primary sup
 | Legacy/broad API | `application/api/controller/` | 39 controllers |
 | Public web | `application/index/controller/` | 24 controllers |
 | Shared models | `application/common/model/` | 65 models after T-040 added two content-job models |
-| Shared services/utilities | `application/common/util/` | 79 utility/service classes after T-040 added `ContentJobRepository` |
+| Shared services/utilities | `application/common/util/` | 80 utility/service classes after T-042 added `ContentJobWorker` |
 | Request behaviors | `application/common/behavior/` | Security, audit, monitoring, preview and initialization hooks |
 | Upgrade schema | `application/data/update/database.php` | Large monolithic legacy upgrade script |
 | Tests | `tests/regression/` | Only `user_register_validate.php` currently exists |

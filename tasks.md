@@ -492,8 +492,13 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - Implementation commit: `6a47bbbae42e345dac1a208db8c8db589cb8c027`; MySQL acceptance commit: `149b01760c9639d121fe253106a1a48dc7aa4c73`.
 - GREEN evidence: PHP `35357937169`, MySQL 5.7 `35357937449`, and MySQL 8.0 `35357937262` passed.
 
-### T-042 Cron/CLI worker budgets and heartbeat — `IN_PROGRESS`
-### T-043 Hardened external HTTP boundary — `TODO`
+### T-042 Cron/CLI worker budgets and heartbeat — `DONE`
+
+- Added `maccms:jobs` with explicit job-count, wall-time, lease, and worker-ID options; the worker emits running/idle heartbeat rows and redacts handler failures.
+- RED commit: `e2da691d96155fdf7e8fbe2a1fa954303daadc46`; implementation commit: `190fd1199a374b5c8216f216eac346e34de444a7`.
+- GREEN evidence: PHP `35358498991`, MySQL 5.7 `35358499027`, MySQL 8.0 `35358499003`, native foundation `35358499120`.
+
+### T-043 Hardened external HTTP boundary — `READY`
 ### T-044 AI JSON schema and validation — `TODO`
 ### T-045 AI run provenance, prompt version and usage — `TODO`
 ### T-046 Field precedence and manual locks — `TODO`
