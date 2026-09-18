@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-04 — content job queue and AI normalization.  
 **Active checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.  
-**Active task:** T-054 — authorized conflict-aware restoration (`READY`).
+**Active task:** T-054 — authorized conflict-aware restoration (`IN_PROGRESS`).
 **Starting commit:** T-053 bookkeeping commit following `9df6b05afac22f25a8602afcd4820f92e83be76e`.
 **Last completed task:** T-053 — canonical public-ID resolution, commit `9df6b05afac22f25a8602afcd4820f92e83be76e`.
 **Last verification:** PHP regression `35386811289` passed for T-053.
-**Next action:** define the failing authorization, conflict detection, and atomic restoration contract for T-054.
+**Next action:** make the authorized conflict-aware restoration contract pass atomically.
 
 ## 1. Confirmed product direction
 
