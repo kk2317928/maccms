@@ -1,0 +1,38 @@
+{include file="../../../application/admin/view_new/public/head" /}
+
+<style>
+.workspace-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
+.workspace-card{background:#fff;border:1px solid #eee;border-radius:4px;padding:15px}.workspace-value{font-size:24px;font-weight:600;margin-top:8px}
+.health-healthy{color:#16a085}.health-warning{color:#e67e22}.health-critical,.health-stale,.health-missing{color:#c0392b}.health-unlimited{color:#607d8b}
+</style>
+
+<div class="page-container p10">
+    <h2 style="margin-bottom:15px;">智能內容工作區</h2>
+
+    <div class="workspace-grid">
+        {volist name="dashboard.workflow" id="count" key="state"}
+        <div class="workspace-card"><div>{$workflow_labels[$state]|default=$state}</div><div class="workspace-value">{$count}</div></div>
+        {/volist}
+    </div>
+
+    <div class="workspace-grid">
+        <div class="workspace-card"><div>佇列深度</div><div class="workspace-value">{$dashboard.queue.depth}</div><div>等待 {$dashboard.queue.queued}／執行中 {$dashboard.queue.running}</div></div>
+        <div class="workspace-card"><div>最舊待執行工作</div><div class="workspace-value health-{$dashboard.queue.health}">{$dashboard.queue.oldest_age_seconds}s</div><div>永久失敗 {$dashboard.queue.failed}</div></div>
+        <div class="workspace-card"><div>24 小時成功率</div><div class="workspace-value">{$dashboard.runs.success_rate}%</div><div>成功 {$dashboard.runs.succeeded}／失敗 {$dashboard.runs.failed}</div></div>
+        <div class="workspace-card"><div>外部限流失敗</div><div class="workspace-value">{$dashboard.runs.rate_limit_failures}</div><div>最近 24 小時</div></div>
+        <div class="workspace-card"><div>今日 AI 用量</div><div class="workspace-value health-{$dashboard.budget.health}">{$dashboard.budget.cost_micros}</div><div>Token {$dashboard.budget.total_tokens}{if condition="$dashboard.budget.usage_percent neq null"}／{$dashboard.budget.usage_percent}%{/if}</div></div>
+        <div class="workspace-card"><div>Cron 健康狀態</div><div class="workspace-value health-{$dashboard.cron.health}">{$dashboard.cron.health}</div><div>正常 {$dashboard.cron.healthy}／異常 {$dashboard.cron.stale}</div></div>
+    </div>
+
+    <table class="layui-table">
+        <thead><tr><th>Worker</th><th>狀態</th><th>本輪處理</th><th>最後 heartbeat</th><th>健康</th></tr></thead>
+        <tbody>
+        {volist name="dashboard.workers" id="worker"}
+        <tr><td>{$worker.worker_id}</td><td>{$worker.status}</td><td>{$worker.processed}</td><td>{$worker.age_seconds}s 前</td><td class="health-{$worker.health}">{$worker.health}</td></tr>
+        {/volist}
+        {empty name="dashboard.workers"}<tr><td colspan="5" class="health-missing">尚未收到 Cron heartbeat</td></tr>{/empty}
+        </tbody>
+    </table>
+</div>
+
+{include file="../../../application/admin/view_new/public/foot" /}

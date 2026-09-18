@@ -20,11 +20,11 @@ This document is a compact navigation baseline for implementation sessions. The 
 
 | Inventory key | PHP files |
 |---|---:|
-| `admin_controllers` | 70 |
+| `admin_controllers` | 71 |
 | `api_controllers` | 39 |
 | `index_controllers` | 24 |
 | `common_models` | 68 |
-| `common_utilities` | 96 |
+| `common_utilities` | 97 |
 
 Counting rule: direct `*.php` children only. Nested templates, validation classes, behaviors, extensions, vendor code, and framework code are intentionally excluded from these five figures.
 
