@@ -17,8 +17,8 @@ Do not mark a task `DONE` with a future or local-only SHA. A checkpoint complete
 | Checkpoint | Purpose | Status | Depends on |
 |---|---|---|---|
 | CP-00 | Reset repository and establish architecture/master plan | DONE | — |
-| CP-01 | Reconcile existing capabilities and establish regression baseline | READY | CP-00 |
-| CP-02 | Add migrations, extension data, public IDs, workflow, playback codec | TODO | CP-01 |
+| CP-01 | Reconcile existing capabilities and establish regression baseline | DONE | CP-00 |
+| CP-02 | Add migrations, extension data, public IDs, workflow, playback codec | READY | CP-01 |
 | CP-03 | Verify foundation on real MySQL and native write paths | TODO | CP-02 |
 | CP-04 | Add content job queue, AI normalization, provenance and locks | TODO | CP-03 |
 | CP-05 | Add duplicate review, reversible merge and TMDB workflow | TODO | CP-04 |
@@ -216,7 +216,7 @@ Expected at this checkpoint: inventory succeeds; prohibited-endpoint enforcement
 - GREEN: GitHub Actions run `35341433065` passed PHP syntax, the outbound contract and the complete baseline suite.
 - Report mode succeeds with the official update endpoint marked `QUARANTINED`; enforcement mode returns nonzero with `PROHIBITED` while removal remains scheduled for CP-09.
 
-### T-014 Record native smoke-test procedure — `IN_PROGRESS`
+### T-014 Record native smoke-test procedure — `DONE`
 
 **Depends on:** T-013
 
@@ -239,14 +239,22 @@ git diff --check
 
 **Commit:** `docs: define native compatibility smoke tests`
 
+**Implementation commit:** `10da419f3efc3b5c7a788495106c40d5dc501bc7`
+
+**Verification evidence:**
+
+- The checklist covers fresh install, administrator authentication/permissions, native video create/edit, collection insert/update, member register/login/logout, playback, API video list/detail, Ulog progress and outbound observation.
+- Every manual case remains explicitly `UNVERIFIED`/`NOT_RUN` pending a named disposable environment.
+- Placeholder and whitespace checks passed; GitHub Actions PHP 8.1 run `35341664442` passed.
+
 ### CP-01 gate
 
-- [ ] T-010 through T-014 are `DONE`, committed, and pushed.
-- [ ] `php tests/regression/run_baseline.php` passes.
-- [ ] Every overlapping subsystem has a reuse/extend/replace/retire decision.
-- [ ] Outbound inventory covers known official and configured services.
-- [ ] Database/manual checks remain honestly marked `UNVERIFIED` if no disposable environment was used.
-- [ ] `CURRENT_STATE.md` names CP-02 and its first `READY` task.
+- [x] T-010 through T-014 are `DONE`, committed, and pushed.
+- [x] `php tests/regression/run_baseline.php` passes on GitHub Actions PHP 8.1.
+- [x] Every overlapping subsystem has a reuse/extend/replace/retire decision.
+- [x] Outbound inventory covers known official and configured services.
+- [x] Database/manual checks remain honestly marked `UNVERIFIED`; no disposable environment was used.
+- [x] `CURRENT_STATE.md` names CP-02 and its first `READY` task.
 
 Checkpoint commit if needed: `docs: close capability reconciliation checkpoint`
 
@@ -256,7 +264,7 @@ Checkpoint commit if needed: `docs: close capability reconciliation checkpoint`
 
 Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. Reconcile exact paths against T-012 before implementation.
 
-### T-020 Add migration ledger and CLI runner — `TODO`
+### T-020 Add migration ledger and CLI runner — `READY`
 
 - Add pure migration-discovery/checksum tests first.
 - Add ordered SQL migration service and `maccms:migrate` command.

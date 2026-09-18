@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 5  
+State document version: 6  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -10,12 +10,12 @@ Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
 
 Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to the pinned upstream and the design/implementation documents have been added. No Headless AI programme feature has been implemented yet.
 
-**Last completed checkpoint:** CP-00 — repository reset and master planning.  
-**Active checkpoint:** CP-01 — existing-capability reconciliation and regression baseline.  
-**Active task:** T-014 — record native smoke-test procedure.  
-**Last completed task:** T-013 — outbound inventory implementation commit `37a909705aeade67c8d28efecc30ca7277c32384`.  
-**Last verification:** GitHub Actions PHP 8.1 run `35341433065` passed the outbound contract and complete baseline suite.  
-**Next action:** execute T-014, record native smoke-test procedures honestly as unverified, and close CP-01 before foundation implementation.
+**Last completed checkpoint:** CP-01 — capability reconciliation and regression baseline.  
+**Active checkpoint:** CP-02 — foundation data and compatibility code.  
+**Active task:** none; T-020 is the first implementation task and is `READY`.  
+**Last completed task:** T-014 — native smoke-test procedure commit `10da419f3efc3b5c7a788495106c40d5dc501bc7`.  
+**Last verification:** GitHub Actions PHP 8.1 run `35341664442` passed; manual/database smoke cases remain explicitly unverified.  
+**Next action:** execute T-020 test-first: add the migration discovery/checksum contract, then the versioned migration service and `maccms:migrate` CLI command.
 
 ## 1. Confirmed product direction
 
