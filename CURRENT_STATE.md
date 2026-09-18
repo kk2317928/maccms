@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 48
+State document version: 49
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-04 — content job queue and AI normalization.  
 **Active checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.  
-**Active task:** T-053 — canonical public-ID resolution (`IN_PROGRESS`).
-**Starting commit:** T-052 bookkeeping commit following `78dea91470d8450623973f5632c33ca1ca57114c`.
-**Last completed task:** T-052 — transactional merge snapshots and playback merge, commit `78dea91470d8450623973f5632c33ca1ca57114c`.
-**Last verification:** PHP regression `35384542597`, MySQL 5.7 `35384542565`, MySQL 8.0 `35384542812`, and native video `35384542591` passed for T-052.
-**Next action:** make the canonical public-ID resolution contract pass without exposing numeric IDs.
+**Active task:** T-054 — authorized conflict-aware restoration (`READY`).
+**Starting commit:** T-053 bookkeeping commit following `9df6b05afac22f25a8602afcd4820f92e83be76e`.
+**Last completed task:** T-053 — canonical public-ID resolution, commit `9df6b05afac22f25a8602afcd4820f92e83be76e`.
+**Last verification:** PHP regression `35386811289` passed for T-053.
+**Next action:** define the failing authorization, conflict detection, and atomic restoration contract for T-054.
 
 ## 1. Confirmed product direction
 
@@ -143,6 +143,7 @@ Absence was established by repository text search against the pinned snapshot. I
 | Source inventory regression | PASS | PHP 8.1 run `35339024233` |
 | Existing registration regression | PASS | PHP 8.1 run `35339024233` |
 | Stable public ID foundation | PASS | PHP 8.1 run `35344501044`; generator and canonical traversal contracts passed |
+| Canonical public-ID resolution | PASS | PHP 8.1 run `35386811289`; alias redirects remain public-ID-only |
 | Video workflow state machine | PASS | PHP 8.1 run `35344911819`; exhaustive transition matrix passed |
 | Lossless native playback codec | PASS | PHP 8.1 run `35345369100`; record-form, validation, round-trip and merge contracts passed |
 | Foundation migration MySQL 5.7 | PASS | Disposable `maccms_ci_57`, MySQL 5.7.44; Actions run `35348332012` |
