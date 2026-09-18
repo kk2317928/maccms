@@ -23,7 +23,12 @@ class MaccmsJobs extends Command
 
     protected function execute(Input $input, Output $output)
     {
-        $worker = new ContentJobWorker(new ContentJobRepository(), []);
+        $handlers = [];
+        $aiHandler = config('maccms.ai_normalization_handler');
+        if (is_callable($aiHandler)) {
+            $handlers['ai.normalize'] = $aiHandler;
+        }
+        $worker = new ContentJobWorker(new ContentJobRepository(), $handlers);
         $result = $worker->run(
             (string) $input->getOption('worker'),
             (int) $input->getOption('max-jobs'),
