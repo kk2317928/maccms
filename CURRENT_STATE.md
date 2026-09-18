@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 40  
+State document version: 41  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-03 — real database and native-path verification.  
 **Active checkpoint:** CP-04 — content job queue and AI normalization.  
-**Active task:** T-047 — AI pipeline integration tests (`READY`).  
-**Starting commit:** T-046 bookkeeping commit following `4d1f27d4b4eb450033cb64b831e17770b7e43a28`.  
+**Active task:** T-047 — AI pipeline integration tests (`IN_PROGRESS`).  
+**Starting commit:** `0a392c98805319ea3125aad01e7d5ec414154103`.  
 **Last completed task:** T-046 — governed field precedence and manual locks, commit `4d1f27d4b4eb450033cb64b831e17770b7e43a28`.  
 **Last verification:** PHP regression `35373257715` passed for T-046.  
-**Next action:** define the failing end-to-end AI normalization pipeline contract.
+**Next action:** verify the failing end-to-end AI normalization pipeline contract, then implement its worker handler.
 
 ## 1. Confirmed product direction
 

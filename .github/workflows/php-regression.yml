@@ -44,6 +44,7 @@ jobs:
           php -l tests/regression/ai_normalization_validator.php
           php -l tests/regression/ai_run_repository.php
           php -l tests/regression/field_governance.php
+          php -l tests/regression/ai_normalization_pipeline.php
           php -l tests/regression/run_ai_jobs.php
           php -l tests/integration/mysql_foundation.php
           php -l tests/integration/native_vod_paths.php

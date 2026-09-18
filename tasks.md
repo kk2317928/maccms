@@ -518,7 +518,7 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - Added one governed write boundary enforcing `manual > confirmed_tmdb > ai > import`, automatic manual locks, background lock protection, and explicit reviewed overrides.
 - RED commit: `4f7687c541182f042900793d49211a3099e5bf6e`; GREEN commit: `4d1f27d4b4eb450033cb64b831e17770b7e43a28`; PHP run `35373257715` passed.
 
-### T-047 AI pipeline integration tests — `READY`
+### T-047 AI pipeline integration tests — `IN_PROGRESS`
 
 Each task requires failing tests, implementation, focused verification, an immediate commit, and immediate push. CP-04 cannot reuse member `task` tables.
 

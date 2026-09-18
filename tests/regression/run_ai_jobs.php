@@ -10,6 +10,7 @@ $tests = [
     'ai_normalization_validator.php',
     'ai_run_repository.php',
     'field_governance.php',
+    'ai_normalization_pipeline.php',
 ];
 
 foreach ($tests as $test) {
