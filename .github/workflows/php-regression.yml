@@ -26,6 +26,7 @@ jobs:
           php -l tests/regression/outbound_inventory.php
           php -l tests/regression/run_baseline.php
           php -l tests/regression/migration_discovery.php
+          php -l tests/regression/migration_cli_contract.php
           php -l tests/regression/run_foundation.php
       - name: Baseline runner contract
         run: php tests/regression/baseline_runner_contract.php
