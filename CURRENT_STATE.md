@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 22  
+State document version: 23  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -10,12 +10,12 @@ Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
 
 Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to the pinned upstream and the design/implementation documents have been added. No Headless AI programme feature has been implemented yet.
 
-**Last completed checkpoint:** CP-01 — capability reconciliation and regression baseline.  
-**Active checkpoint:** CP-02 — foundation data and compatibility code.  
-**Active task:** none; CP-02 gate verification is in progress.  
+**Last completed checkpoint:** CP-02 — foundation data and compatibility code.  
+**Active checkpoint:** CP-03 — real database and native-path verification.  
+**Active task:** none; T-030 is READY.  
 **Last completed task:** T-026 — native video extension hooks commit `c5d60729dcc750ece6d758e10d9ae1dc5b3e9125`.  
-**Last verification:** GitHub Actions PHP 8.1 run `35346507561` passed syntax and the complete baseline/foundation suites.  
-**Next action:** add an explicit fully-applied migration no-op assertion, verify the CP-02 gate, then prepare CP-03 real-MySQL verification.
+**Last verification:** GitHub Actions PHP 8.1 run `35346673637` passed the complete baseline/foundation suites, including the explicit migration second-run no-op assertion.  
+**Next action:** start T-030 using an explicitly named disposable MySQL 5.7 service database and record its exact server version and migration evidence.
 
 ## 1. Confirmed product direction
 

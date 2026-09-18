@@ -18,8 +18,8 @@ Do not mark a task `DONE` with a future or local-only SHA. A checkpoint complete
 |---|---|---|---|
 | CP-00 | Reset repository and establish architecture/master plan | DONE | — |
 | CP-01 | Reconcile existing capabilities and establish regression baseline | DONE | CP-00 |
-| CP-02 | Add migrations, extension data, public IDs, workflow, playback codec | READY | CP-01 |
-| CP-03 | Verify foundation on real MySQL and native write paths | TODO | CP-02 |
+| CP-02 | Add migrations, extension data, public IDs, workflow, playback codec | DONE | CP-01 |
+| CP-03 | Verify foundation on real MySQL and native write paths | READY | CP-02 |
 | CP-04 | Add content job queue, AI normalization, provenance and locks | TODO | CP-03 |
 | CP-05 | Add duplicate review, reversible merge and TMDB workflow | TODO | CP-04 |
 | CP-06 | Add intelligent-content admin workspace and permissions | TODO | CP-05 |
@@ -387,17 +387,17 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 
 ### CP-02 gate
 
-- [ ] Focused foundation suite passes.
-- [ ] Existing baseline suite passes.
-- [ ] Migration second run is a no-op in an isolated test double or parser test.
-- [ ] No external request was added.
-- [ ] Changes are split into T-020 through T-026 commits and pushed individually.
+- [x] Focused foundation suite passes — GitHub Actions run `35346673637`.
+- [x] Existing baseline suite passes — GitHub Actions run `35346673637`.
+- [x] Migration second run is a no-op in an isolated test double — commit `f8907cf4d395aaa134abcb9bf01d4c72f17b0074`, run `35346673637`.
+- [x] No external request was added — production additions contain no HTTP/cURL/socket client primitives; outbound contract passed in run `35346673637`.
+- [x] Changes are split into T-020 through T-026 commits and pushed individually.
 
 ---
 
 ## CP-03 — Real database and native-path verification
 
-### T-030 Verify migrations on MySQL 5.7 — `TODO`
+### T-030 Verify migrations on MySQL 5.7 — `READY`
 
 - Requires an explicitly named disposable database and recorded version.
 - Commit evidence: `test: verify foundation on mysql 5.7`
