@@ -68,13 +68,15 @@ foreach ($states as $from) {
 }
 
 foreach ([['unknown', 'imported'], ['imported', 'unknown']] as $edge) {
-    $invalidRejected = false;
-    try {
-        VodWorkflow::canTransition($edge[0], $edge[1]);
-    } catch (InvalidArgumentException $exception) {
-        $invalidRejected = true;
+    foreach (['canTransition', 'assertTransition'] as $method) {
+        $invalidRejected = false;
+        try {
+            VodWorkflow::$method($edge[0], $edge[1]);
+        } catch (InvalidArgumentException $exception) {
+            $invalidRejected = true;
+        }
+        workflow_assert($invalidRejected, "{$method} must reject unknown workflow states.");
     }
-    workflow_assert($invalidRejected, 'unknown workflow states must be rejected.');
 }
 
 workflow_assert(VodWorkflow::nextAfterRetry('ai_processing') === 'imported', 'AI retry must restart at imported.');

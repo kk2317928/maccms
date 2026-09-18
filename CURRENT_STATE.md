@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 11  
+State document version: 12  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -14,8 +14,8 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 **Active checkpoint:** CP-02 — foundation data and compatibility code.  
 **Active task:** T-023 — add workflow state machine.  
 **Last completed task:** T-022 — stable public IDs, ending at syntax-fix commit `14405a0b68ce8d6efb78d78a81d4e4d554d85347`.  
-**Last verification:** GitHub Actions PHP 8.1 run `35344501044` passed syntax and the complete baseline/foundation suites.  
-**Next action:** push the T-023 RED transition-matrix contract, confirm its expected failure, then implement `VodWorkflow` independently of `vod_status`.
+**Last verification:** T-023 RED run `35344769008` passed syntax and all pre-existing suites, then failed at the missing workflow implementation as expected.  
+**Next action:** verify and push the T-023 GREEN workflow state machine and updated source inventory.
 
 ## 1. Confirmed product direction
 
@@ -53,7 +53,7 @@ Upstream Composer metadata declares PHP `>=7.0`; the new programme's primary sup
 | Legacy/broad API | `application/api/controller/` | 39 controllers |
 | Public web | `application/index/controller/` | 24 controllers |
 | Shared models | `application/common/model/` | 60 models after T-022 added `VodExt` |
-| Shared services/utilities | `application/common/util/` | 75 utility/service classes after T-022 added `PublicIdGenerator` |
+| Shared services/utilities | `application/common/util/` | 76 utility/service classes after T-023 added `VodWorkflow` |
 | Request behaviors | `application/common/behavior/` | Security, audit, monitoring, preview and initialization hooks |
 | Upgrade schema | `application/data/update/database.php` | Large monolithic legacy upgrade script |
 | Tests | `tests/regression/` | Only `user_register_validate.php` currently exists |
