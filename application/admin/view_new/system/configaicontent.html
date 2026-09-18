@@ -78,6 +78,14 @@
         </div>
 
         <div class="layui-form-item">
+            <label class="layui-form-label">每日預算（微單位）：</label>
+            <div class="layui-input-block">
+                <input type="number" min="0" name="ai_content[daily_budget_micros]" value="{$config.ai_content.daily_budget_micros}" class="layui-input">
+                <div style="float:none;" class="layui-form-mid layui-word-aux">0 代表不限額；智能內容工作區與背景 AI 任務共用此設定。</div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
             <label class="layui-form-label">{:lang('admin/aiannotation/auto_adopt_empty')}：</label>
             <div class="layui-input-block">
                 <input type="checkbox" name="ai_content[auto_adopt_empty]" value="1" lay-skin="switch" {if condition="$config['ai_content']['auto_adopt_empty'] eq '1'"}checked{/if}>

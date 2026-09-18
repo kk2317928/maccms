@@ -55,10 +55,12 @@ class ContentJobWorker
                     $failed++;
                 }
             } catch (Throwable $exception) {
+                $rateLimited = (int) $exception->getCode() === 429;
                 $class = $exception instanceof JsonException ? 'payload_invalid'
-                    : ($exception instanceof ContentJobFailure ? $exception->errorClass() : 'handler_error');
+                    : ($exception instanceof ContentJobFailure ? $exception->errorClass() : ($rateLimited ? 'rate_limit' : 'handler_error'));
                 $summary = $exception instanceof ContentJobFailure ? $exception->safeSummary()
-                    : ($class === 'payload_invalid' ? 'Job payload is invalid.' : 'Job handler failed.');
+                    : ($rateLimited ? 'External provider rate limit reached.'
+                    : ($class === 'payload_invalid' ? 'Job payload is invalid.' : 'Job handler failed.'));
                 $this->repository->fail(
                     (int) $job['job_id'], $workerId, $class,
                     $summary,

@@ -28,6 +28,7 @@ class AiProvider
             'timeout' => max(5, intval(isset($ai['timeout']) ? $ai['timeout'] : 30)),
             'max_tokens' => max(256, intval(isset($ai['max_tokens']) ? $ai['max_tokens'] : 800)),
             'batch_size' => max(1, min(100, intval(isset($ai['batch_size']) ? $ai['batch_size'] : 20))),
+            'daily_budget_micros' => self::dailyBudgetMicros($cfg),
             'auto_adopt_empty' => (string)(isset($ai['auto_adopt_empty']) ? $ai['auto_adopt_empty'] : '0') === '1',
         ];
 
@@ -48,6 +49,12 @@ class AiProvider
             $out['api_base'] = self::defaultBase($out['provider']);
         }
         return $out;
+    }
+
+    public static function dailyBudgetMicros(array $config)
+    {
+        $ai = isset($config['ai_content']) && is_array($config['ai_content']) ? $config['ai_content'] : [];
+        return max(0, intval(isset($ai['daily_budget_micros']) ? $ai['daily_budget_micros'] : 0));
     }
 
     private static function defaultBase($provider)
@@ -206,7 +213,11 @@ class AiProvider
             curl_setopt($ch, CURLOPT_HTTPHEADER, $heads);
         }
         $response = @curl_exec($ch);
+        $status = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
         curl_close($ch);
+        if ($status === 429) {
+            throw new ContentJobFailure('rate_limit', 'External provider rate limit reached.');
+        }
         return $response;
     }
 

@@ -61,6 +61,7 @@ jobs:
           php -l tests/integration/mysql_foundation.php
           php -l tests/integration/native_vod_paths.php
           php -l application/common/util/SchemaMigrationService.php
+          php -l application/common/util/AiProvider.php
           php -l application/common/util/PublicIdGenerator.php
           php -l application/common/util/VodWorkflow.php
           php -l application/common/util/VodPlaybackCodec.php
@@ -97,6 +98,7 @@ jobs:
           php -l application/common/model/ContentMergeSnapshot.php
           php -l application/common/model/Vod.php
           php -l application/common/model/Collect.php
+          php -l application/admin/controller/System.php
           php -l application/command/MaccmsMigrate.php
           php -l application/command/MaccmsJobs.php
       - name: Baseline runner contract

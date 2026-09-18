@@ -51,10 +51,9 @@ class ContentWorkspaceDashboard
 
     public static function optionsFromConfig(array $config): array
     {
-        $ai = is_array($config['ai_content'] ?? null) ? $config['ai_content'] : [];
         $workspace = is_array($config['content_workspace'] ?? null) ? $config['content_workspace'] : [];
         return [
-            'daily_budget_micros' => max(0, (int) ($ai['daily_budget_micros'] ?? 0)),
+            'daily_budget_micros' => AiProvider::dailyBudgetMicros($config),
             'heartbeat_stale_seconds' => max(1, (int) ($workspace['heartbeat_stale_seconds'] ?? 300)),
             'queue_stale_seconds' => max(1, (int) ($workspace['queue_stale_seconds'] ?? 300)),
         ];

@@ -1955,6 +1955,7 @@ class System extends Base
                 'timeout' => (string)max(5, intval(isset($ai['timeout']) ? $ai['timeout'] : 30)),
                 'max_tokens' => (string)max(256, intval(isset($ai['max_tokens']) ? $ai['max_tokens'] : 800)),
                 'batch_size' => (string)max(1, min(100, intval(isset($ai['batch_size']) ? $ai['batch_size'] : 20))),
+                'daily_budget_micros' => (string)max(0, intval(isset($ai['daily_budget_micros']) ? $ai['daily_budget_micros'] : 0)),
                 'auto_adopt_empty' => isset($ai['auto_adopt_empty']) && (string)$ai['auto_adopt_empty'] === '1' ? '1' : '0',
             ];
 
@@ -1982,7 +1983,12 @@ class System extends Base
             return $this->success(lang('save_ok'));
         }
 
-        $this->assign('config', config('maccms'));
+        $config = config('maccms');
+        if (!isset($config['ai_content']) || !is_array($config['ai_content'])) {
+            $config['ai_content'] = [];
+        }
+        $config['ai_content']['daily_budget_micros'] = (string)max(0, intval(isset($config['ai_content']['daily_budget_micros']) ? $config['ai_content']['daily_budget_micros'] : 0));
+        $this->assign('config', $config);
         $this->assign('title', lang('admin/system/configaicontent'));
         // AI 内容标注配置页仅放新版后台主题（view_new）；旧版 view/ 不再承载新功能（铁律 2）
         $this->view->config('view_path', APP_PATH . 'admin/view_new/');
