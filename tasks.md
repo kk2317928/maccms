@@ -549,10 +549,12 @@ Each task requires failing tests, implementation, focused verification, an immed
 - Added normalized public-ID lookup that follows bounded canonical chains, returns alias/canonical redirect metadata only, rejects invalid or missing IDs, and never exposes numeric video IDs.
 - RED commit: `f9c11cf16aba5d50acd1110569ea63d69509aa39`; GREEN commit: `9df6b05afac22f25a8602afcd4820f92e83be76e`; PHP run `35386811289` passed.
 
-### T-054 Authorized conflict-aware restoration — `IN_PROGRESS`
+### T-054 Authorized conflict-aware restoration — `DONE`
 
-- RED: define exact authorization, explicit confirmation, snapshot integrity, post-merge conflict detection, atomic restoration, candidate reopening, and actor/timestamp audit contracts.
-### T-055 TMDB search/candidate scoring/manual ID/no-match — `TODO`
+- Added exact restore permission and confirmation gates, snapshot hash verification, deterministic expected-post-merge comparison, atomic rollback on conflicts, candidate reopening, and immutable actor/timestamp restoration audit fields.
+- RED commit: `1d7faa223ab5795597916977f8e0f4d4d0e4c96e`; GREEN commit: `8421e86fcf9b4a5364beb7b5253e7468aff945b1`; PHP run `35387273739` passed.
+
+### T-055 TMDB search/candidate scoring/manual ID/no-match — `READY`
 ### T-056 TMDB field import with provenance and locks — `TODO`
 ### T-057 End-to-end duplicate/TMDB regression suite — `TODO`
 

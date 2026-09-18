@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 49
+State document version: 50
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-04 — content job queue and AI normalization.  
 **Active checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.  
-**Active task:** T-054 — authorized conflict-aware restoration (`IN_PROGRESS`).
-**Starting commit:** T-053 bookkeeping commit following `9df6b05afac22f25a8602afcd4820f92e83be76e`.
-**Last completed task:** T-053 — canonical public-ID resolution, commit `9df6b05afac22f25a8602afcd4820f92e83be76e`.
-**Last verification:** PHP regression `35386811289` passed for T-053.
-**Next action:** make the authorized conflict-aware restoration contract pass atomically.
+**Active task:** T-055 — TMDB search/candidate scoring/manual ID/no-match (`READY`).
+**Starting commit:** T-054 bookkeeping commit following `8421e86fcf9b4a5364beb7b5253e7468aff945b1`.
+**Last completed task:** T-054 — authorized conflict-aware restoration, commit `8421e86fcf9b4a5364beb7b5253e7468aff945b1`.
+**Last verification:** PHP regression `35387273739` passed for T-054.
+**Next action:** define deterministic TMDB search ordering, candidate scoring, manual-ID lookup, and explicit no-match contracts for T-055.
 
 ## 1. Confirmed product direction
 
@@ -144,6 +144,7 @@ Absence was established by repository text search against the pinned snapshot. I
 | Existing registration regression | PASS | PHP 8.1 run `35339024233` |
 | Stable public ID foundation | PASS | PHP 8.1 run `35344501044`; generator and canonical traversal contracts passed |
 | Canonical public-ID resolution | PASS | PHP 8.1 run `35386811289`; alias redirects remain public-ID-only |
+| Conflict-aware duplicate restoration | PASS | PHP 8.1 run `35387273739`; authorization, confirmation, integrity, conflict, rollback and audit contracts passed |
 | Video workflow state machine | PASS | PHP 8.1 run `35344911819`; exhaustive transition matrix passed |
 | Lossless native playback codec | PASS | PHP 8.1 run `35345369100`; record-form, validation, round-trip and merge contracts passed |
 | Foundation migration MySQL 5.7 | PASS | Disposable `maccms_ci_57`, MySQL 5.7.44; Actions run `35348332012` |
