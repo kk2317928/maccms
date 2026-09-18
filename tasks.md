@@ -264,14 +264,28 @@ Checkpoint commit if needed: `docs: close capability reconciliation checkpoint`
 
 Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. Reconcile exact paths against T-012 before implementation.
 
-### T-020 Add migration ledger and CLI runner — `IN_PROGRESS`
+### T-020 Add migration ledger and CLI runner — `DONE`
 
 - Add pure migration-discovery/checksum tests first.
 - Add ordered SQL migration service and `maccms:migrate` command.
 - Preserve `SeoAiGenerate` registration.
 - Commit: `feat: add versioned schema migrations`
 
-### T-021 Add foundation extension schema — `TODO`
+**Implementation commits:**
+
+- `da14410e9dfed29e3334ec9c437ad827896987e1` — add the pure discovery/checksum RED contract and foundation runner.
+- `f9cfcada3de647f75d69d8c432e08b71c281fe0a` — add the CLI registration RED contract.
+- `4099ea796a245f13aadd89cc39ce5bdb4c9c6577` — implement the migration ledger, service and `maccms:migrate` command.
+- `d127bc853070f06ef92d8d642914d83b4882fbb9` — reconcile the intentional source-inventory count change.
+
+**Verification evidence:**
+
+- RED service: GitHub Actions run `35341864143` passed the complete baseline and failed only at the foundation suite with `SchemaMigrationService` absent.
+- RED CLI: GitHub Actions run `35341976317` failed with the migration command contract before implementation.
+- GREEN: GitHub Actions run `35342212142` passed PHP syntax, baseline/outbound contracts, migration discovery/checksum, CLI registration and the foundation suite.
+- Fresh `git diff --check` returned exit code 0 after the GREEN run.
+
+### T-021 Add foundation extension schema — `READY`
 
 - Add video extension, taxonomy relation, field-state, and migration tables.
 - Resolve reuse of `ContentLang` explicitly; do not create a competing multilingual system without T-012 evidence.

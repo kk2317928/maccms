@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 6  
+State document version: 7  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,10 +12,10 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-01 — capability reconciliation and regression baseline.  
 **Active checkpoint:** CP-02 — foundation data and compatibility code.  
-**Active task:** T-020 — add migration ledger and CLI runner.  
-**Last completed task:** T-014 — native smoke-test procedure commit `10da419f3efc3b5c7a788495106c40d5dc501bc7`.  
-**Last verification:** GitHub Actions PHP 8.1 run `35341664442` passed; manual/database smoke cases remain explicitly unverified.  
-**Next action:** verify the pure migration discovery/checksum contract fails because `SchemaMigrationService` is absent, then implement the service and CLI command.
+**Active task:** none; T-021 is the next `READY` implementation task.  
+**Last completed task:** T-020 — migration ledger/CLI implementation commit `4099ea796a245f13aadd89cc39ce5bdb4c9c6577`, with source-inventory reconciliation at `d127bc853070f06ef92d8d642914d83b4882fbb9`.  
+**Last verification:** GitHub Actions PHP 8.1 run `35342212142` and a fresh `git diff --check` passed.  
+**Next action:** execute T-021 test-first and add the versioned foundation extension schema without creating a competing multilingual store.
 
 ## 1. Confirmed product direction
 
