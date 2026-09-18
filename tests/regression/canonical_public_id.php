@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+error_reporting(E_ALL & ~E_DEPRECATED);
+
 $root = dirname(__DIR__, 2);
 defined('ROOT_PATH') or define('ROOT_PATH', $root . DIRECTORY_SEPARATOR);
 defined('APP_PATH') or define('APP_PATH', ROOT_PATH . 'application' . DIRECTORY_SEPARATOR);
