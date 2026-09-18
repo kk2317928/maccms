@@ -12,10 +12,10 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-00 — repository reset and master planning.  
 **Active checkpoint:** CP-01 — existing-capability reconciliation and regression baseline.  
-**Active task:** none; T-011 is the next `READY` task.  
+**Active task:** T-011 — build the baseline regression runner.  
 **Last completed task:** T-010 — source inventory implementation commit `04a4cc462f2d9bcdfa0ff961c19124a2def7883b`.  
 **Last verification:** GitHub Actions PHP 8.1 run `35335644796` passed source inventory and the existing registration regression.  
-**Next action:** execute T-011 and add the deterministic baseline regression runner.
+**Next action:** verify the T-011 runner contract fails for the intended missing-runner reason, then implement the deterministic baseline regression runner.
 
 ## 1. Confirmed product direction
 

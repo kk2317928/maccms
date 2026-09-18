@@ -19,7 +19,11 @@ jobs:
           php-version: '8.1'
           coverage: none
       - name: PHP syntax
-        run: php -l tests/regression/source_inventory.php
+        run: |
+          php -l tests/regression/source_inventory.php
+          php -l tests/regression/baseline_runner_contract.php
+      - name: Baseline runner contract
+        run: php tests/regression/baseline_runner_contract.php
       - name: Source inventory
         run: php tests/regression/source_inventory.php
       - name: Existing user registration regression

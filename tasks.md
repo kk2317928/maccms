@@ -92,7 +92,7 @@ git diff --check
 - RED: GitHub Actions run `35335533101` failed only with `Source inventory document is missing.`
 - GREEN: GitHub Actions run `35335644796` passed on PHP 8.1, including `source_inventory.php` and `user_register_validate.php`.
 
-### T-011 Build the baseline regression runner — `READY`
+### T-011 Build the baseline regression runner — `IN_PROGRESS`
 
 **Depends on:** T-010
 
