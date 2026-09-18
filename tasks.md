@@ -434,13 +434,25 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - GREEN: PHP 8.1 run `35348806445`, MySQL 8.0 run `35348806475`, and MySQL 5.7 regression run `35348806492` all passed.
 - The MySQL 8.0 run verified first-run `applied=1, skipped=0`, second-run `applied=0, skipped=1`, the checksummed ledger row, and all four InnoDB/utf8mb4 tables and indexes.
 
-### T-032 Verify admin/collection writes and playback round trip — `IN_PROGRESS`
+### T-032 Verify admin/collection writes and playback round trip — `DONE`
 
 - Create one draft via admin and one via collection.
 - Verify one extension row per video, distinct IDs, and byte-identical playback round trip.
 - Commit: `docs: record foundation integration verification`
 
-### T-033 Publish foundation deployment/rollback guide — `TODO`
+**Implementation commits:**
+
+- `863bcc0dab2f07bbe791e3f58143e60d860bfc64` — add the full native-schema MySQL workflow and admin/collection integration harness.
+- `48ff96c0721bce1de1791b7373db3e06665864a6` — bind the harness to the native admin module and require an explicit success marker so framework-rendered exceptions cannot produce false-green CI.
+
+**Verification evidence:**
+
+- The first run exposed `app\model\Vod` resolution while returning process status zero; it was rejected as a false positive and is not completion evidence.
+- GREEN: native integration run `35349617886` used disposable `maccms_ci_native`, PHP 8.1, and MySQL 5.7.44; PHP regression run `35349617888` also passed.
+- The native run imported the complete install schema, applied migration `20260918000100`, called `Vod::saveData()`, exercised `Collect::vod_data()` insert and update, and verified two native rows, exactly two extension rows, distinct valid public IDs, no collection duplicate, persisted update remarks, and byte-identical playback round trips.
+- This automated model-boundary verification does not claim the browser/admin-form manual smoke case; that remains `NOT_RUN` in `docs/testing/native-smoke-checklist.md`.
+
+### T-033 Publish foundation deployment/rollback guide — `READY`
 
 - Exact backup, migration, verification, application rollback, and database restore procedure.
 - Commit: `docs: add foundation deployment and rollback guide`

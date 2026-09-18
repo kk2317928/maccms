@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 28  
+State document version: 29  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,10 +12,10 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-02 — foundation data and compatibility code.  
 **Active checkpoint:** CP-03 — real database and native-path verification.  
-**Active task:** T-032 — verify admin/collection writes and playback round trip.  
-**Last completed task:** T-031 — MySQL 8.0 migration verification, commit `3c517f1fe34034127e1e21cdc1a386450574a6a1`.  
-**Last verification:** GitHub Actions PHP 8.1 run `35348806445`, MySQL 8.0 run `35348806475`, and MySQL 5.7 run `35348806492` all passed with first apply, second-run no-op, ledger checksum, and schema invariants.  
-**Next action:** add a disposable-database integration harness that exercises `Vod::saveData()`, collection insert/update, extension-row uniqueness/public IDs, and byte-identical playback codec round trips.
+**Active task:** T-033 — publish the foundation deployment/rollback guide.  
+**Last completed task:** T-032 — native video persistence and playback verification, commit `48ff96c0721bce1de1791b7373db3e06665864a6`.  
+**Last verification:** Native integration run `35349617886` passed on disposable `maccms_ci_native`, PHP 8.1, and MySQL 5.7.44; PHP regression run `35349617888` also passed.  
+**Next action:** publish exact backup, migration, invariant-check, application rollback, and database restore instructions, then run the complete CP-03 gate.
 
 ## 1. Confirmed product direction
 
@@ -144,10 +144,12 @@ Absence was established by repository text search against the pinned snapshot. I
 | Stable public ID foundation | PASS | PHP 8.1 run `35344501044`; generator and canonical traversal contracts passed |
 | Video workflow state machine | PASS | PHP 8.1 run `35344911819`; exhaustive transition matrix passed |
 | Lossless native playback codec | PASS | PHP 8.1 run `35345369100`; record-form, validation, round-trip and merge contracts passed |
-| Fresh install MySQL 5.7 | PASS | Disposable `maccms_ci_57`, MySQL 5.7.44; Actions run `35348332012` |
-| Fresh install MySQL 8.0 | PASS | Disposable `maccms_ci_80`, MySQL 8.0.46; Actions run `35348806475` |
-| Native admin video write | UNVERIFIED | CP-01 baseline task |
-| Native collection insert/update | UNVERIFIED | CP-01 baseline task |
+| Foundation migration MySQL 5.7 | PASS | Disposable `maccms_ci_57`, MySQL 5.7.44; Actions run `35348332012` |
+| Foundation migration MySQL 8.0 | PASS | Disposable `maccms_ci_80`, MySQL 8.0.46; Actions run `35348806475` |
+| Native install schema + admin persistence boundary | PASS (automated) | `Vod::saveData()` on `maccms_ci_native`; run `35349617886`; browser form remains `NOT_RUN` |
+| Native collection insert/update | PASS (automated) | `Collect::vod_data()` insert/update on `maccms_ci_native`; run `35349617886` |
+| Native playback storage round trip | PASS (automated) | Both created rows round-tripped all four `vod_play_*` fields byte-for-byte; run `35349617886` |
+| Fresh web-installer/manual smoke | UNVERIFIED | `docs/testing/native-smoke-checklist.md` remains `NOT_RUN` |
 | No prohibited outbound request | FAIL by static inspection | `static_new/js/admin_common.js` update check remains |
 
 ## 8. Open decisions

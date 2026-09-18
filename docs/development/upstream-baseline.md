@@ -37,3 +37,13 @@ The repeatable manual procedure is `docs/testing/native-smoke-checklist.md`. Res
 - Runtime network-capture verification of default outbound triggers.
 
 Results must be appended here with the exact PHP version, database version, command or manual flow, result, and date. Unverified items must not be reported as passing.
+
+## Foundation verification results — 2026-09-18
+
+| Disposable environment | Commit | Runtime/database | First migration | Second migration | Native admin boundary | Collection insert/update | Playback round trip |
+|---|---|---|---|---|---|---|---|
+| `maccms_ci_57` | `a24acb7dd716bb4284c5db4c8506c0496857f4ec` | PHP 8.1 / MySQL 5.7.44 | PASS: applied 1 | PASS: applied 0, skipped 1 | NOT_RUN | NOT_RUN | NOT_RUN |
+| `maccms_ci_80` | `3c517f1fe34034127e1e21cdc1a386450574a6a1` | PHP 8.1 / MySQL 8.0.46 | PASS: applied 1 | PASS: applied 0, skipped 1 | NOT_RUN | NOT_RUN | NOT_RUN |
+| `maccms_ci_native` | `48ff96c0721bce1de1791b7373db3e06665864a6` | PHP 8.1 / MySQL 5.7.44 | PASS: applied 1 after full schema import | NOT_RUN in this workflow | PASS: `Vod::saveData()` created one draft and one extension row | PASS: insert/update retained one native row and one extension row | PASS: both rows, all four `vod_play_*` strings byte-identical |
+
+Evidence: GitHub Actions runs `35348332012`, `35348806475`, `35348806492`, `35349617886`, and `35349617888`. The native integration test invokes the same model persistence boundaries used by admin and collection code; it is not a browser/admin-form test. Manual HTTP, authentication, rendering, and outbound-observation cases remain `NOT_RUN` in `docs/testing/native-smoke-checklist.md`.
