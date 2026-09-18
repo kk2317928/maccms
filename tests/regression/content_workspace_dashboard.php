@@ -41,12 +41,13 @@ $dashboard->workflowRows = [
     ['workflow_status' => 'manual_review', 'total' => '3'],
     ['workflow_status' => 'published', 'total' => '9'],
 ];
-$dashboard->queueRow = ['queued' => '5', 'running' => '2', 'failed' => '1', 'oldest_ready_at' => '850'];
+$dashboard->queueRow = ['queued' => '5', 'running' => '2', 'failed' => '1', 'oldest_runnable_at' => '850'];
 $dashboard->runRow = ['succeeded' => '8', 'failed' => '2', 'rate_limited' => '1'];
 $dashboard->usageRow = ['cost_micros' => '800', 'total_tokens' => '1200'];
 $dashboard->workerRows = [
     ['worker_id' => 'cron-a', 'status' => 'idle', 'processed' => '7', 'last_seen_at' => '950'],
     ['worker_id' => 'cron-b', 'status' => 'running', 'processed' => '2', 'last_seen_at' => '600'],
+    ['worker_id' => 'cron-retired', 'status' => 'stopped', 'processed' => '9', 'last_seen_at' => '990'],
 ];
 
 $snapshot = $dashboard->snapshot([
@@ -57,6 +58,7 @@ $snapshot = $dashboard->snapshot([
 
 dashboardAssert($snapshot['workflow']['imported'] === 4, 'workflow counts must be normalized to integers.');
 dashboardAssert($snapshot['workflow']['tmdb_matching'] === 0, 'missing workflow states must be zero-filled.');
+dashboardAssert($snapshot['workflow_rows'][0] === ['state' => 'imported', 'total' => 4], 'the view must receive numerically indexed workflow rows.');
 dashboardAssert($snapshot['queue'] === [
     'queued' => 5, 'running' => 2, 'failed' => 1, 'depth' => 7,
     'oldest_age_seconds' => 150, 'health' => 'warning',
@@ -71,7 +73,12 @@ dashboardAssert($snapshot['budget'] === [
 ], 'daily AI budget usage is incorrect.');
 dashboardAssert($snapshot['workers'][0]['age_seconds'] === 50 && $snapshot['workers'][0]['health'] === 'healthy', 'fresh heartbeat must be healthy.');
 dashboardAssert($snapshot['workers'][1]['age_seconds'] === 400 && $snapshot['workers'][1]['health'] === 'stale', 'expired heartbeat must be stale.');
-dashboardAssert($snapshot['cron']['healthy'] === 1 && $snapshot['cron']['stale'] === 1 && $snapshot['cron']['health'] === 'warning', 'Cron summary must expose partial heartbeat failure.');
+dashboardAssert($snapshot['workers'][2]['health'] === 'stale', 'a stopped worker must not be reported healthy even with a fresh heartbeat.');
+dashboardAssert($snapshot['cron']['healthy'] === 1 && $snapshot['cron']['stale'] === 2 && $snapshot['cron']['health'] === 'healthy', 'a fresh active worker must keep the overall Cron heartbeat healthy.');
+dashboardAssert(ContentWorkspaceDashboard::optionsFromConfig([
+    'ai_content' => ['daily_budget_micros' => '2500'],
+    'content_workspace' => ['heartbeat_stale_seconds' => '90', 'queue_stale_seconds' => '180'],
+]) === ['daily_budget_micros' => 2500, 'heartbeat_stale_seconds' => 90, 'queue_stale_seconds' => 180], 'dashboard options must use the canonical AI-content budget setting.');
 
 $empty = new FixtureContentWorkspaceDashboard(static fn (): int => 1000);
 $emptySnapshot = $empty->snapshot(['daily_budget_micros' => 0]);

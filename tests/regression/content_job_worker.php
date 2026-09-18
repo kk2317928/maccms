@@ -17,8 +17,15 @@ if (!is_file($workerPath)) {
     exit(1);
 }
 require_once $workerPath;
+$failurePath = $root . '/application/common/util/ContentJobFailure.php';
+if (!is_file($failurePath)) {
+    fwrite(STDERR, "FAIL: ContentJobFailure is missing.\n");
+    exit(1);
+}
+require_once $failurePath;
 
 use app\common\util\ContentJobWorker;
+use app\common\util\ContentJobFailure;
 
 final class WorkerFakeRepository
 {
@@ -83,3 +90,12 @@ foreach (['maccms:jobs', "'max-jobs'", "'max-seconds'", "'lease-seconds'", "'wor
 }
 
 fwrite(STDOUT, "OK: bounded content-job worker contract passed.\n");
+
+$rateRepository = new WorkerFakeRepository();
+$rateRepository->jobs = [['job_id' => 4, 'job_type' => 'limited', 'payload_json' => '{}']];
+$rateWorker = new ContentJobWorker($rateRepository, [
+    'limited' => static function (): array { throw new ContentJobFailure('rate_limit', 'External provider rate limit reached.'); },
+], static fn (): int => 2000);
+$rateWorker->run('rate-worker', 1, 30, 120);
+workerAssert($rateRepository->failed[0][1] === 'rate_limit', 'typed provider rate limits must remain observable in job-run metrics.');
+workerAssert($rateRepository->failed[0][2] === 'External provider rate limit reached.', 'typed job failures must expose only their safe summary.');
