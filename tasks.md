@@ -367,7 +367,7 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - RED: GitHub Actions run `35345571249` passed syntax and all pre-existing suites, then failed because the extension sources were absent.
 - GREEN: GitHub Actions run `35345760601` passed model bindings, exact kind/source allowlists, service interfaces, deterministic taxonomy ordering/mapping, and all suites.
 
-### T-026 Hook both native video write paths — `READY`
+### T-026 Hook both native video write paths — `IN_PROGRESS`
 
 - Cover `Vod::saveData()` and collection insert/update paths in `Collect::vod_data()`.
 - Preserve existing return values and transaction semantics.
