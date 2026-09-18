@@ -12,7 +12,8 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-03 — real database and native-path verification.  
 **Active checkpoint:** CP-04 — content job queue and AI normalization.  
-**Active task:** T-043 — hardened external HTTP boundary (`READY`).  
+**Active task:** T-043 — hardened external HTTP boundary (`IN_PROGRESS`).  
+**Starting commit:** `88de442f70ddf31006ffd326540fd35c2c0dd495`.  
 **Last completed task:** T-042 — bounded Cron/CLI worker and heartbeat, commit `190fd1199a374b5c8216f216eac346e34de444a7`.  
 **Last verification:** PHP `35358498991`, MySQL 5.7 `35358499027`, MySQL 8.0 `35358499003`, and native foundation `35358499120` passed for T-042.  
 **Next action:** define failing URL, DNS/IP, redirect, timeout, response-size, allowlist, and secret-redaction contracts for T-043.

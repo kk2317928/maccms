@@ -40,6 +40,7 @@ jobs:
           php -l tests/regression/content_job_contract.php
           php -l tests/regression/content_job_lifecycle.php
           php -l tests/regression/content_job_worker.php
+          php -l tests/regression/hardened_http.php
           php -l tests/regression/run_ai_jobs.php
           php -l tests/integration/mysql_foundation.php
           php -l tests/integration/native_vod_paths.php

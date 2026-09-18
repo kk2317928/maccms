@@ -498,7 +498,7 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - RED commit: `e2da691d96155fdf7e8fbe2a1fa954303daadc46`; implementation commit: `190fd1199a374b5c8216f216eac346e34de444a7`.
 - GREEN evidence: PHP `35358498991`, MySQL 5.7 `35358499027`, MySQL 8.0 `35358499003`, native foundation `35358499120`.
 
-### T-043 Hardened external HTTP boundary — `READY`
+### T-043 Hardened external HTTP boundary — `IN_PROGRESS`
 ### T-044 AI JSON schema and validation — `TODO`
 ### T-045 AI run provenance, prompt version and usage — `TODO`
 ### T-046 Field precedence and manual locks — `TODO`

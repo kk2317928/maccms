@@ -6,6 +6,7 @@ $tests = [
     'content_job_contract.php',
     'content_job_lifecycle.php',
     'content_job_worker.php',
+    'hardened_http.php',
 ];
 
 foreach ($tests as $test) {
