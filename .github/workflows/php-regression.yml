@@ -22,8 +22,11 @@ jobs:
         run: |
           php -l tests/regression/source_inventory.php
           php -l tests/regression/baseline_runner_contract.php
+          php -l tests/regression/outbound_inventory_contract.php
           php -l tests/regression/run_baseline.php
       - name: Baseline runner contract
         run: php tests/regression/baseline_runner_contract.php
+      - name: Outbound inventory contract
+        run: php tests/regression/outbound_inventory_contract.php
       - name: Baseline regression suite
         run: php tests/regression/run_baseline.php

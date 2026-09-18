@@ -12,10 +12,10 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-00 — repository reset and master planning.  
 **Active checkpoint:** CP-01 — existing-capability reconciliation and regression baseline.  
-**Active task:** none; T-013 is the next `READY` task.  
+**Active task:** T-013 — inventory and classify outbound communication.  
 **Last completed task:** T-012 — capability reconciliation commit `6128c771788586b18b13632f6f4d75947e654ee5`.  
 **Last verification:** GitHub Actions PHP 8.1 run `35340449661` passed after the capability reconciliation; its source-contract checks also passed locally.  
-**Next action:** execute T-013 and inventory/classify all outbound communication, including the known official update request.
+**Next action:** verify the outbound inventory contract fails before implementation, then implement report and enforcement modes.
 
 ## 1. Confirmed product direction
 

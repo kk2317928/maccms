@@ -175,7 +175,7 @@ git diff --check
 - Referenced primary entrypoint files existed and `git diff --check` passed.
 - GitHub Actions PHP 8.1 baseline run `35340449661` passed.
 
-### T-013 Inventory and classify outbound communication — `READY`
+### T-013 Inventory and classify outbound communication — `IN_PROGRESS`
 
 **Depends on:** T-012
 
