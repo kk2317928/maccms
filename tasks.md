@@ -539,8 +539,12 @@ Each task requires failing tests, implementation, focused verification, an immed
 - Added canonical content fingerprints, permanent reviewed `different` decisions, pair-level suppression lookup, and atomic stale invalidation for pending candidates only. Permanent decisions survive later content changes; invalid candidates cannot silently remain reviewable.
 - RED commit: `7b04a844c340d1df4994010c9e8eac3534e4df2d`; GREEN commit: `9696b267a6db7f2e54cf1e28bbd8fc6e03c5d7c5`; PHP run `35381357761`, MySQL 5.7 run `35381357697`, MySQL 8.0 run `35381357765`, and native video run `35381357708` passed.
 
-### T-052 Merge snapshots and playback merge — `IN_PROGRESS`
-### T-053 Canonical public-ID resolution — `TODO`
+### T-052 Merge snapshots and playback merge — `DONE`
+
+- Added an explicit reviewer-triggered transactional merge service with immutable pre-merge snapshots for native video, extension/aliases, multilingual overlays, taxonomy, field states, external mappings, and Ulog relations. Playback is merged only through `VodPlaybackCodec`, retaining primary order and metadata while deduplicating normalized URLs; any failure rolls back snapshot and mutations.
+- RED commit: `8b8752ebaeae608338fe260969c7851530de758e`; GREEN commit: `78dea91470d8450623973f5632c33ca1ca57114c`; PHP run `35384542597`, MySQL 5.7 run `35384542565`, MySQL 8.0 run `35384542812`, and native video run `35384542591` passed.
+
+### T-053 Canonical public-ID resolution — `READY`
 ### T-054 Authorized conflict-aware restoration — `TODO`
 ### T-055 TMDB search/candidate scoring/manual ID/no-match — `TODO`
 ### T-056 TMDB field import with provenance and locks — `TODO`

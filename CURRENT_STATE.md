@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 47
+State document version: 48
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-04 — content job queue and AI normalization.  
 **Active checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.  
-**Active task:** T-052 — merge snapshots and playback merge (`IN_PROGRESS`).
-**Starting commit:** `fe6cc07d00434d2fca4ded08937c39e089ced5ce`.
-**Last completed task:** T-051 — permanent different-work decisions and stale candidate invalidation, commit `9696b267a6db7f2e54cf1e28bbd8fc6e03c5d7c5`.
-**Last verification:** PHP regression `35381357761`, MySQL 5.7 `35381357697`, MySQL 8.0 `35381357765`, and native video `35381357708` passed for T-051.
-**Next action:** verify the failing transactional merge snapshot and playback URL-deduplication contract, then implement it.
+**Active task:** T-053 — canonical public-ID resolution (`READY`).
+**Starting commit:** T-052 bookkeeping commit following `78dea91470d8450623973f5632c33ca1ca57114c`.
+**Last completed task:** T-052 — transactional merge snapshots and playback merge, commit `78dea91470d8450623973f5632c33ca1ca57114c`.
+**Last verification:** PHP regression `35384542597`, MySQL 5.7 `35384542565`, MySQL 8.0 `35384542812`, and native video `35384542591` passed for T-052.
+**Next action:** define the failing canonical public-ID resolution and merged-alias redirect contract for T-053.
 
 ## 1. Confirmed product direction
 
@@ -53,8 +53,8 @@ Upstream Composer metadata declares PHP `>=7.0`; the new programme's primary sup
 | Admin templates | `application/admin/view_new/` | Current admin UI templates; not `view/` |
 | Legacy/broad API | `application/api/controller/` | 39 controllers |
 | Public web | `application/index/controller/` | 24 controllers |
-| Shared models | `application/common/model/` | 67 models after T-050 added duplicate-candidate persistence |
-| Shared services/utilities | `application/common/util/` | 90 utility/service classes after T-051 added permanent duplicate decisions and stale invalidation |
+| Shared models | `application/common/model/` | 68 models after T-052 added immutable merge snapshots |
+| Shared services/utilities | `application/common/util/` | 91 utility/service classes after T-052 added transactional duplicate merging |
 | Request behaviors | `application/common/behavior/` | Security, audit, monitoring, preview and initialization hooks |
 | Upgrade schema | `application/data/update/database.php` | Large monolithic legacy upgrade script |
 | Tests | `tests/regression/` | Only `user_register_validate.php` currently exists |
