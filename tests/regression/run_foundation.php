@@ -5,6 +5,7 @@ declare(strict_types=1);
 $tests = [
     'migration_cli_contract.php',
     'migration_discovery.php',
+    'migration_contract.php',
 ];
 
 foreach ($tests as $test) {

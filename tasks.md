@@ -285,7 +285,7 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - GREEN: GitHub Actions run `35342212142` passed PHP syntax, baseline/outbound contracts, migration discovery/checksum, CLI registration and the foundation suite.
 - Fresh `git diff --check` returned exit code 0 after the GREEN run.
 
-### T-021 Add foundation extension schema — `READY`
+### T-021 Add foundation extension schema — `IN_PROGRESS`
 
 - Add video extension, taxonomy relation, field-state, and migration tables.
 - Resolve reuse of `ContentLang` explicitly; do not create a competing multilingual system without T-012 evidence.

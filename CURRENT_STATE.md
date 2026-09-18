@@ -12,10 +12,10 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-01 — capability reconciliation and regression baseline.  
 **Active checkpoint:** CP-02 — foundation data and compatibility code.  
-**Active task:** none; T-021 is the next `READY` implementation task.  
+**Active task:** T-021 — add foundation extension schema.  
 **Last completed task:** T-020 — migration ledger/CLI implementation commit `4099ea796a245f13aadd89cc39ce5bdb4c9c6577`, with source-inventory reconciliation at `d127bc853070f06ef92d8d642914d83b4882fbb9`.  
 **Last verification:** GitHub Actions PHP 8.1 run `35342212142` and a fresh `git diff --check` passed.  
-**Next action:** execute T-021 test-first and add the versioned foundation extension schema without creating a competing multilingual store.
+**Next action:** verify the foundation migration contract fails because the versioned SQL is absent, then implement only the extension schema defined by T-021.
 
 ## 1. Confirmed product direction
 
