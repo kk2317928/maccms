@@ -397,12 +397,28 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 
 ## CP-03 — Real database and native-path verification
 
-### T-030 Verify migrations on MySQL 5.7 — `IN_PROGRESS`
+### T-030 Verify migrations on MySQL 5.7 — `DONE`
 
 - Requires an explicitly named disposable database and recorded version.
 - Commit evidence: `test: verify foundation on mysql 5.7`
 
-### T-031 Verify migrations on MySQL 8.0 — `TODO`
+**Implementation commits:**
+
+- `eb3440e02208ade184b49c144430f185645c0cea` — add the isolated MySQL 5.7 service workflow and schema invariant test.
+- `be930fe14588b9aa5303752220f2503d1c6916d3` — expose migration command output on CI failure.
+- `3db86d645b96bfbdae2024791be0e086dd48a06b` — add the missing ThinkPHP console entrypoint.
+- `bc6d66492a944969e3184d621ec719f133647df9` / `fee03f902a534e7fa98816a77a0e758b10caca76` — require and initialize the neutral CLI entrance.
+- `0bd26168054580b185b2b752ca226b31b374abd9` / `a24acb7dd716bb4284c5db4c8506c0496857f4ec` — reproduce and fix MySQL DDL implicit-commit handling.
+
+**Verification evidence:**
+
+- Disposable database: `maccms_ci_57`; server family/version assertion: MySQL `5.7.*` (service image resolved to 5.7.44).
+- RED CLI contract: run `35347666606` failed only because `think` did not define the neutral command entrance.
+- RED DDL behavior: run `35348240031` failed at `Db::startTrans()`, reproducing MySQL DDL transaction incompatibility.
+- GREEN: PHP 8.1 regression run `35348332053` and MySQL 5.7 run `35348332012` passed.
+- The database run verified first-run `applied=1, skipped=0`, second-run `applied=0, skipped=1`, one checksummed ledger row, and all four InnoDB/utf8mb4 extension tables and indexes.
+
+### T-031 Verify migrations on MySQL 8.0 — `READY`
 
 - Requires a separate explicitly named disposable database.
 - Commit evidence: `test: verify foundation on mysql 8.0`

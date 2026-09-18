@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 24  
+State document version: 25  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,10 +12,10 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-02 — foundation data and compatibility code.  
 **Active checkpoint:** CP-03 — real database and native-path verification.  
-**Active task:** T-030 — verify migrations on MySQL 5.7.  
-**Last completed task:** T-026 — native video extension hooks commit `c5d60729dcc750ece6d758e10d9ae1dc5b3e9125`.  
-**Last verification:** GitHub Actions PHP 8.1 run `35346673637` passed the complete baseline/foundation suites, including the explicit migration second-run no-op assertion.  
-**Next action:** push the isolated MySQL 5.7 integration workflow and record its exact migration/version/schema result.
+**Active task:** T-031 — verify migrations on MySQL 8.0.  
+**Last completed task:** T-030 — MySQL 5.7 migration verification, implementation commit `a24acb7dd716bb4284c5db4c8506c0496857f4ec`.  
+**Last verification:** GitHub Actions PHP 8.1 run `35348332053` and MySQL 5.7 run `35348332012` passed; the real database run covered first apply, second-run no-op, ledger checksum, and schema invariants.  
+**Next action:** add the separate `maccms_ci_80` MySQL 8.0 workflow, run the same migration invariants, and record the exact server version.
 
 ## 1. Confirmed product direction
 
@@ -40,7 +40,7 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 | Framework | `thinkphp/` | Bundled ThinkPHP 5-era framework |
 | Shared config | `application/config.php`, `application/extra/maccms.php` | Framework and runtime product configuration |
 | Routes | `application/route.php` | Existing public-site route map |
-| CLI | `application/command.php` | Currently registers only `SeoAiGenerate` |
+| CLI | `think`, `application/command.php` | Neutral `command` entrance; registers `SeoAiGenerate` and `MaccmsMigrate` |
 
 Upstream Composer metadata declares PHP `>=7.0`; the new programme's primary supported runtime is PHP 8.1.
 
@@ -72,13 +72,13 @@ Counts describe the pinned source snapshot and are not architectural limits.
 ### Playback
 
 - Native playback remains stored in `vod_play_from`, `vod_play_url`, `vod_play_server`, and `vod_play_note`.
-- The project does not yet have the planned single lossless playback codec.
-- Future import, merge, and `/api/v1` output must share one codec rather than reimplement delimiter logic.
+- `VodPlaybackCodec` is the lossless native playback codec for parse/serialize/merge operations.
+- Future import, merge, and `/api/v1` output must reuse it rather than reimplement delimiter logic.
 
 ### Schema changes
 
 - Existing installs/upgrades use `application/data/update/database.php` and installer SQL/config injection.
-- The programme's versioned/checksummed migration runner does not exist yet.
+- The programme has a versioned/checksummed migration runner exposed as `php think maccms:migrate`.
 - Existing `task` and `task_log` tables are member reward/sign-in tasks. `ext_sync_job` and `ext_sync_log` schedule external-provider feeds. Neither is a general leased/idempotent content queue.
 
 ## 4. Existing capabilities that overlap the design
@@ -144,7 +144,7 @@ Absence was established by repository text search against the pinned snapshot. I
 | Stable public ID foundation | PASS | PHP 8.1 run `35344501044`; generator and canonical traversal contracts passed |
 | Video workflow state machine | PASS | PHP 8.1 run `35344911819`; exhaustive transition matrix passed |
 | Lossless native playback codec | PASS | PHP 8.1 run `35345369100`; record-form, validation, round-trip and merge contracts passed |
-| Fresh install MySQL 5.7 | UNVERIFIED | CP-02/CP-03 gate |
+| Fresh install MySQL 5.7 | PASS | Disposable `maccms_ci_57`, MySQL 5.7.44; Actions run `35348332012` |
 | Fresh install MySQL 8.0 | UNVERIFIED | CP-02/CP-03 gate |
 | Native admin video write | UNVERIFIED | CP-01 baseline task |
 | Native collection insert/update | UNVERIFIED | CP-01 baseline task |
