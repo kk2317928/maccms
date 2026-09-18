@@ -12,6 +12,11 @@ $host = getenv('MACCMS_TEST_HOST') ?: '127.0.0.1';
 $port = getenv('MACCMS_TEST_PORT') ?: '3306';
 $user = getenv('MACCMS_TEST_USER') ?: 'root';
 $password = getenv('MACCMS_TEST_PASSWORD') ?: '';
+$expectedFamily = (string) getenv('MACCMS_TEST_MYSQL_FAMILY');
+if (!in_array($expectedFamily, ['5.7', '8.0'], true)) {
+    fwrite(STDERR, "FAIL: MACCMS_TEST_MYSQL_FAMILY must be 5.7 or 8.0.\n");
+    exit(1);
+}
 $pdo = new PDO(
     "mysql:host={$host};port={$port};dbname={$database};charset=utf8mb4",
     $user,
@@ -20,8 +25,8 @@ $pdo = new PDO(
 );
 
 $version = (string) $pdo->query('SELECT VERSION()')->fetchColumn();
-if (strpos($version, '5.7.') !== 0) {
-    fwrite(STDERR, "FAIL: expected MySQL 5.7, got {$version}.\n");
+if (strpos($version, $expectedFamily . '.') !== 0) {
+    fwrite(STDERR, "FAIL: expected MySQL {$expectedFamily}, got {$version}.\n");
     exit(1);
 }
 

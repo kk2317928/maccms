@@ -39,6 +39,7 @@ jobs:
       MACCMS_TEST_PORT: 3306
       MACCMS_TEST_USER: root
       MACCMS_TEST_PASSWORD: root
+      MACCMS_TEST_MYSQL_FAMILY: '8.0'
     steps:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
