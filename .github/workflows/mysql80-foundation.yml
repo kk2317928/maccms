@@ -12,6 +12,8 @@ on:
       - 'application/common/util/SchemaMigrationService.php'
       - 'application/data/migrations/**'
       - 'tests/integration/mysql_foundation.php'
+      - 'tests/integration/content_job_lifecycle.php'
+      - 'application/common/util/ContentJobRepository.php'
   workflow_dispatch:
 
 permissions:
@@ -53,6 +55,7 @@ jobs:
         run: |
           php -l think
           php -l tests/integration/mysql_foundation.php
+          php -l tests/integration/content_job_lifecycle.php
       - name: First migration run
         run: |
           set +e
@@ -73,3 +76,5 @@ jobs:
           grep -q 'done, applied=0, skipped=2' <<< "$output"
       - name: Verify MySQL 8.0 schema invariants
         run: php tests/integration/mysql_foundation.php
+      - name: Verify MySQL 8.0 content job lifecycle
+        run: php tests/integration/content_job_lifecycle.php
