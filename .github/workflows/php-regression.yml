@@ -38,7 +38,11 @@ jobs:
           php -l application/common/util/PublicIdGenerator.php
           php -l application/common/util/VodWorkflow.php
           php -l application/common/util/VodPlaybackCodec.php
+          php -l application/common/util/VodExtensionService.php
           php -l application/common/model/VodExt.php
+          php -l application/common/model/MetaTerm.php
+          php -l application/common/model/VodMetaTerm.php
+          php -l application/common/model/VodFieldState.php
           php -l application/command/MaccmsMigrate.php
       - name: Baseline runner contract
         run: php tests/regression/baseline_runner_contract.php
