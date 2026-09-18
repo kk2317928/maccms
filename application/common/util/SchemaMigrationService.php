@@ -69,21 +69,18 @@ class SchemaMigrationService
             $sql = str_replace('__PREFIX__', $this->prefix, $originalSql);
             $statements = $this->splitStatements($sql);
 
-            Db::startTrans();
-            try {
-                foreach ($statements as $statement) {
-                    Db::execute($statement);
-                }
-                Db::execute(
-                    'INSERT INTO `' . $this->prefix . 'schema_migration` '
-                    . '(`version`,`name`,`checksum`,`executed_at`) VALUES (?,?,?,?)',
-                    [$migration['version'], $migration['name'], $migration['checksum'], time()]
-                );
-                Db::commit();
-            } catch (\Throwable $exception) {
-                Db::rollback();
-                throw $exception;
+            // MySQL implicitly commits CREATE/ALTER/DROP statements. Wrapping DDL in
+            // a PDO transaction therefore leaves no active transaction to commit or
+            // roll back. Migration SQL must be idempotent; record the ledger row only
+            // after every statement has completed successfully.
+            foreach ($statements as $statement) {
+                Db::execute($statement);
             }
+            Db::execute(
+                'INSERT INTO `' . $this->prefix . 'schema_migration` '
+                . '(`version`,`name`,`checksum`,`executed_at`) VALUES (?,?,?,?)',
+                [$migration['version'], $migration['name'], $migration['checksum'], time()]
+            );
 
             $applied[] = $migration['version'];
         }
