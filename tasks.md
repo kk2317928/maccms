@@ -20,8 +20,8 @@ Do not mark a task `DONE` with a future or local-only SHA. A checkpoint complete
 | CP-01 | Reconcile existing capabilities and establish regression baseline | DONE | CP-00 |
 | CP-02 | Add migrations, extension data, public IDs, workflow, playback codec | DONE | CP-01 |
 | CP-03 | Verify foundation on real MySQL and native write paths | DONE | CP-02 |
-| CP-04 | Add content job queue, AI normalization, provenance and locks | IN_PROGRESS | CP-03 |
-| CP-05 | Add duplicate review, reversible merge and TMDB workflow | TODO | CP-04 |
+| CP-04 | Add content job queue, AI normalization, provenance and locks | DONE | CP-03 |
+| CP-05 | Add duplicate review, reversible merge and TMDB workflow | READY | CP-04 |
 | CP-06 | Add intelligent-content admin workspace and permissions | TODO | CP-05 |
 | CP-07 | Add versioned Headless API, sessions, favorites and progress | TODO | CP-06 |
 | CP-08 | Add event deduplication, rankings and recommendations | TODO | CP-07 |
@@ -518,7 +518,10 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - Added one governed write boundary enforcing `manual > confirmed_tmdb > ai > import`, automatic manual locks, background lock protection, and explicit reviewed overrides.
 - RED commit: `4f7687c541182f042900793d49211a3099e5bf6e`; GREEN commit: `4d1f27d4b4eb450033cb64b831e17770b7e43a28`; PHP run `35373257715` passed.
 
-### T-047 AI pipeline integration tests — `IN_PROGRESS`
+### T-047 AI pipeline integration tests — `DONE`
+
+- Integrated the daily-budget gate, provider usage envelope, strict schema validation, immutable valid/invalid run audit, governed field application, and callable `ai.normalize` worker handler.
+- RED commit: `4f0fd2cf0e7439b3bd03ed37e29c29b721181c31`; GREEN commit: `d5b76fd4dba4933afe1879cd606cef23080e84c2`; PHP run `35373626629` passed.
 
 Each task requires failing tests, implementation, focused verification, an immediate commit, and immediate push. CP-04 cannot reuse member `task` tables.
 
@@ -526,7 +529,7 @@ Each task requires failing tests, implementation, focused verification, an immed
 
 ## CP-05 — Duplicate review, merge/restore and TMDB
 
-### T-050 Duplicate candidate schema and deterministic scoring — `TODO`
+### T-050 Duplicate candidate schema and deterministic scoring — `READY`
 ### T-051 Different-work decisions and candidate invalidation — `TODO`
 ### T-052 Merge snapshots and playback merge — `TODO`
 ### T-053 Canonical public-ID resolution — `TODO`

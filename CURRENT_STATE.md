@@ -1,22 +1,22 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 41  
+State document version: 42  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
 
 ## Session start summary
 
-Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to the pinned upstream and the design/implementation documents have been added. No Headless AI programme feature has been implemented yet.
+Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to the approved upstream while the programme is implemented incrementally on the integration branch.
 
-**Last completed checkpoint:** CP-03 — real database and native-path verification.  
-**Active checkpoint:** CP-04 — content job queue and AI normalization.  
-**Active task:** T-047 — AI pipeline integration tests (`IN_PROGRESS`).  
-**Starting commit:** `0a392c98805319ea3125aad01e7d5ec414154103`.  
-**Last completed task:** T-046 — governed field precedence and manual locks, commit `4d1f27d4b4eb450033cb64b831e17770b7e43a28`.  
-**Last verification:** PHP regression `35373257715` passed for T-046.  
-**Next action:** verify the failing end-to-end AI normalization pipeline contract, then implement its worker handler.
+**Last completed checkpoint:** CP-04 — content job queue and AI normalization.  
+**Active checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.  
+**Active task:** T-050 — duplicate candidate schema and deterministic scoring (`READY`).  
+**Starting commit:** T-047 bookkeeping commit following `d5b76fd4dba4933afe1879cd606cef23080e84c2`.  
+**Last completed task:** T-047 — end-to-end AI normalization pipeline, commit `d5b76fd4dba4933afe1879cd606cef23080e84c2`.  
+**Last verification:** PHP regression `35373626629` passed for T-047.  
+**Next action:** define the failing duplicate-candidate schema and deterministic scoring contract for T-050.
 
 ## 1. Confirmed product direction
 
@@ -54,7 +54,7 @@ Upstream Composer metadata declares PHP `>=7.0`; the new programme's primary sup
 | Legacy/broad API | `application/api/controller/` | 39 controllers |
 | Public web | `application/index/controller/` | 24 controllers |
 | Shared models | `application/common/model/` | 66 models after T-045 added immutable AI-run provenance |
-| Shared services/utilities | `application/common/util/` | 85 utility/service classes after T-046 added governed field writes |
+| Shared services/utilities | `application/common/util/` | 87 utility/service classes after T-047 integrated the AI pipeline and job handler |
 | Request behaviors | `application/common/behavior/` | Security, audit, monitoring, preview and initialization hooks |
 | Upgrade schema | `application/data/update/database.php` | Large monolithic legacy upgrade script |
 | Tests | `tests/regression/` | Only `user_register_validate.php` currently exists |
