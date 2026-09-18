@@ -28,6 +28,7 @@ jobs:
           php -l tests/regression/run_baseline.php
           php -l tests/regression/migration_discovery.php
           php -l tests/regression/migration_cli_contract.php
+          php -l tests/regression/migration_mysql_ddl.php
           php -l tests/regression/migration_contract.php
           php -l tests/regression/public_id_generator.php
           php -l tests/regression/vod_ext_public_id.php

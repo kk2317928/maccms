@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 $tests = [
     'migration_cli_contract.php',
+    'migration_mysql_ddl.php',
     'migration_discovery.php',
     'migration_contract.php',
     'public_id_generator.php',
