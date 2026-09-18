@@ -367,11 +367,23 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - RED: GitHub Actions run `35345571249` passed syntax and all pre-existing suites, then failed because the extension sources were absent.
 - GREEN: GitHub Actions run `35345760601` passed model bindings, exact kind/source allowlists, service interfaces, deterministic taxonomy ordering/mapping, and all suites.
 
-### T-026 Hook both native video write paths — `IN_PROGRESS`
+### T-026 Hook both native video write paths — `DONE`
 
 - Cover `Vod::saveData()` and collection insert/update paths in `Collect::vod_data()`.
 - Preserve existing return values and transaction semantics.
 - Commit: `feat: ensure video extension records on save`
+
+**Implementation commits:**
+
+- `e13279f519664fd0148582c84b26f8a619ebfa80` — add the initial structural RED contract.
+- `0b6fe6589a38580f587179b9204d6ca14db6215f` — correct interpolated test literals and obtain the valid RED result.
+- `c5d60729dcc750ece6d758e10d9ae1dc5b3e9125` — add the shared failure-mapping helper and three native post-save hooks.
+
+**Verification evidence:**
+
+- Initial RED run `35346208054` stopped at a test-file parser error; no production code was written from this invalid RED.
+- Valid RED: GitHub Actions run `35346322469` passed syntax and every pre-existing suite, then failed at the missing native persistence hooks.
+- GREEN: GitHub Actions run `35346507561` passed PHP syntax, both native-path structural contracts, and the complete baseline/foundation suites.
 
 ### CP-02 gate
 
