@@ -20,7 +20,7 @@ Do not mark a task `DONE` with a future or local-only SHA. A checkpoint complete
 | CP-01 | Reconcile existing capabilities and establish regression baseline | DONE | CP-00 |
 | CP-02 | Add migrations, extension data, public IDs, workflow, playback codec | DONE | CP-01 |
 | CP-03 | Verify foundation on real MySQL and native write paths | DONE | CP-02 |
-| CP-04 | Add content job queue, AI normalization, provenance and locks | READY | CP-03 |
+| CP-04 | Add content job queue, AI normalization, provenance and locks | IN_PROGRESS | CP-03 |
 | CP-05 | Add duplicate review, reversible merge and TMDB workflow | TODO | CP-04 |
 | CP-06 | Add intelligent-content admin workspace and permissions | TODO | CP-05 |
 | CP-07 | Add versioned Headless API, sessions, favorites and progress | TODO | CP-06 |
@@ -476,8 +476,15 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 
 ## CP-04 — Content job queue and AI normalization
 
-### T-040 Dedicated content-job schema and repository — `IN_PROGRESS`
-### T-041 Atomic claim, lease recovery, retry and idempotency — `TODO`
+### T-040 Dedicated content-job schema and repository — `DONE`
+
+- Added checksummed migration `20260918000200_content_jobs.sql` with separate `content_job` and `content_job_run` tables; no reward-task or external-sync table is reused.
+- Added focused `ContentJob` and `ContentJobRun` models plus `ContentJobRepository::enqueue()`/`find()` with validated JSON payloads and `(job_type,idempotency_key)` identity.
+- RED commit: `8d62749980d44975264e8818f2d99a5ea7c2409f`; PHP run `35355224245` failed only in the new AI jobs suite because the migration was absent.
+- Implementation commit: `06c809d47cf5de07e3a46c3892f2ee56c4612fc0`.
+- GREEN evidence: PHP regression `35355631036`, MySQL 5.7 `35355630985`, MySQL 8.0 `35355630926`, and native video foundation `35355630932` all passed.
+
+### T-041 Atomic claim, lease recovery, retry and idempotency — `READY`
 ### T-042 Cron/CLI worker budgets and heartbeat — `TODO`
 ### T-043 Hardened external HTTP boundary — `TODO`
 ### T-044 AI JSON schema and validation — `TODO`

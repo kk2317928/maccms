@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 32  
+State document version: 33  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,10 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-03 — real database and native-path verification.  
 **Active checkpoint:** CP-04 — content job queue and AI normalization.  
-**Active task:** T-040 — dedicated content-job schema and repository (`IN_PROGRESS`).  
-**Last completed task:** T-033 — foundation deployment/rollback guide, commit `7931350d13c89a6ed3f5e0ad5157d5f7079295ca`.  
-**Last verification:** PHP regression run `35350022475` passed after the reviewed deployment guide; CP-03 database and native-path evidence is recorded in `tasks.md` and `docs/development/upstream-baseline.md`.  
-**Starting commit:** `ddd103478eb95766e2448e2cfdd46465d391ed16`.  
-**Next action:** verify the failing content-job schema/repository contract, then implement only the T-040 migration, models, and enqueue/find repository boundary.
+**Active task:** T-041 — atomic claim, lease recovery, retry and idempotency (`READY`).  
+**Last completed task:** T-040 — dedicated content-job schema and repository, commit `06c809d47cf5de07e3a46c3892f2ee56c4612fc0`.  
+**Last verification:** PHP regression `35355631036`, MySQL 5.7 `35355630985`, MySQL 8.0 `35355630926`, and native video foundation `35355630932` passed for T-040.  
+**Next action:** add failing T-041 concurrency/state-transition contracts for atomic claim, expired lease recovery, completion/failure recording, and retry scheduling.
 
 ## 1. Confirmed product direction
 
@@ -53,8 +52,8 @@ Upstream Composer metadata declares PHP `>=7.0`; the new programme's primary sup
 | Admin templates | `application/admin/view_new/` | Current admin UI templates; not `view/` |
 | Legacy/broad API | `application/api/controller/` | 39 controllers |
 | Public web | `application/index/controller/` | 24 controllers |
-| Shared models | `application/common/model/` | 63 models after T-025 added three extension models |
-| Shared services/utilities | `application/common/util/` | 78 utility/service classes after T-025 added `VodExtensionService` |
+| Shared models | `application/common/model/` | 65 models after T-040 added two content-job models |
+| Shared services/utilities | `application/common/util/` | 79 utility/service classes after T-040 added `ContentJobRepository` |
 | Request behaviors | `application/common/behavior/` | Security, audit, monitoring, preview and initialization hooks |
 | Upgrade schema | `application/data/update/database.php` | Large monolithic legacy upgrade script |
 | Tests | `tests/regression/` | Only `user_register_validate.php` currently exists |
