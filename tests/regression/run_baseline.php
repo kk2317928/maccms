@@ -28,6 +28,7 @@ if ($suiteDir !== null) {
 } else {
     $scripts = [
         __DIR__ . '/source_inventory.php',
+        __DIR__ . '/outbound_inventory.php',
         __DIR__ . '/user_register_validate.php',
     ];
 }
