@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-04 — content job queue and AI normalization.  
 **Active checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.  
-**Active task:** T-057 — end-to-end duplicate/TMDB regression suite (`READY`).
+**Active task:** T-057 — end-to-end duplicate/TMDB regression suite (`IN_PROGRESS`).
 **Starting commit:** T-056 bookkeeping commit following `4f563a596ce45d22e26244a116d2d8244606d02f`.
 **Last completed task:** T-056 — reviewed TMDB field import with provenance and locks, commit `4f563a596ce45d22e26244a116d2d8244606d02f`.
 **Last verification:** PHP regression `35388048661` passed for T-056.
-**Next action:** add and run an end-to-end duplicate-to-canonical-to-restore-to-TMDB regression flow for T-057.
+**Next action:** make the fail-closed end-to-end duplicate/TMDB suite contract pass in deterministic order.
 
 ## 1. Confirmed product direction
 
