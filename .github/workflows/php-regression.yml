@@ -64,6 +64,8 @@ jobs:
           php -l application/common/util/FieldGovernance.php
           php -l application/common/util/AiNormalizationPipeline.php
           php -l application/common/util/AiNormalizationJobHandler.php
+          php -l application/common/util/DuplicateCandidateScorer.php
+          php -l application/common/util/DuplicateCandidateRepository.php
           php -l application/common/model/VodExt.php
           php -l application/common/model/MetaTerm.php
           php -l application/common/model/VodMetaTerm.php
@@ -71,6 +73,7 @@ jobs:
           php -l application/common/model/ContentJob.php
           php -l application/common/model/ContentJobRun.php
           php -l application/common/model/ContentAiRun.php
+          php -l application/common/model/ContentDuplicateCandidate.php
           php -l application/common/model/Vod.php
           php -l application/common/model/Collect.php
           php -l application/command/MaccmsMigrate.php
