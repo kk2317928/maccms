@@ -55,4 +55,11 @@ jobs:
       - name: Apply foundation migration
         run: php think maccms:migrate
       - name: Verify native video paths
-        run: php tests/integration/native_vod_paths.php
+        run: |
+          set +e
+          output=$(php tests/integration/native_vod_paths.php 2>&1)
+          status=$?
+          set -e
+          echo "$output"
+          test "$status" -eq 0
+          grep -q '^OK: native admin/collection writes and playback round trips passed' <<< "$output"

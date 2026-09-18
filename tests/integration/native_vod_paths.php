@@ -16,6 +16,9 @@ $_SERVER['HTTP_HOST'] = '127.0.0.1';
 $_SERVER['SCRIPT_NAME'] = '/tests/integration/native_vod_paths.php';
 require $root . '/thinkphp/base.php';
 \think\App::initCommon();
+// Mirror the native admin request module so model()/validate() fall back to
+// app\common instead of looking for the nonexistent app\model namespace.
+\think\Request::instance()->module('admin');
 
 function native_fail(string $message): void
 {
@@ -44,6 +47,10 @@ function native_playback_round_trip(array $row): void
     native_assert($encoded['server'] === $row['vod_play_server'], 'vod_play_server did not round-trip byte-for-byte.');
     native_assert($encoded['note'] === $row['vod_play_note'], 'vod_play_note did not round-trip byte-for-byte.');
 }
+
+$versionRow = \think\Db::query('SELECT VERSION() AS version');
+$mysqlVersion = (string) ($versionRow[0]['version'] ?? '');
+native_assert(strpos($mysqlVersion, '5.7.') === 0, 'native path workflow requires MySQL 5.7, got ' . $mysqlVersion . '.');
 
 $maccms = config('maccms');
 $maccms['app']['vod_search_optimise'] = '';
@@ -207,4 +214,4 @@ native_playback_round_trip($adminRow);
 native_playback_round_trip($collectRowAfterUpdate);
 native_assert($collectRowAfterUpdate['vod_remarks'] === 'Collected 3 episodes', 'Collection update did not persist the changed remarks.');
 
-fwrite(STDOUT, "OK: native admin/collection writes and playback round trips passed for {$database}.\n");
+fwrite(STDOUT, "OK: native admin/collection writes and playback round trips passed for {$database} on MySQL {$mysqlVersion}.\n");
