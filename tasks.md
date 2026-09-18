@@ -175,7 +175,7 @@ git diff --check
 - Referenced primary entrypoint files existed and `git diff --check` passed.
 - GitHub Actions PHP 8.1 baseline run `35340449661` passed.
 
-### T-013 Inventory and classify outbound communication — `IN_PROGRESS`
+### T-013 Inventory and classify outbound communication — `DONE`
 
 **Depends on:** T-012
 
@@ -205,7 +205,18 @@ Expected at this checkpoint: inventory succeeds; prohibited-endpoint enforcement
 
 **Commit:** `test: inventory outbound network dependencies`
 
-### T-014 Record native smoke-test procedure — `TODO`
+**Implementation commits:**
+
+- `193fed4228658f6972ab8abf6d4762528c695fe2` — add the report/enforcement behavior contract and record T-013 in progress.
+- `37a909705aeade67c8d28efecc30ca7277c32384` — add the static scanner, endpoint classification and baseline integration.
+
+**Verification evidence:**
+
+- RED: GitHub Actions run `35341174607` passed existing contracts and failed only at the missing outbound inventory implementation.
+- GREEN: GitHub Actions run `35341433065` passed PHP syntax, the outbound contract and the complete baseline suite.
+- Report mode succeeds with the official update endpoint marked `QUARANTINED`; enforcement mode returns nonzero with `PROHIBITED` while removal remains scheduled for CP-09.
+
+### T-014 Record native smoke-test procedure — `READY`
 
 **Depends on:** T-013
 

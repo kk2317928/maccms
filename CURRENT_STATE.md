@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 4  
+State document version: 5  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,10 +12,10 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-00 — repository reset and master planning.  
 **Active checkpoint:** CP-01 — existing-capability reconciliation and regression baseline.  
-**Active task:** T-013 — inventory and classify outbound communication.  
-**Last completed task:** T-012 — capability reconciliation commit `6128c771788586b18b13632f6f4d75947e654ee5`.  
-**Last verification:** GitHub Actions PHP 8.1 run `35340449661` passed after the capability reconciliation; its source-contract checks also passed locally.  
-**Next action:** verify the outbound inventory contract fails before implementation, then implement report and enforcement modes.
+**Active task:** none; T-014 is the next `READY` task.  
+**Last completed task:** T-013 — outbound inventory implementation commit `37a909705aeade67c8d28efecc30ca7277c32384`.  
+**Last verification:** GitHub Actions PHP 8.1 run `35341433065` passed the outbound contract and complete baseline suite.  
+**Next action:** execute T-014, record native smoke-test procedures honestly as unverified, and close CP-01 before foundation implementation.
 
 ## 1. Confirmed product direction
 
