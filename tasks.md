@@ -52,7 +52,7 @@ Do not mark a task `DONE` with a future or local-only SHA. A checkpoint complete
 
 ## CP-01 — Existing-capability reconciliation and regression baseline
 
-### T-010 Record reproducible source inventory — `IN_PROGRESS`
+### T-010 Record reproducible source inventory — `DONE`
 
 **Goal:** Make codebase shape changes visible without rescanning the repository manually.
 
@@ -81,7 +81,18 @@ git diff --check
 
 **Commit:** `test: capture maccms source inventory baseline`
 
-### T-011 Build the baseline regression runner — `TODO`
+**Implementation commits:**
+
+- `e3fc1a6352141d06ff4eb3c59f82305b36787e5b` — initial RED test and PHP 8.1 workflow.
+- `0a781368a163c459147c0dbaa742b866c635a4c8` — align newline-count semantics; confirmed the only RED failure was the missing inventory document.
+- `04a4cc462f2d9bcdfa0ff961c19124a2def7883b` — add the source inventory document and reach GREEN.
+
+**Verification evidence:**
+
+- RED: GitHub Actions run `35335533101` failed only with `Source inventory document is missing.`
+- GREEN: GitHub Actions run `35335644796` passed on PHP 8.1, including `source_inventory.php` and `user_register_validate.php`.
+
+### T-011 Build the baseline regression runner — `READY`
 
 **Depends on:** T-010
 
@@ -388,10 +399,10 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 
 ```text
 Checkpoint: CP-01
-Next task: T-010
-Task status: IN_PROGRESS
+Next task: T-011
+Task status: READY
 Required starting state: clean feature/headless-ai-v1 at latest remote commit
 First command after checkout: php -v
-Task commit: test: capture maccms source inventory baseline
+Task commit: test: add repeatable baseline regression runner
 Push required: yes, immediately after task verification
 ```

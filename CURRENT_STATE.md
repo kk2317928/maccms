@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 1  
+State document version: 2  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,9 +12,10 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-00 — repository reset and master planning.  
 **Active checkpoint:** CP-01 — existing-capability reconciliation and regression baseline.  
-**Active task:** T-010 — record reproducible source inventory.  
-**Last verified remote commit before this document task:** `7059ec9a7846a9ca5df36d8bfebd0729d6730904`.  
-**Next action:** complete T-010 RED/GREEN verification through GitHub Actions because the local runtime has no PHP interpreter.
+**Active task:** none; T-011 is the next `READY` task.  
+**Last completed task:** T-010 — source inventory implementation commit `04a4cc462f2d9bcdfa0ff961c19124a2def7883b`.  
+**Last verification:** GitHub Actions PHP 8.1 run `35335644796` passed source inventory and the existing registration regression.  
+**Next action:** execute T-011 and add the deterministic baseline regression runner.
 
 ## 1. Confirmed product direction
 
@@ -136,7 +137,8 @@ Absence was established by repository text search against the pinned snapshot. I
 | Repository tree imported | PASS at prior checkpoint | 3,112 entries, non-truncated Git tree |
 | Design and two implementation-plan documents present | PASS at prior checkpoint | Remote tree inspection |
 | Baseline PHP syntax | UNVERIFIED | CP-01 task |
-| Existing regression test | UNVERIFIED | CP-01 task |
+| Source inventory regression | PASS | PHP 8.1 run `35335644796` |
+| Existing registration regression | PASS | PHP 8.1 run `35335644796` |
 | Fresh install MySQL 5.7 | UNVERIFIED | CP-02/CP-03 gate |
 | Fresh install MySQL 8.0 | UNVERIFIED | CP-02/CP-03 gate |
 | Native admin video write | UNVERIFIED | CP-01 baseline task |
