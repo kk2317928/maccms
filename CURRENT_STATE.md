@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-04 — content job queue and AI normalization.  
 **Active checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.  
-**Active task:** T-056 — TMDB field import with provenance and locks (`READY`).
+**Active task:** T-056 — TMDB field import with provenance and locks (`IN_PROGRESS`).
 **Starting commit:** T-055 bookkeeping commit following `9e7bf04aaab0870386b9dd075515cdb60244b3d6`.
 **Last completed task:** T-055 — deterministic TMDB matching, commit `9e7bf04aaab0870386b9dd075515cdb60244b3d6`.
 **Last verification:** PHP regression `35387700115` passed for T-055.
-**Next action:** define reviewed TMDB field import, provenance, difference preview, and manual-lock preservation contracts for T-056.
+**Next action:** make reviewed TMDB field import, provenance, difference preview, and lock contracts pass.
 
 ## 1. Confirmed product direction
 
