@@ -46,10 +46,13 @@ jobs:
           php -l application/common/util/VodWorkflow.php
           php -l application/common/util/VodPlaybackCodec.php
           php -l application/common/util/VodExtensionService.php
+          php -l application/common/util/ContentJobRepository.php
           php -l application/common/model/VodExt.php
           php -l application/common/model/MetaTerm.php
           php -l application/common/model/VodMetaTerm.php
           php -l application/common/model/VodFieldState.php
+          php -l application/common/model/ContentJob.php
+          php -l application/common/model/ContentJobRun.php
           php -l application/common/model/Vod.php
           php -l application/common/model/Collect.php
           php -l application/command/MaccmsMigrate.php

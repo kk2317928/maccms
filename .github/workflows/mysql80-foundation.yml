@@ -61,7 +61,7 @@ jobs:
           set -e
           echo "$output"
           test "$status" -eq 0
-          grep -q 'done, applied=1, skipped=0' <<< "$output"
+          grep -q 'done, applied=2, skipped=0' <<< "$output"
       - name: Second migration run is a no-op
         run: |
           set +e
@@ -70,6 +70,6 @@ jobs:
           set -e
           echo "$output"
           test "$status" -eq 0
-          grep -q 'done, applied=0, skipped=1' <<< "$output"
+          grep -q 'done, applied=0, skipped=2' <<< "$output"
       - name: Verify MySQL 8.0 schema invariants
         run: php tests/integration/mysql_foundation.php
