@@ -12,9 +12,9 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-00 — repository reset and master planning.  
 **Active checkpoint:** CP-01 — existing-capability reconciliation and regression baseline.  
-**Active task:** none; select the first `READY` task in `tasks.md`.  
+**Active task:** T-010 — record reproducible source inventory.  
 **Last verified remote commit before this document task:** `7059ec9a7846a9ca5df36d8bfebd0729d6730904`.  
-**Next action:** execute T-010, record a source inventory snapshot, then commit and push it.
+**Next action:** complete T-010 RED/GREEN verification through GitHub Actions because the local runtime has no PHP interpreter.
 
 ## 1. Confirmed product direction
 
@@ -163,4 +163,3 @@ Result: <pass/fail and concise evidence>
 Next action: <one exact action>
 Blocker: <none or explicit requirement>
 ```
-

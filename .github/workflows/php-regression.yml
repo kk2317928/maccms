@@ -1,0 +1,26 @@
+name: PHP regression
+
+on:
+  push:
+    branches:
+      - feature/headless-ai-v1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          coverage: none
+      - name: PHP syntax
+        run: php -l tests/regression/source_inventory.php
+      - name: Source inventory
+        run: php tests/regression/source_inventory.php
+      - name: Existing user registration regression
+        run: php tests/regression/user_register_validate.php

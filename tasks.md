@@ -52,7 +52,7 @@ Do not mark a task `DONE` with a future or local-only SHA. A checkpoint complete
 
 ## CP-01 — Existing-capability reconciliation and regression baseline
 
-### T-010 Record reproducible source inventory — `READY`
+### T-010 Record reproducible source inventory — `IN_PROGRESS`
 
 **Goal:** Make codebase shape changes visible without rescanning the repository manually.
 
@@ -62,6 +62,7 @@ Do not mark a task `DONE` with a future or local-only SHA. A checkpoint complete
 - Modify: `tests/regression/run_baseline.php` if created by this task
 - Modify: `CURRENT_STATE.md`
 - Modify: `tasks.md`
+- Create: `.github/workflows/php-regression.yml` (PHP 8.1 verification because the current Work runtime has no PHP interpreter)
 
 **Actions:**
 
@@ -388,10 +389,9 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 ```text
 Checkpoint: CP-01
 Next task: T-010
-Task status: READY
+Task status: IN_PROGRESS
 Required starting state: clean feature/headless-ai-v1 at latest remote commit
 First command after checkout: php -v
 Task commit: test: capture maccms source inventory baseline
 Push required: yes, immediately after task verification
 ```
-
