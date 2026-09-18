@@ -418,7 +418,7 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - GREEN: PHP 8.1 regression run `35348332053` and MySQL 5.7 run `35348332012` passed.
 - The database run verified first-run `applied=1, skipped=0`, second-run `applied=0, skipped=1`, one checksummed ledger row, and all four InnoDB/utf8mb4 extension tables and indexes.
 
-### T-031 Verify migrations on MySQL 8.0 — `READY`
+### T-031 Verify migrations on MySQL 8.0 — `IN_PROGRESS`
 
 - Requires a separate explicitly named disposable database.
 - Commit evidence: `test: verify foundation on mysql 8.0`

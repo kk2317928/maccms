@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 25  
+State document version: 26  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -15,7 +15,7 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 **Active task:** T-031 — verify migrations on MySQL 8.0.  
 **Last completed task:** T-030 — MySQL 5.7 migration verification, implementation commit `a24acb7dd716bb4284c5db4c8506c0496857f4ec`.  
 **Last verification:** GitHub Actions PHP 8.1 run `35348332053` and MySQL 5.7 run `35348332012` passed; the real database run covered first apply, second-run no-op, ledger checksum, and schema invariants.  
-**Next action:** add the separate `maccms_ci_80` MySQL 8.0 workflow, run the same migration invariants, and record the exact server version.
+**Next action:** run the new `maccms_ci_80` MySQL 8.0 workflow to obtain the RED compatibility result, then parameterize the shared version assertion without weakening either database-family check.
 
 ## 1. Confirmed product direction
 
