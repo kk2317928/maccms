@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 39  
+State document version: 40  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-03 — real database and native-path verification.  
 **Active checkpoint:** CP-04 — content job queue and AI normalization.  
-**Active task:** T-046 — field precedence and manual locks (`IN_PROGRESS`).  
-**Starting commit:** `38fecdaef12f94d6fb1e63867a168022b9aaafe1`.  
-**Last completed task:** T-045 — immutable AI-run provenance and daily usage, commit `d7615bf893877de21af5f3928c8bf7958db7565b`.  
-**Last verification:** PHP regression `35372769277`, MySQL 5.7 `35372770568`, MySQL 8.0 `35372769449`, and native video `35372769363` passed for T-045.  
-**Next action:** verify the failing field-source precedence and manual-lock contract, then implement the governance service.
+**Active task:** T-047 — AI pipeline integration tests (`READY`).  
+**Starting commit:** T-046 bookkeeping commit following `4d1f27d4b4eb450033cb64b831e17770b7e43a28`.  
+**Last completed task:** T-046 — governed field precedence and manual locks, commit `4d1f27d4b4eb450033cb64b831e17770b7e43a28`.  
+**Last verification:** PHP regression `35373257715` passed for T-046.  
+**Next action:** define the failing end-to-end AI normalization pipeline contract.
 
 ## 1. Confirmed product direction
 
@@ -54,7 +54,7 @@ Upstream Composer metadata declares PHP `>=7.0`; the new programme's primary sup
 | Legacy/broad API | `application/api/controller/` | 39 controllers |
 | Public web | `application/index/controller/` | 24 controllers |
 | Shared models | `application/common/model/` | 66 models after T-045 added immutable AI-run provenance |
-| Shared services/utilities | `application/common/util/` | 84 utility/service classes after T-045 added AI-run usage accounting |
+| Shared services/utilities | `application/common/util/` | 85 utility/service classes after T-046 added governed field writes |
 | Request behaviors | `application/common/behavior/` | Security, audit, monitoring, preview and initialization hooks |
 | Upgrade schema | `application/data/update/database.php` | Large monolithic legacy upgrade script |
 | Tests | `tests/regression/` | Only `user_register_validate.php` currently exists |
