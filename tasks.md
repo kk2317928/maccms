@@ -302,13 +302,25 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - GREEN: GitHub Actions run `35343905926` passed the schema contract and complete PHP 8.1 baseline/foundation suites.
 - Contract confirms four InnoDB/utf8mb4 tables, literal `__PREFIX__`, required unique/query indexes, no foreign keys, and no competing `content_lang` table.
 
-### T-022 Add stable public IDs — `IN_PROGRESS`
+### T-022 Add stable public IDs — `DONE`
 
 - Pure collision/retry/exhaustion tests first.
 - Add `VodExt` persistence and canonical traversal cycle protection.
 - Commit: `feat: add stable video public ids`
 
-### T-023 Add workflow state machine — `TODO`
+**Implementation commits:**
+
+- `a0412f55610998c9625bb5fb8e44be474de8313d` — add the public-ID and canonical traversal RED contracts.
+- `9239f41107ae8e73392dee804f18d8f415fecad5` — add the generator, `VodExt` persistence, canonical traversal, and inventory updates.
+- `14405a0b68ce8d6efb78d78a81d4e4d554d85347` — correct the generator syntax found by the GREEN syntax gate.
+
+**Verification evidence:**
+
+- RED: GitHub Actions run `35344205411` passed syntax and all pre-existing suites, then failed at the missing public-ID implementation as expected.
+- Initial GREEN run `35344396710` exposed a parser error before tests; the isolated syntax fix was committed separately.
+- GREEN: GitHub Actions run `35344501044` passed PHP syntax, collision/retry/exhaustion, canonical chain/cycle/depth, and all baseline/foundation suites.
+
+### T-023 Add workflow state machine — `READY`
 
 - Keep it separate from `vod_status`.
 - Test every allowed and forbidden transition.

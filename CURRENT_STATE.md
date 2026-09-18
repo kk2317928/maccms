@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 9  
+State document version: 10  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,10 +12,10 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-01 — capability reconciliation and regression baseline.  
 **Active checkpoint:** CP-02 — foundation data and compatibility code.  
-**Active task:** T-022 — add stable public IDs.  
-**Last completed task:** T-021 — foundation extension schema commit `5add8f640e6825b3aaf8f78d5b500672b92dbe9f`.  
-**Last verification:** T-022 RED run `35344205411` passed syntax and all pre-existing suites, then failed at the new public-ID foundation contract as expected.  
-**Next action:** verify and push the T-022 GREEN implementation for stable six-character public IDs, persistence and canonical traversal protection.
+**Active task:** none; T-023 is READY.  
+**Last completed task:** T-022 — stable public IDs, ending at syntax-fix commit `14405a0b68ce8d6efb78d78a81d4e4d554d85347`.  
+**Last verification:** GitHub Actions PHP 8.1 run `35344501044` passed syntax and the complete baseline/foundation suites.  
+**Next action:** start T-023 test-first by defining every allowed and forbidden processing-workflow transition independently of `vod_status`.
 
 ## 1. Confirmed product direction
 
@@ -141,6 +141,7 @@ Absence was established by repository text search against the pinned snapshot. I
 | Baseline regression runner | PASS | PHP 8.1 run `35339024233`; deterministic order and first-failure propagation contract passed |
 | Source inventory regression | PASS | PHP 8.1 run `35339024233` |
 | Existing registration regression | PASS | PHP 8.1 run `35339024233` |
+| Stable public ID foundation | PASS | PHP 8.1 run `35344501044`; generator and canonical traversal contracts passed |
 | Fresh install MySQL 5.7 | UNVERIFIED | CP-02/CP-03 gate |
 | Fresh install MySQL 8.0 | UNVERIFIED | CP-02/CP-03 gate |
 | Native admin video write | UNVERIFIED | CP-01 baseline task |
