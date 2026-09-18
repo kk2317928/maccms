@@ -2,4 +2,5 @@
 <?php
 
 define('APP_PATH', __DIR__ . '/application/');
+define('ENTRANCE', 'command');
 require __DIR__ . '/thinkphp/console.php';
