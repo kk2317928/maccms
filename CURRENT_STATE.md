@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 33  
+State document version: 34  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,10 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-03 — real database and native-path verification.  
 **Active checkpoint:** CP-04 — content job queue and AI normalization.  
-**Active task:** T-041 — atomic claim, lease recovery, retry and idempotency (`IN_PROGRESS`).  
-**Last completed task:** T-040 — dedicated content-job schema and repository, commit `06c809d47cf5de07e3a46c3892f2ee56c4612fc0`.  
-**Last verification:** PHP regression `35355631036`, MySQL 5.7 `35355630985`, MySQL 8.0 `35355630926`, and native video foundation `35355630932` passed for T-040.  
-**Starting commit:** `8a2c3433e55a1b5e59c1db649546df3ce704ba75`.  
-**Next action:** verify the failing T-041 lifecycle and MySQL exclusion contracts, then add the minimum atomic queue transitions.
+**Active task:** T-042 — Cron/CLI worker budgets and heartbeat (`READY`).  
+**Last completed task:** T-041 — atomic claim, lease recovery, retry and idempotency, commits `6a47bbbae42e345dac1a208db8c8db589cb8c027` and `149b01760c9639d121fe253106a1a48dc7aa4c73`.  
+**Last verification:** PHP `35357937169`, MySQL 5.7 `35357937449`, and MySQL 8.0 `35357937262` passed for T-041.  
+**Next action:** define the failing T-042 worker budget, handler dispatch, CLI option, and heartbeat contract.
 
 ## 1. Confirmed product direction
 
