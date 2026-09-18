@@ -320,7 +320,7 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - Initial GREEN run `35344396710` exposed a parser error before tests; the isolated syntax fix was committed separately.
 - GREEN: GitHub Actions run `35344501044` passed PHP syntax, collision/retry/exhaustion, canonical chain/cycle/depth, and all baseline/foundation suites.
 
-### T-023 Add workflow state machine — `READY`
+### T-023 Add workflow state machine — `IN_PROGRESS`
 
 - Keep it separate from `vod_status`.
 - Test every allowed and forbidden transition.

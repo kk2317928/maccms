@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 10  
+State document version: 11  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,10 +12,10 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-01 — capability reconciliation and regression baseline.  
 **Active checkpoint:** CP-02 — foundation data and compatibility code.  
-**Active task:** none; T-023 is READY.  
+**Active task:** T-023 — add workflow state machine.  
 **Last completed task:** T-022 — stable public IDs, ending at syntax-fix commit `14405a0b68ce8d6efb78d78a81d4e4d554d85347`.  
 **Last verification:** GitHub Actions PHP 8.1 run `35344501044` passed syntax and the complete baseline/foundation suites.  
-**Next action:** start T-023 test-first by defining every allowed and forbidden processing-workflow transition independently of `vod_status`.
+**Next action:** push the T-023 RED transition-matrix contract, confirm its expected failure, then implement `VodWorkflow` independently of `vod_status`.
 
 ## 1. Confirmed product direction
 
