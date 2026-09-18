@@ -12,7 +12,8 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-03 — real database and native-path verification.  
 **Active checkpoint:** CP-04 — content job queue and AI normalization.  
-**Active task:** T-042 — Cron/CLI worker budgets and heartbeat (`READY`).  
+**Active task:** T-042 — Cron/CLI worker budgets and heartbeat (`IN_PROGRESS`).  
+**Starting commit:** `65786d700d22b6cdd0b0e01a7aff9340d79d795b`.  
 **Last completed task:** T-041 — atomic claim, lease recovery, retry and idempotency, commits `6a47bbbae42e345dac1a208db8c8db589cb8c027` and `149b01760c9639d121fe253106a1a48dc7aa4c73`.  
 **Last verification:** PHP `35357937169`, MySQL 5.7 `35357937449`, and MySQL 8.0 `35357937262` passed for T-041.  
 **Next action:** define the failing T-042 worker budget, handler dispatch, CLI option, and heartbeat contract.

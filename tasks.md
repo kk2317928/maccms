@@ -492,7 +492,7 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - Implementation commit: `6a47bbbae42e345dac1a208db8c8db589cb8c027`; MySQL acceptance commit: `149b01760c9639d121fe253106a1a48dc7aa4c73`.
 - GREEN evidence: PHP `35357937169`, MySQL 5.7 `35357937449`, and MySQL 8.0 `35357937262` passed.
 
-### T-042 Cron/CLI worker budgets and heartbeat — `READY`
+### T-042 Cron/CLI worker budgets and heartbeat — `IN_PROGRESS`
 ### T-043 Hardened external HTTP boundary — `TODO`
 ### T-044 AI JSON schema and validation — `TODO`
 ### T-045 AI run provenance, prompt version and usage — `TODO`
