@@ -9,6 +9,7 @@ $tests = [
     'hardened_http.php',
     'ai_normalization_validator.php',
     'ai_run_repository.php',
+    'field_governance.php',
 ];
 
 foreach ($tests as $test) {

@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 38  
+State document version: 39  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-03 — real database and native-path verification.  
 **Active checkpoint:** CP-04 — content job queue and AI normalization.  
-**Active task:** T-046 — field precedence and manual locks (`READY`).  
-**Starting commit:** T-045 bookkeeping commit following `d7615bf893877de21af5f3928c8bf7958db7565b`.  
+**Active task:** T-046 — field precedence and manual locks (`IN_PROGRESS`).  
+**Starting commit:** `38fecdaef12f94d6fb1e63867a168022b9aaafe1`.  
 **Last completed task:** T-045 — immutable AI-run provenance and daily usage, commit `d7615bf893877de21af5f3928c8bf7958db7565b`.  
 **Last verification:** PHP regression `35372769277`, MySQL 5.7 `35372770568`, MySQL 8.0 `35372769449`, and native video `35372769363` passed for T-045.  
-**Next action:** define the failing field-source precedence and manual-lock contract.
+**Next action:** verify the failing field-source precedence and manual-lock contract, then implement the governance service.
 
 ## 1. Confirmed product direction
 
