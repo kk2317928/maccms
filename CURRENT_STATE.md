@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 13  
+State document version: 14  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,10 +12,10 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-01 — capability reconciliation and regression baseline.  
 **Active checkpoint:** CP-02 — foundation data and compatibility code.  
-**Active task:** none; T-024 is READY.  
+**Active task:** T-024 — add lossless playback codec.  
 **Last completed task:** T-023 — workflow state machine commit `30fe98116456ad5b9ae2898fa18e0eda5198565c`.  
 **Last verification:** GitHub Actions PHP 8.1 run `35344911819` passed syntax and the complete baseline/foundation suites.  
-**Next action:** start T-024 test-first with lossless native playback decode/encode/merge fixtures and validation boundaries.
+**Next action:** push the T-024 RED codec contract, confirm its expected failure, then implement exact decode/encode/merge semantics.
 
 ## 1. Confirmed product direction
 

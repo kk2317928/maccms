@@ -9,6 +9,7 @@ $tests = [
     'public_id_generator.php',
     'vod_ext_public_id.php',
     'vod_workflow.php',
+    'vod_playback_codec.php',
 ];
 
 foreach ($tests as $test) {

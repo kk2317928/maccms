@@ -336,7 +336,7 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - RED: GitHub Actions run `35344769008` passed syntax and all pre-existing suites, then failed at the missing workflow implementation as expected.
 - GREEN: GitHub Actions run `35344911819` passed all 81 state-pair checks, unknown-state/retry rejection, PHP syntax, and the complete baseline/foundation suites.
 
-### T-024 Add lossless playback codec — `READY`
+### T-024 Add lossless playback codec — `IN_PROGRESS`
 
 - Test all native delimiters, empty records, unsafe schemes, round trip, and deterministic merge.
 - Commit: `feat: add lossless video playback codec`
