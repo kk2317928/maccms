@@ -7,6 +7,8 @@ defined('ROOT_PATH') or define('ROOT_PATH', $root . DIRECTORY_SEPARATOR);
 defined('APP_PATH') or define('APP_PATH', ROOT_PATH . 'application' . DIRECTORY_SEPARATOR);
 require ROOT_PATH . 'thinkphp/base.php';
 require ROOT_PATH . 'thinkphp/helper.php';
+require_once APP_PATH . 'common/model/Base.php';
+require_once APP_PATH . 'common/model/VodExt.php';
 
 function canonical_public_id_assert($condition, $message)
 {
