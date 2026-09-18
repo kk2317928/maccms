@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 44
+State document version: 45
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-04 — content job queue and AI normalization.  
 **Active checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.  
-**Active task:** T-051 — different-work decisions and candidate invalidation (`READY`).
-**Starting commit:** T-050 bookkeeping commit following `8ac4a1951458cdcf21395c604efdcb20cfd41112`.
+**Active task:** T-051 — different-work decisions and candidate invalidation (`IN_PROGRESS`).
+**Starting commit:** `16154e5482c812e4caef2a5d2816afbdcac382f3`.
 **Last completed task:** T-050 — duplicate candidate schema and deterministic scoring, commit `8ac4a1951458cdcf21395c604efdcb20cfd41112`.
 **Last verification:** PHP regression `35377005776`, MySQL 5.7 `35377005526`, MySQL 8.0 `35377005625`, and native video `35377005595` passed for T-050.
-**Next action:** define the failing permanent different-work decision and stale-candidate invalidation contract for T-051.
+**Next action:** verify the failing permanent different-work decision and stale-candidate invalidation contract, then implement it.
 
 ## 1. Confirmed product direction
 

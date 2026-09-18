@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-$tests = ['duplicate_candidate_scoring.php'];
+$tests = ['duplicate_candidate_scoring.php', 'duplicate_candidate_decisions.php'];
 foreach ($tests as $test) {
     fwrite(STDOUT, "RUN: {$test}\n");
     passthru(escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg(__DIR__ . '/' . $test), $exitCode);
