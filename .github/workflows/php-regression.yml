@@ -55,6 +55,7 @@ jobs:
           php -l tests/regression/duplicate_tmdb_suite_contract.php
           php -l tests/regression/run_duplicate_tmdb.php
           php -l tests/regression/content_admin_security.php
+          php -l tests/regression/content_workspace_dashboard.php
           php -l tests/regression/run_admin.php
           php -l tests/regression/run_ai_jobs.php
           php -l tests/integration/mysql_foundation.php

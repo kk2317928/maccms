@@ -12,8 +12,8 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.
 **Active checkpoint:** CP-06 — intelligent-content administration.
-**Active task:** T-061 — dashboard metrics, queue health and Cron heartbeat (`READY`).
-**Starting commit:** T-060 bookkeeping commit following `a9d072693f5a4078810cdebb05ced1c7cc7fe0cc`.
+**Active task:** T-061 — dashboard metrics, queue health and Cron heartbeat (`IN_PROGRESS`).
+**Starting commit:** `d6a7008720514d00453dce36f3068ec9b10469e7`.
 **Last completed task:** T-060 — granular permissions and immutable audit events, commit `a9d072693f5a4078810cdebb05ced1c7cc7fe0cc`.
 **Last verification:** PHP regression `35391110548`, MySQL 5.7 `35391110547`, MySQL 8.0 `35391110450`, and native video `35390914302` passed for T-060.
 **Next action:** define dashboard counts, queue age/depth, success/failure rate, budget usage, rate-limit and Cron-heartbeat contracts for T-061.
