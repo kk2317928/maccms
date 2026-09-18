@@ -32,14 +32,31 @@ class ContentWorkspaceDashboard
         $from = $now - 86400;
         $dayFrom = intdiv($now, 86400) * 86400;
         $workers = $this->normalizeWorkers($this->readWorkerHeartbeats(), $now, $heartbeatStale);
+        $workflow = $this->normalizeWorkflow($this->readWorkflowCounts());
+        $workflowRows = [];
+        foreach ($workflow as $state => $total) {
+            $workflowRows[] = ['state' => $state, 'total' => $total];
+        }
         return [
             'generated_at' => $now,
-            'workflow' => $this->normalizeWorkflow($this->readWorkflowCounts()),
+            'workflow' => $workflow,
+            'workflow_rows' => $workflowRows,
             'queue' => $this->normalizeQueue($this->readQueueSummary($now), $now, $queueStale),
             'runs' => $this->normalizeRuns($this->readRunSummary($from, $now)),
             'budget' => $this->normalizeBudget($this->readAiUsage($dayFrom, $dayFrom + 86400), $budgetLimit),
             'workers' => $workers,
             'cron' => $this->cronSummary($workers),
+        ];
+    }
+
+    public static function optionsFromConfig(array $config): array
+    {
+        $ai = is_array($config['ai_content'] ?? null) ? $config['ai_content'] : [];
+        $workspace = is_array($config['content_workspace'] ?? null) ? $config['content_workspace'] : [];
+        return [
+            'daily_budget_micros' => max(0, (int) ($ai['daily_budget_micros'] ?? 0)),
+            'heartbeat_stale_seconds' => max(1, (int) ($workspace['heartbeat_stale_seconds'] ?? 300)),
+            'queue_stale_seconds' => max(1, (int) ($workspace['queue_stale_seconds'] ?? 300)),
         ];
     }
 
@@ -54,7 +71,8 @@ class ContentWorkspaceDashboard
             "COALESCE(SUM(CASE WHEN status='queued' THEN 1 ELSE 0 END),0) AS queued,"
             . "COALESCE(SUM(CASE WHEN status='running' THEN 1 ELSE 0 END),0) AS running,"
             . "COALESCE(SUM(CASE WHEN status='failed' THEN 1 ELSE 0 END),0) AS failed,"
-            . "MIN(CASE WHEN status='queued' AND next_run_at<=" . $now . ' THEN next_run_at ELSE NULL END) AS oldest_ready_at'
+            . "MIN(CASE WHEN status='queued' AND next_run_at<=" . $now . ' THEN next_run_at '
+            . "WHEN status='running' AND lock_expires_at<=" . $now . ' THEN lock_expires_at ELSE NULL END) AS oldest_runnable_at'
         )->find();
         return $row ?: [];
     }
@@ -98,7 +116,7 @@ class ContentWorkspaceDashboard
     {
         $queued = (int) ($row['queued'] ?? 0);
         $running = (int) ($row['running'] ?? 0);
-        $oldest = (int) ($row['oldest_ready_at'] ?? 0);
+        $oldest = (int) ($row['oldest_runnable_at'] ?? 0);
         $age = $oldest > 0 ? max(0, $now - $oldest) : 0;
         return [
             'queued' => $queued,
@@ -152,7 +170,7 @@ class ContentWorkspaceDashboard
                 'processed' => (int) ($row['processed'] ?? 0),
                 'last_seen_at' => $lastSeen,
                 'age_seconds' => $age,
-                'health' => $lastSeen > 0 && $age <= $staleSeconds ? 'healthy' : 'stale',
+                'health' => $lastSeen > 0 && $age <= $staleSeconds && (string) ($row['status'] ?? '') !== 'stopped' ? 'healthy' : 'stale',
             ];
         }
         return $workers;
@@ -167,7 +185,7 @@ class ContentWorkspaceDashboard
             }
         }
         $stale = count($workers) - $healthy;
-        $health = !$workers ? 'missing' : ($stale === 0 ? 'healthy' : ($healthy === 0 ? 'critical' : 'warning'));
+        $health = !$workers ? 'missing' : ($healthy > 0 ? 'healthy' : 'critical');
         return ['workers' => count($workers), 'healthy' => $healthy, 'stale' => $stale, 'health' => $health];
     }
 }

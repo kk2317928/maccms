@@ -67,6 +67,7 @@ jobs:
           php -l application/common/util/VodExtensionService.php
           php -l application/common/util/ContentJobRepository.php
           php -l application/common/util/ContentJobWorker.php
+          php -l application/common/util/ContentJobFailure.php
           php -l application/common/util/ExternalHttpPolicy.php
           php -l application/common/util/HardenedHttpClient.php
           php -l application/common/util/AiNormalizationValidator.php

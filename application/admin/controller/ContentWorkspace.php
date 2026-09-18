@@ -14,13 +14,9 @@ class ContentWorkspace extends Base
 
     public function view()
     {
-        $config = config('maccms.content_workspace');
+        $config = config('maccms');
         $config = is_array($config) ? $config : [];
-        $snapshot = (new ContentWorkspaceDashboard())->snapshot([
-            'daily_budget_micros' => max(0, (int) ($config['daily_budget_micros'] ?? 0)),
-            'heartbeat_stale_seconds' => max(1, (int) ($config['heartbeat_stale_seconds'] ?? 300)),
-            'queue_stale_seconds' => max(1, (int) ($config['queue_stale_seconds'] ?? 300)),
-        ]);
+        $snapshot = (new ContentWorkspaceDashboard())->snapshot(ContentWorkspaceDashboard::optionsFromConfig($config));
 
         $this->assign('dashboard', $snapshot);
         $this->assign('workflow_labels', [

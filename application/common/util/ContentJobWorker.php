@@ -55,10 +55,13 @@ class ContentJobWorker
                     $failed++;
                 }
             } catch (Throwable $exception) {
-                $class = $exception instanceof JsonException ? 'payload_invalid' : 'handler_error';
+                $class = $exception instanceof JsonException ? 'payload_invalid'
+                    : ($exception instanceof ContentJobFailure ? $exception->errorClass() : 'handler_error');
+                $summary = $exception instanceof ContentJobFailure ? $exception->safeSummary()
+                    : ($class === 'payload_invalid' ? 'Job payload is invalid.' : 'Job handler failed.');
                 $this->repository->fail(
                     (int) $job['job_id'], $workerId, $class,
-                    $class === 'payload_invalid' ? 'Job payload is invalid.' : 'Job handler failed.',
+                    $summary,
                     $this->now()
                 );
                 $failed++;

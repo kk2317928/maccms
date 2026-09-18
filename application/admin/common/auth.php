@@ -2567,7 +2567,7 @@ return array (
     'icon' => 'xe62a',
     'sub' =>
     array (
-      160 => array ('show' => 0, 'name' => '--查看工作區', 'controller' => 'content_workspace', 'action' => 'view'),
+      160 => array ('show' => 1, 'name' => '工作區', 'controller' => 'content_workspace', 'action' => 'view'),
       161 => array ('show' => 0, 'name' => '--執行 AI', 'controller' => 'content_workspace', 'action' => 'run_ai'),
       162 => array ('show' => 0, 'name' => '--執行 TMDB', 'controller' => 'content_workspace', 'action' => 'run_tmdb'),
       163 => array ('show' => 0, 'name' => '--內容審核', 'controller' => 'content_workspace', 'action' => 'review'),

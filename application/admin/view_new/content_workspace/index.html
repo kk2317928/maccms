@@ -10,17 +10,17 @@
     <h2 style="margin-bottom:15px;">智能內容工作區</h2>
 
     <div class="workspace-grid">
-        {volist name="dashboard.workflow" id="count" key="state"}
-        <div class="workspace-card"><div>{$workflow_labels[$state]|default=$state}</div><div class="workspace-value">{$count}</div></div>
+        {volist name="dashboard.workflow_rows" id="workflow"}
+        <div class="workspace-card"><div>{$workflow_labels[$workflow['state']]|default=$workflow['state']}</div><div class="workspace-value">{$workflow.total}</div></div>
         {/volist}
     </div>
 
     <div class="workspace-grid">
         <div class="workspace-card"><div>佇列深度</div><div class="workspace-value">{$dashboard.queue.depth}</div><div>等待 {$dashboard.queue.queued}／執行中 {$dashboard.queue.running}</div></div>
-        <div class="workspace-card"><div>最舊待執行工作</div><div class="workspace-value health-{$dashboard.queue.health}">{$dashboard.queue.oldest_age_seconds}s</div><div>永久失敗 {$dashboard.queue.failed}</div></div>
-        <div class="workspace-card"><div>24 小時成功率</div><div class="workspace-value">{$dashboard.runs.success_rate}%</div><div>成功 {$dashboard.runs.succeeded}／失敗 {$dashboard.runs.failed}</div></div>
+        <div class="workspace-card"><div>最舊待執行工作</div><div class="workspace-value health-{$dashboard.queue.health}">{$dashboard.queue.oldest_age_seconds}s</div><div>{$dashboard.queue.health}／永久失敗 {$dashboard.queue.failed}</div></div>
+        <div class="workspace-card"><div>24 小時成功率</div><div class="workspace-value">{$dashboard.runs.success_rate}%</div><div>失敗率 {$dashboard.runs.failure_rate}%（{$dashboard.runs.failed} 次）</div></div>
         <div class="workspace-card"><div>外部限流失敗</div><div class="workspace-value">{$dashboard.runs.rate_limit_failures}</div><div>最近 24 小時</div></div>
-        <div class="workspace-card"><div>今日 AI 用量</div><div class="workspace-value health-{$dashboard.budget.health}">{$dashboard.budget.cost_micros}</div><div>Token {$dashboard.budget.total_tokens}{if condition="$dashboard.budget.usage_percent neq null"}／{$dashboard.budget.usage_percent}%{/if}</div></div>
+        <div class="workspace-card"><div>今日 AI 用量</div><div class="workspace-value health-{$dashboard.budget.health}">{$dashboard.budget.cost_micros}</div><div>{$dashboard.budget.health}／Token {$dashboard.budget.total_tokens}{if condition="$dashboard.budget.usage_percent neq null"}／{$dashboard.budget.usage_percent}%{/if}</div></div>
         <div class="workspace-card"><div>Cron 健康狀態</div><div class="workspace-value health-{$dashboard.cron.health}">{$dashboard.cron.health}</div><div>正常 {$dashboard.cron.healthy}／異常 {$dashboard.cron.stale}</div></div>
     </div>
 
