@@ -128,7 +128,7 @@ git diff --check
 - RED: GitHub Actions run `35338906406` passed PHP syntax and failed at `Baseline runner contract` before the runner existed.
 - GREEN: GitHub Actions run `35339024233` passed the runner contract and the complete PHP 8.1 baseline suite.
 
-### T-012 Inventory overlapping subsystems — `READY`
+### T-012 Inventory overlapping subsystems — `IN_PROGRESS`
 
 **Depends on:** T-011
 
