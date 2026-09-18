@@ -16,13 +16,13 @@ class DiscoveryMigrationService extends SchemaMigrationService
 {
     private $appliedRows;
 
-    public function __construct($directory, $prefix, array $appliedRows)
+    public function __construct(string $directory, string $prefix, array $appliedRows)
     {
         parent::__construct($directory, $prefix);
         $this->appliedRows = $appliedRows;
     }
 
-    protected function appliedMigrations()
+    protected function appliedMigrations(): array
     {
         return $this->appliedRows;
     }

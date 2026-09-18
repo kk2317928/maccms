@@ -11,4 +11,5 @@
 
 return [
     'app\\command\\SeoAiGenerate',
+    'app\\command\\MaccmsMigrate',
 ];

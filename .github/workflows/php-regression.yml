@@ -28,6 +28,8 @@ jobs:
           php -l tests/regression/migration_discovery.php
           php -l tests/regression/migration_cli_contract.php
           php -l tests/regression/run_foundation.php
+          php -l application/common/util/SchemaMigrationService.php
+          php -l application/command/MaccmsMigrate.php
       - name: Baseline runner contract
         run: php tests/regression/baseline_runner_contract.php
       - name: Outbound inventory contract
