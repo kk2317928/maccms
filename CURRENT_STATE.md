@@ -12,7 +12,8 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-03 — real database and native-path verification.  
 **Active checkpoint:** CP-04 — content job queue and AI normalization.  
-**Active task:** T-044 — AI JSON schema and validation (`READY`).  
+**Active task:** T-044 — AI JSON schema and validation (`IN_PROGRESS`).  
+**Starting commit:** `f91ad52726d95f72e7f720d65ef0cae6946e0b2a`.  
 **Last completed task:** T-043 — hardened external HTTP boundary, commit `db9fca5ade0dd6cdb419ea55de2990b985aa61e4`.  
 **Last verification:** PHP regression `35367531362` passed for T-043.  
 **Next action:** define the failing normalized-title, aliases, year, type, TMDB clues, taxonomy, confidence, and reason validation contract.

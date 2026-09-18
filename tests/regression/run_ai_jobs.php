@@ -7,6 +7,7 @@ $tests = [
     'content_job_lifecycle.php',
     'content_job_worker.php',
     'hardened_http.php',
+    'ai_normalization_validator.php',
 ];
 
 foreach ($tests as $test) {
