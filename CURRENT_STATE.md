@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 42  
+State document version: 43
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-04 — content job queue and AI normalization.  
 **Active checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.  
-**Active task:** T-050 — duplicate candidate schema and deterministic scoring (`READY`).  
-**Starting commit:** T-047 bookkeeping commit following `d5b76fd4dba4933afe1879cd606cef23080e84c2`.  
+**Active task:** T-050 — duplicate candidate schema and deterministic scoring (`IN_PROGRESS`).
+**Starting commit:** `30fd1d8948b6a1a91ad226798ab92b6a03f5d72b`.
 **Last completed task:** T-047 — end-to-end AI normalization pipeline, commit `d5b76fd4dba4933afe1879cd606cef23080e84c2`.  
 **Last verification:** PHP regression `35373626629` passed for T-047.  
-**Next action:** define the failing duplicate-candidate schema and deterministic scoring contract for T-050.
+**Next action:** verify the failing duplicate-candidate persistence and five-tier deterministic scoring contract, then implement it.
 
 ## 1. Confirmed product direction
 

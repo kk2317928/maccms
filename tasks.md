@@ -529,7 +529,7 @@ Each task requires failing tests, implementation, focused verification, an immed
 
 ## CP-05 — Duplicate review, merge/restore and TMDB
 
-### T-050 Duplicate candidate schema and deterministic scoring — `READY`
+### T-050 Duplicate candidate schema and deterministic scoring — `IN_PROGRESS`
 ### T-051 Different-work decisions and candidate invalidation — `TODO`
 ### T-052 Merge snapshots and playback merge — `TODO`
 ### T-053 Canonical public-ID resolution — `TODO`

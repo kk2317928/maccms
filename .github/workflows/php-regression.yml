@@ -45,6 +45,8 @@ jobs:
           php -l tests/regression/ai_run_repository.php
           php -l tests/regression/field_governance.php
           php -l tests/regression/ai_normalization_pipeline.php
+          php -l tests/regression/duplicate_candidate_scoring.php
+          php -l tests/regression/run_duplicate_tmdb.php
           php -l tests/regression/run_ai_jobs.php
           php -l tests/integration/mysql_foundation.php
           php -l tests/integration/native_vod_paths.php
@@ -83,3 +85,5 @@ jobs:
         run: php tests/regression/run_foundation.php
       - name: AI jobs regression suite
         run: php tests/regression/run_ai_jobs.php
+      - name: Duplicate and TMDB regression suite
+        run: php tests/regression/run_duplicate_tmdb.php
