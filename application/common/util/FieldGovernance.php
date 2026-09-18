@@ -74,10 +74,22 @@ class FieldGovernance
         return $reviewedOverride || self::RANKS[$source] >= self::RANKS[$currentSource];
     }
 
+    public function inspect(int $vodId, string $field): array
+    {
+        $this->assertInput($vodId, $field, 'import', '');
+        return ['value' => $this->loadValue($vodId, $field), 'state' => $this->loadState($vodId, $field)];
+    }
+
     protected function loadState(int $vodId, string $field): ?array
     {
         $row = Db::name('vod_field_state')->where(['vod_id' => $vodId, 'field_name' => $field])->find();
         return $row ?: null;
+    }
+
+    protected function loadValue(int $vodId, string $field)
+    {
+        $table = in_array($field, self::EXT_FIELDS, true) ? 'vod_ext' : 'vod';
+        return Db::name($table)->where('vod_id', $vodId)->value($field);
     }
 
     protected function persistValue(int $vodId, string $field, $value): void
