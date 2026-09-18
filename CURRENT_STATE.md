@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 36  
+State document version: 37  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,10 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-03 — real database and native-path verification.  
 **Active checkpoint:** CP-04 — content job queue and AI normalization.  
-**Active task:** T-044 — AI JSON schema and validation (`IN_PROGRESS`).  
-**Starting commit:** `f91ad52726d95f72e7f720d65ef0cae6946e0b2a`.  
-**Last completed task:** T-043 — hardened external HTTP boundary, commit `db9fca5ade0dd6cdb419ea55de2990b985aa61e4`.  
-**Last verification:** PHP regression `35367531362` passed for T-043.  
-**Next action:** define the failing normalized-title, aliases, year, type, TMDB clues, taxonomy, confidence, and reason validation contract.
+**Active task:** T-045 — AI run provenance, prompt version and usage (`READY`).  
+**Last completed task:** T-044 — strict AI normalization validation, commit `3103631ab3ba6317b07db0561d9478bb49b23655`.  
+**Last verification:** PHP regression `35367850824` passed for T-044.  
+**Next action:** define the failing immutable AI run, response fingerprint, validation decision, token usage, and daily-budget contract.
 
 ## 1. Confirmed product direction
 
@@ -54,7 +53,7 @@ Upstream Composer metadata declares PHP `>=7.0`; the new programme's primary sup
 | Legacy/broad API | `application/api/controller/` | 39 controllers |
 | Public web | `application/index/controller/` | 24 controllers |
 | Shared models | `application/common/model/` | 65 models after T-040 added two content-job models |
-| Shared services/utilities | `application/common/util/` | 82 utility/service classes after T-043 added the shared outbound policy/client |
+| Shared services/utilities | `application/common/util/` | 83 utility/service classes after T-044 added strict AI response validation |
 | Request behaviors | `application/common/behavior/` | Security, audit, monitoring, preview and initialization hooks |
 | Upgrade schema | `application/data/update/database.php` | Large monolithic legacy upgrade script |
 | Tests | `tests/regression/` | Only `user_register_validate.php` currently exists |

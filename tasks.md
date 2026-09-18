@@ -503,8 +503,12 @@ Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. 
 - Added shared HTTPS/allowlist/DNS public-IP policy, DNS pinning, redirect revalidation, timeout and response-size limits, header validation, and secret redaction.
 - RED commit: `5a9892d2de18ba71a52299fe00be708e5feccf93`; GREEN commit: `db9fca5ade0dd6cdb419ea55de2990b985aa61e4`; PHP run `35367531362` passed.
 
-### T-044 AI JSON schema and validation — `IN_PROGRESS`
-### T-045 AI run provenance, prompt version and usage — `TODO`
+### T-044 AI JSON schema and validation — `DONE`
+
+- Added strict bounded schema validation for titles, aliases, year/type, TMDB clues, taxonomy suggestions, confidence, and reason; malformed, missing, unknown, and wrongly typed values are rejected.
+- RED commit: `46a9c192c4cd6412dfc605d5caf1f94025959dbc`; GREEN commit: `3103631ab3ba6317b07db0561d9478bb49b23655`; PHP run `35367850824` passed.
+
+### T-045 AI run provenance, prompt version and usage — `READY`
 ### T-046 Field precedence and manual locks — `TODO`
 ### T-047 AI pipeline integration tests — `TODO`
 
