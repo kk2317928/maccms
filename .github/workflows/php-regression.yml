@@ -50,6 +50,7 @@ jobs:
           php -l tests/regression/duplicate_merge.php
           php -l tests/regression/canonical_public_id.php
           php -l tests/regression/duplicate_restore.php
+          php -l tests/regression/tmdb_matching.php
           php -l tests/regression/run_duplicate_tmdb.php
           php -l tests/regression/run_ai_jobs.php
           php -l tests/integration/mysql_foundation.php
@@ -73,6 +74,7 @@ jobs:
           php -l application/common/util/DuplicateCandidateDecisionService.php
           php -l application/common/util/DuplicateMergeService.php
           php -l application/common/util/DuplicateRestoreService.php
+          php -l application/common/util/TmdbMatchService.php
           php -l application/common/model/VodExt.php
           php -l application/common/model/MetaTerm.php
           php -l application/common/model/VodMetaTerm.php

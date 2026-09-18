@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-04 — content job queue and AI normalization.  
 **Active checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.  
-**Active task:** T-055 — TMDB search/candidate scoring/manual ID/no-match (`READY`).
+**Active task:** T-055 — TMDB search/candidate scoring/manual ID/no-match (`IN_PROGRESS`).
 **Starting commit:** T-054 bookkeeping commit following `8421e86fcf9b4a5364beb7b5253e7468aff945b1`.
 **Last completed task:** T-054 — authorized conflict-aware restoration, commit `8421e86fcf9b4a5364beb7b5253e7468aff945b1`.
 **Last verification:** PHP regression `35387273739` passed for T-054.
-**Next action:** define deterministic TMDB search ordering, candidate scoring, manual-ID lookup, and explicit no-match contracts for T-055.
+**Next action:** make deterministic TMDB matching, manual-ID lookup, and no-match contracts pass.
 
 ## 1. Confirmed product direction
 
