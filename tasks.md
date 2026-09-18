@@ -92,7 +92,7 @@ git diff --check
 - RED: GitHub Actions run `35335533101` failed only with `Source inventory document is missing.`
 - GREEN: GitHub Actions run `35335644796` passed on PHP 8.1, including `source_inventory.php` and `user_register_validate.php`.
 
-### T-011 Build the baseline regression runner — `IN_PROGRESS`
+### T-011 Build the baseline regression runner — `DONE`
 
 **Depends on:** T-010
 
@@ -118,7 +118,17 @@ git diff --check
 
 **Commit:** `test: add repeatable baseline regression runner`
 
-### T-012 Inventory overlapping subsystems — `TODO`
+**Implementation commits:**
+
+- `8cedf9e9782cfa0eafeedd3bed4d7e092e39b7c5` — add the runner behavior contract and record T-011 in progress.
+- `cdc337d73c889ee334129c01183aff3b39d055c5` — implement the deterministic runner and document its database-free scope.
+
+**Verification evidence:**
+
+- RED: GitHub Actions run `35338906406` passed PHP syntax and failed at `Baseline runner contract` before the runner existed.
+- GREEN: GitHub Actions run `35339024233` passed the runner contract and the complete PHP 8.1 baseline suite.
+
+### T-012 Inventory overlapping subsystems — `READY`
 
 **Depends on:** T-011
 
