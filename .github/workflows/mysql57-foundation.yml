@@ -51,13 +51,21 @@ jobs:
         run: php -l tests/integration/mysql_foundation.php
       - name: First migration run
         run: |
-          output=$(php think maccms:migrate)
+          set +e
+          output=$(php think maccms:migrate 2>&1)
+          status=$?
+          set -e
           echo "$output"
+          test "$status" -eq 0
           grep -q 'done, applied=1, skipped=0' <<< "$output"
       - name: Second migration run is a no-op
         run: |
-          output=$(php think maccms:migrate)
+          set +e
+          output=$(php think maccms:migrate 2>&1)
+          status=$?
+          set -e
           echo "$output"
+          test "$status" -eq 0
           grep -q 'done, applied=0, skipped=1' <<< "$output"
       - name: Verify MySQL 5.7 schema invariants
         run: php tests/integration/mysql_foundation.php
