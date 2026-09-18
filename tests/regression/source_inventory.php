@@ -19,8 +19,8 @@ function inventory_php_count($directory)
 
 function inventory_line_count($path)
 {
-    $lines = @file($path);
-    return is_array($lines) ? count($lines) : -1;
+    $content = @file_get_contents($path);
+    return is_string($content) ? substr_count($content, "\n") : -1;
 }
 
 $requiredFiles = [
