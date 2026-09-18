@@ -554,10 +554,12 @@ Each task requires failing tests, implementation, focused verification, an immed
 - Added exact restore permission and confirmation gates, snapshot hash verification, deterministic expected-post-merge comparison, atomic rollback on conflicts, candidate reopening, and immutable actor/timestamp restoration audit fields.
 - RED commit: `1d7faa223ab5795597916977f8e0f4d4d0e4c96e`; GREEN commit: `8421e86fcf9b4a5364beb7b5253e7468aff945b1`; PHP run `35387273739` passed.
 
-### T-055 TMDB search/candidate scoring/manual ID/no-match — `IN_PROGRESS`
+### T-055 TMDB search/candidate scoring/manual ID/no-match — `DONE`
 
-- RED: define locale-aware ordered search, deterministic multi-signal scoring, review-only high-confidence preselection, manual-ID fetch, and explicit no-match contracts.
-### T-056 TMDB field import with provenance and locks — `TODO`
+- Added ordered and deduplicated original/English/Traditional/Simplified/alias searches, deterministic title/year/type/region/people scoring, review-only unique high-confidence preselection, exact manual-ID fetch, and explicit no-match results.
+- RED commit: `0e26b77ab134e0ddda99ee2801ef6355f723d71c`; GREEN commit: `9e7bf04aaab0870386b9dd075515cdb60244b3d6`; PHP run `35387700115` passed.
+
+### T-056 TMDB field import with provenance and locks — `READY`
 ### T-057 End-to-end duplicate/TMDB regression suite — `TODO`
 
 No task may introduce automatic merge.
