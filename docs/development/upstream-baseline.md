@@ -20,9 +20,12 @@ php tests/regression/run_baseline.php
 The runner records the active PHP version, then executes these scripts in a fixed order and stops at the first nonzero exit:
 
 1. `tests/regression/source_inventory.php`
-2. `tests/regression/user_register_validate.php`
+2. `tests/regression/outbound_inventory.php`
+3. `tests/regression/user_register_validate.php`
 
-GitHub Actions runs the same command on PHP 8.1. This baseline covers source structure and the existing user-registration validation regression only. It does not connect to MySQL, boot an HTTP server, or prove any manual admin, collection, playback, or API flow.
+GitHub Actions runs the same command on PHP 8.1. This baseline covers source structure, the static/quarantined outbound inventory and the existing user-registration validation regression. It does not connect to MySQL, boot an HTTP server, or prove any manual admin, collection, playback, or API flow.
+
+The repeatable manual procedure is `docs/testing/native-smoke-checklist.md`. Results remain `UNVERIFIED`/`NOT_RUN` until appended with an explicitly named disposable environment and exact runtime/database versions.
 
 ## Baseline verification still required
 
@@ -31,6 +34,6 @@ GitHub Actions runs the same command on PHP 8.1. This baseline covers source str
 - Native collection insert and update.
 - Member registration/login.
 - Native playback parsing and rendering.
-- Inventory of all default outbound hosts and triggers.
+- Runtime network-capture verification of default outbound triggers.
 
 Results must be appended here with the exact PHP version, database version, command or manual flow, result, and date. Unverified items must not be reported as passing.

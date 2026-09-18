@@ -216,7 +216,7 @@ Expected at this checkpoint: inventory succeeds; prohibited-endpoint enforcement
 - GREEN: GitHub Actions run `35341433065` passed PHP syntax, the outbound contract and the complete baseline suite.
 - Report mode succeeds with the official update endpoint marked `QUARANTINED`; enforcement mode returns nonzero with `PROHIBITED` while removal remains scheduled for CP-09.
 
-### T-014 Record native smoke-test procedure — `READY`
+### T-014 Record native smoke-test procedure — `IN_PROGRESS`
 
 **Depends on:** T-013
 

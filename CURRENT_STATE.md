@@ -12,7 +12,7 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 
 **Last completed checkpoint:** CP-00 — repository reset and master planning.  
 **Active checkpoint:** CP-01 — existing-capability reconciliation and regression baseline.  
-**Active task:** none; T-014 is the next `READY` task.  
+**Active task:** T-014 — record native smoke-test procedure.  
 **Last completed task:** T-013 — outbound inventory implementation commit `37a909705aeade67c8d28efecc30ca7277c32384`.  
 **Last verification:** GitHub Actions PHP 8.1 run `35341433065` passed the outbound contract and complete baseline suite.  
 **Next action:** execute T-014, record native smoke-test procedures honestly as unverified, and close CP-01 before foundation implementation.
