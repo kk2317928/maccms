@@ -30,7 +30,8 @@ $cases = [
 ];
 foreach ($cases as $action => $permission) {
     try { $policy->assertAllowed($action, []); security_assert(false, "{$action} must default deny."); } catch (RuntimeException $exception) {}
-    security_assert($policy->assertAllowed($action, [$permission]) === true, "{$action} must require its exact permission.");
+    $confirmed = in_array($action, ['merge_restore', 'publish', 'bulk_overwrite', 'security'], true);
+    security_assert($policy->assertAllowed($action, [$permission], $confirmed) === true, "{$action} must require its exact permission.");
 }
 foreach (['merge_restore', 'publish', 'bulk_overwrite', 'security'] as $action) {
     try { $policy->assertAllowed($action, [$cases[$action]], false); security_assert(false, "{$action} must require confirmation."); } catch (RuntimeException $exception) {}
