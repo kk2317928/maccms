@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-18  
-State document version: 20  
+State document version: 21  
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -14,8 +14,8 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository has been reset to th
 **Active checkpoint:** CP-02 — foundation data and compatibility code.  
 **Active task:** T-026 — hook both native video write paths.  
 **Last completed task:** T-025 — video metadata extension services commit `76321134eaaa04d42d1f767a0caad736916257ce`.  
-**Last verification:** GitHub Actions PHP 8.1 run `35345760601` passed syntax and the complete baseline/foundation suites.  
-**Next action:** push the T-026 RED structural hook contract, confirm its expected failure, then add the three minimal post-save hooks.
+**Last verification:** T-026 RED run `35346322469` passed syntax and every pre-existing suite, then failed at the missing native persistence hooks as expected.  
+**Next action:** verify and push the T-026 GREEN admin/collection post-save hooks.
 
 ## 1. Confirmed product direction
 

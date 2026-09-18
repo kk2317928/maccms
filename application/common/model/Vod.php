@@ -8,6 +8,7 @@ use app\common\util\MeilisearchListBridge;
 use app\common\util\MeilisearchSync;
 use app\common\util\VodAuditService;
 use app\common\util\VodPublishService;
+use app\common\util\VodExtensionService;
 use app\common\validate\Vod as VodValidate;
 
 class Vod extends Base {
@@ -29,6 +30,21 @@ class Vod extends Base {
     protected $auto       = [];
     protected $insert     = [];
     protected $update     = [];
+
+    public function ensureExtension($vodId)
+    {
+        $vodId = (int) $vodId;
+        if ($vodId <= 0) {
+            return ['code'=>1002, 'msg'=>lang('save_err')];
+        }
+        try {
+            VodExtensionService::ensure($vodId);
+            return ['code'=>1, 'msg'=>lang('save_ok')];
+        } catch (\Throwable $exception) {
+            \think\Log::error('Vod extension ensure failed vod_id=' . $vodId . ' err=' . $exception->getMessage());
+            return ['code'=>1002, 'msg'=>lang('save_err')];
+        }
+    }
 
     public function countData($where)
     {
@@ -845,6 +861,10 @@ class Vod extends Base {
         $ixVodId = $seoObjId > 0 ? $seoObjId : intval($data['vod_id'] ?? 0);
         if ($ixVodId <= 0) {
             $ixVodId = intval($this->getLastInsID());
+        }
+        $extensionResult = $this->ensureExtension($ixVodId);
+        if ($extensionResult['code'] !== 1) {
+            return $extensionResult;
         }
         MeilisearchSync::afterVodSave($ixVodId);
 

@@ -66,8 +66,8 @@ foreach ($expectedCounts as $name => $expected) {
 }
 
 $lineCounts = [
-    'application/common/model/Collect.php' => 3182,
-    'application/common/model/Vod.php' => 1004,
+    'application/common/model/Collect.php' => 3192,
+    'application/common/model/Vod.php' => 1025,
     'application/common/util/OpenApiSpec.php' => 1158,
     'application/data/update/database.php' => 1520,
 ];

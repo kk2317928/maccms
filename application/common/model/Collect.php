@@ -945,9 +945,15 @@ class Collect extends Base {
                         $v = VodValidate::formatDataBeforeDb($v);
                         $vod_id = model('Vod')->insert($v, false, true);
                         if ($vod_id > 0) {
-                            $vod_search_enabled && $vod_search->checkAndUpdateTopResults(['vod_id' => $vod_id] + $v, true);
-                            $color = 'green';
-                            $des = lang('model/collect/add_ok');
+                            $extensionResult = model('Vod')->ensureExtension($vod_id);
+                            if ($extensionResult['code'] !== 1) {
+                                $color = 'red';
+                                $des = $extensionResult['msg'];
+                            } else {
+                                $vod_search_enabled && $vod_search->checkAndUpdateTopResults(['vod_id' => $vod_id] + $v, true);
+                                $color = 'green';
+                                $des = lang('model/collect/add_ok');
+                            }
                         } else {
                             $color = 'red';
                             $des = 'vod insert failed';
@@ -1202,8 +1208,12 @@ class Collect extends Base {
                             $update = VodValidate::formatDataBeforeDb($update);
                             $res = model('Vod')->where($where)->update($update);
                             $color = 'green';
-                            if ($res === false) {
-
+                            if ($res !== false && (int) $info['vod_id'] > 0) {
+                                $extensionResult = model('Vod')->ensureExtension((int) $info['vod_id']);
+                                if ($extensionResult['code'] !== 1) {
+                                    $color = 'red';
+                                    $des = $extensionResult['msg'];
+                                }
                             }
                         }
                         else{
