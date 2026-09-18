@@ -36,6 +36,7 @@ jobs:
           php -l application/common/util/SchemaMigrationService.php
           php -l application/common/util/PublicIdGenerator.php
           php -l application/common/util/VodWorkflow.php
+          php -l application/common/util/VodPlaybackCodec.php
           php -l application/common/model/VodExt.php
           php -l application/command/MaccmsMigrate.php
       - name: Baseline runner contract
