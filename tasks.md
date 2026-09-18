@@ -264,7 +264,7 @@ Checkpoint commit if needed: `docs: close capability reconciliation checkpoint`
 
 Detailed source: `docs/superpowers/plans/2026-09-18-maccms-foundation-data.md`. Reconcile exact paths against T-012 before implementation.
 
-### T-020 Add migration ledger and CLI runner — `READY`
+### T-020 Add migration ledger and CLI runner — `IN_PROGRESS`
 
 - Add pure migration-discovery/checksum tests first.
 - Add ordered SQL migration service and `maccms:migrate` command.
