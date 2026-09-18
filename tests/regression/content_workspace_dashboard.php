@@ -9,8 +9,11 @@ if (!is_file($path)) {
     exit(1);
 }
 require_once $path;
+$providerPath = $root . '/application/common/util/AiProvider.php';
+require_once $providerPath;
 
 use app\common\util\ContentWorkspaceDashboard;
+use app\common\util\AiProvider;
 
 function dashboardAssert($condition, string $message): void
 {
@@ -79,6 +82,7 @@ dashboardAssert(ContentWorkspaceDashboard::optionsFromConfig([
     'ai_content' => ['daily_budget_micros' => '2500'],
     'content_workspace' => ['heartbeat_stale_seconds' => '90', 'queue_stale_seconds' => '180'],
 ]) === ['daily_budget_micros' => 2500, 'heartbeat_stale_seconds' => 90, 'queue_stale_seconds' => 180], 'dashboard options must use the canonical AI-content budget setting.');
+dashboardAssert(AiProvider::dailyBudgetMicros(['ai_content' => ['daily_budget_micros' => '2500']]) === 2500, 'AI provider and dashboard must share one persisted daily budget.');
 
 $empty = new FixtureContentWorkspaceDashboard(static fn (): int => 1000);
 $emptySnapshot = $empty->snapshot(['daily_budget_micros' => 0]);

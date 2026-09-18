@@ -98,4 +98,13 @@ $rateWorker->run('rate-worker', 1, 30, 120);
 workerAssert($rateRepository->failed[0][1] === 'rate_limit', 'typed provider rate limits must remain observable in job-run metrics.');
 workerAssert($rateRepository->failed[0][2] === 'External provider rate limit reached.', 'typed job failures must expose only their safe summary.');
 
+$httpRepository = new WorkerFakeRepository();
+$httpRepository->jobs = [['job_id' => 5, 'job_type' => 'http-limited', 'payload_json' => '{}']];
+$httpWorker = new ContentJobWorker($httpRepository, [
+    'http-limited' => static function (): array { throw new RuntimeException('provider response must stay redacted', 429); },
+], static fn (): int => 3000);
+$httpWorker->run('http-rate-worker', 1, 30, 120);
+workerAssert($httpRepository->failed[0][1] === 'rate_limit', 'HTTP 429 exceptions must remain observable as rate limits.');
+workerAssert($httpRepository->failed[0][2] === 'External provider rate limit reached.', 'HTTP 429 details must be redacted.');
+
 fwrite(STDOUT, "OK: bounded content-job worker contract passed.\n");
