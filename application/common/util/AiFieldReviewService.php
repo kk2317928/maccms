@@ -164,9 +164,12 @@ class AiFieldReviewService
         }
         if (!is_string($value)) { throw new InvalidArgumentException('Edited title must be text.'); }
         $value = trim($value);
-        if (strlen($value) > 255 || preg_match('/[<>]|[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', $value)) { throw new InvalidArgumentException('Edited title is invalid.'); }
+        if (preg_match('/[<>]|[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', $value)) { throw new InvalidArgumentException('Edited title is invalid.'); }
         if ($field === 'vod_name' && $value === '') { throw new InvalidArgumentException('Edited video name is required.'); }
-        return function_exists('mac_filter_xss') ? mac_filter_xss($value) : trim(htmlspecialchars(strip_tags($value), ENT_QUOTES));
+        $value = function_exists('mac_filter_xss') ? mac_filter_xss($value) : trim(htmlspecialchars(strip_tags($value), ENT_QUOTES));
+        $length = function_exists('mb_strlen') ? mb_strlen($value, 'UTF-8') : strlen($value);
+        if ($length > 255) { throw new InvalidArgumentException('Edited title is too long after canonicalization.'); }
+        return $value;
     }
     private function tablePrefix(): string
     {
