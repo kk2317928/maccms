@@ -183,7 +183,7 @@ Task: T-074 Favorites/history/progress DTO and anonymous merge
 Starting commit: 326515e67b85ac6e7f4509eb9dd4c3e2f99a5cea
 Changed files: API activity utilities/controller/routes, Auth context reuse, regression/workflow/inventory docs
 Last command: GitHub workflow lookup for current head
-Result: implementation and independent review fixes pushed through e4b4ed7759b4d6e20a3153def655d1a433ed7944; no workflow run was enqueued
+Result: implementation and independent review fixes pushed through 66548ebd634d981ee7f509efdbfb729c78b197f8; no workflow run was enqueued
 Next action: trigger PHP regression on current head and resolve any failures
 Blocker: GitHub App content commits did not enqueue the push workflow and the connector exposes no workflow-dispatch action
 ```
