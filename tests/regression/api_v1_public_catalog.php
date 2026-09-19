@@ -89,8 +89,10 @@ foreach (array('vod_status','workflow_status','published','merged_into_vod_id','
     catalogTrue(strpos($predicate, $needle) !== false, 'Publication predicate missing '.$needle);
 }
 $repositorySource = file_get_contents($root.'/application/common/util/ApiV1CatalogRepository.php');
-catalogTrue(strpos($repositorySource, 'vod_play_url') === false, 'Catalog repository must not select raw playback URLs outside the episode fetch boundary.');
-$episodeMethod = substr($repositorySource, strpos($repositorySource, 'function findEpisodeData'));
+$episodeBoundary = strpos($repositorySource, 'function findEpisodeData');
+catalogTrue($episodeBoundary !== false, 'Episode repository boundary is missing.');
+catalogTrue(strpos(substr($repositorySource, 0, $episodeBoundary), 'vod_play_url') === false, 'Catalog repository must not select raw playback URLs outside the episode fetch boundary.');
+$episodeMethod = substr($repositorySource, $episodeBoundary);
 catalogTrue(strpos($episodeMethod, 'field(') !== false, 'Episode query must explicitly select playback columns.');
 
 fwrite(STDOUT, "API v1 public catalog contract passed.".PHP_EOL);
