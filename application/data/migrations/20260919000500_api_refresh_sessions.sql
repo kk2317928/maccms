@@ -1,0 +1,22 @@
+CREATE TABLE IF NOT EXISTS `{PREFIX}api_refresh_session` (
+  `refresh_id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `session_id` char(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  `family_id` char(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  `user_id` int unsigned NOT NULL,
+  `token_hash` char(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  `parent_hash` char(64) CHARACTER SET ascii COLLATE ascii_bin DEFAULT NULL,
+  `device_name` varchar(80) NOT NULL DEFAULT '',
+  `user_agent_hash` char(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '',
+  `ip_hash` char(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '',
+  `created_at` int unsigned NOT NULL,
+  `last_used_at` int unsigned NOT NULL,
+  `expires_at` int unsigned NOT NULL,
+  `consumed_at` int unsigned DEFAULT NULL,
+  `revoked_at` int unsigned DEFAULT NULL,
+  `revoke_reason` varchar(32) NOT NULL DEFAULT '',
+  PRIMARY KEY (`refresh_id`),
+  UNIQUE KEY `uk_api_refresh_token_hash` (`token_hash`),
+  KEY `idx_api_refresh_family` (`family_id`,`revoked_at`),
+  KEY `idx_api_refresh_user_session` (`user_id`,`session_id`,`created_at`),
+  KEY `idx_api_refresh_expiry` (`expires_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
