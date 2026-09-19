@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-$tests = ['content_admin_security.php', 'content_workspace_dashboard.php'];
+$tests = ['content_admin_security.php', 'content_workspace_dashboard.php', 'ai_field_review.php'];
 foreach ($tests as $test) {
     fwrite(STDOUT, "RUN: {$test}\n");
     passthru(escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg(__DIR__ . '/' . $test), $exitCode);

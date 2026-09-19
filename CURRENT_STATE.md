@@ -12,8 +12,8 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.
 **Active checkpoint:** CP-06 — intelligent-content administration.
-**Active task:** T-062 — AI field review UI (`READY`).
-**Starting commit:** T-061 final implementation commit `c00ea9dfe58e3c88cd707ef7a05b77c58b7f7ddd`.
+**Active task:** T-062 — AI field review UI (`IN_PROGRESS`).
+**Starting commit:** T-061 bookkeeping commit `0778bae841697a6de1e022ee50bbb11b77ab213d`.
 **Last completed task:** T-061 — dashboard metrics, queue health and Cron heartbeat, commit `c00ea9dfe58e3c88cd707ef7a05b77c58b7f7ddd`.
 **Last verification:** PHP regression `35394733235` passed for T-061. MySQL 5.7 `35391110547`, MySQL 8.0 `35391110450`, and native video `35390914302` remain the latest database/native evidence; T-061 added no schema or native video-path changes.
 **Next action:** define field-level before/after review, accept/edit/reject/lock, provenance and conflict-warning contracts for T-062.

@@ -585,7 +585,7 @@ No task may introduce automatic merge.
 - Extended the existing workflow, content-job, AI-run and worker-heartbeat stores with a read-only intelligent-content dashboard. It reports all workflow-state counts, runnable queue depth/age including expired leases, 24-hour success/failure and provider-rate-limit metrics, UTC daily token/cost budget health, and active Cron heartbeat health. The native `content_workspace/view` permission controls a visible `view_new` entry; AI budget configuration and zero-as-unlimited enforcement now share one persisted contract, while provider HTTP 429 failures remain redacted and observable.
 - RED commit: `e2fa8d972b909c94ce4abf2a125c5f7e3029766c`; GREEN/final fix commit: `c00ea9dfe58e3c88cd707ef7a05b77c58b7f7ddd`; PHP run `35394733235` passed. Reuse decision: extend the existing queue, AI-run, workflow and heartbeat tables; no parallel dashboard schema or migration was added.
 
-### T-062 AI field review UI — `READY`
+### T-062 AI field review UI — `IN_PROGRESS`
 ### T-063 Duplicate comparison, merge and restore UI — `TODO`
 ### T-064 TMDB candidate and manual-match UI — `TODO`
 ### T-065 Final validation/publication UI — `TODO`
