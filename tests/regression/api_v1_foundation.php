@@ -44,6 +44,8 @@ $required = array(
     'application/common/util/ApiV1RequestId.php',
     'application/common/util/ApiV1Pagination.php',
     'application/common/util/ApiV1Response.php',
+    'application/common/util/ApiV1Bootstrap.php',
+    'application/common/exception/ApiV1ExceptionHandler.php',
     'application/api/controller/v1/Base.php',
     'application/api/controller/v1/Index.php',
 );
@@ -56,11 +58,13 @@ require_once $root . '/application/common/util/ApiV1AllowlistDto.php';
 require_once $root . '/application/common/util/ApiV1RequestId.php';
 require_once $root . '/application/common/util/ApiV1Pagination.php';
 require_once $root . '/application/common/util/ApiV1Response.php';
+require_once $root . '/application/common/util/ApiV1Bootstrap.php';
 
 use app\common\util\ApiV1AllowlistDto;
 use app\common\util\ApiV1Pagination;
 use app\common\util\ApiV1RequestId;
 use app\common\util\ApiV1Response;
+use app\common\util\ApiV1Bootstrap;
 
 $dto = new ApiV1AllowlistDto(
     array('public_id' => 'ABC234', 'title' => 'Example', 'vod_id' => 99),
@@ -102,6 +106,29 @@ assertTrueValue($generated !== "bad\nvalue", 'Unsafe inbound request ID must not
 $success = ApiV1Response::success(array('version' => 'v1'), 'req-1');
 assertSameValue(array('data' => array('version' => 'v1'), 'meta' => array('request_id' => 'req-1')), $success, 'Success envelope mismatch.');
 assertTrueValue(!array_key_exists('error', $success), 'Success envelope cannot contain error.');
+$reserved = ApiV1Response::success(array(), 'safe-id', array('request_id' => 'different'));
+assertSameValue('safe-id', $reserved['meta']['request_id'], 'Validated request ID must be reserved from metadata overrides.');
+
+assertSameValue(array('module' => 'api', 'path_info' => '/v1.index/index'), ApiV1Bootstrap::resolve(array(
+    'REQUEST_METHOD' => 'GET',
+    'REQUEST_URI' => '/api/v1',
+    'SCRIPT_NAME' => '/index.php',
+)), 'Clean GET probe must bind the API module.');
+assertSameValue(array('module' => 'api', 'path_info' => '/v1.index/methodNotAllowed'), ApiV1Bootstrap::resolve(array(
+    'REQUEST_METHOD' => 'POST',
+    'REQUEST_URI' => '/api/v1',
+    'SCRIPT_NAME' => '/index.php',
+)), 'Unsupported probe method must use the v1 405 action.');
+assertSameValue(array('module' => 'api', 'path_info' => '/v1.index/notFound'), ApiV1Bootstrap::resolve(array(
+    'REQUEST_METHOD' => 'GET',
+    'REQUEST_URI' => '/api/v1/nested/not-found.json',
+    'SCRIPT_NAME' => '/index.php',
+)), 'Nested and punctuated unknown paths must stay inside the v1 error boundary.');
+assertSameValue(null, ApiV1Bootstrap::resolve(array(
+    'REQUEST_METHOD' => 'GET',
+    'REQUEST_URI' => '/voddetail/1',
+    'SCRIPT_NAME' => '/index.php',
+)), 'Non-v1 requests must retain the legacy entrypoint binding.');
 
 $collection = ApiV1Response::collection(array($dto), $default, 1, 'req-2');
 assertSameValue(array('public_id' => 'ABC234', 'title' => 'Example'), $collection['data'][0], 'Collection must normalize DTOs.');
@@ -111,10 +138,19 @@ $error = ApiV1Response::error('VALIDATION_ERROR', 'Invalid request.', 'req-3', a
 assertTrueValue(!array_key_exists('data', $error), 'Error envelope cannot contain data.');
 assertSameValue('VALIDATION_ERROR', $error['error']['code'], 'Stable error code mismatch.');
 
-$route = file_get_contents($root . '/application/route.php');
-assertContainsValue("'api/v1$'", $route, 'Exact API v1 route is missing.');
-assertContainsValue("'api/v1.index/index'", $route, 'API v1 probe target is missing.');
-assertContainsValue("'api/v1/<path>'", $route, 'API v1 fallback route is missing.');
+$indexEntry = file_get_contents($root . '/index.php');
+assertContainsValue('ApiV1Bootstrap::resolve', $indexEntry, 'Public entrypoint must resolve the clean v1 boundary before binding.');
+assertContainsValue("define('BIND_MODULE', $apiV1Dispatch['module'])", $indexEntry, 'Public entrypoint must bind the resolved API module.');
+$apiEntry = file_get_contents($root . '/api.php');
+assertContainsValue('ApiV1Bootstrap::resolve', $apiEntry, 'Legacy API entrypoint must normalize v1 paths without changing other paths.');
+
+$handler = file_get_contents($root . '/application/common/exception/ApiV1ExceptionHandler.php');
+assertContainsValue('class ApiV1ExceptionHandler extends Handle', $handler, 'v1 exception handler must extend the framework handler.');
+assertContainsValue('INTERNAL_ERROR', $handler, 'v1 exception handler must emit the generic stable code.');
+assertTrueValue(strpos($handler, 'getMessage(') === false, 'v1 exception handler must not expose exception messages.');
+assertTrueValue(strpos($handler, 'getTrace') === false, 'v1 exception handler must not expose exception traces.');
+$config = file_get_contents($root . '/application/config.php');
+assertContainsValue("defined('MAC_API_V1_REQUEST')", $config, 'Global exception handler selection must be scoped to v1 requests.');
 
 $base = file_get_contents($root . '/application/api/controller/v1/Base.php');
 assertContainsValue('class Base extends \\app\\api\\controller\\Base', $base, 'v1 base must preserve API initialization.');
@@ -123,6 +159,7 @@ assertContainsValue('ApiV1Response::error', $base, 'v1 base must use the stable 
 $index = file_get_contents($root . '/application/api/controller/v1/Index.php');
 assertContainsValue("'version' => 'v1'", $index, 'v1 probe version payload is missing.');
 assertContainsValue('NOT_FOUND', $index, 'v1 fallback must use the stable not-found code.');
+assertContainsValue('METHOD_NOT_ALLOWED', $index, 'v1 probe must use the stable method-not-allowed code.');
 
 $workflow = file_get_contents($root . '/.github/workflows/php-regression.yml');
 foreach (array(
