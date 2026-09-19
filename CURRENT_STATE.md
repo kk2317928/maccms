@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-19
-State document version: 60
+State document version: 61
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.
 **Active checkpoint:** CP-06 — intelligent-content administration.
-**Active task:** T-066 — batch enqueue and failure/retry UI (`READY`).
+**Active task:** T-066 — batch enqueue and failure/retry UI (`IN_PROGRESS`).
 **Starting commit:** T-065 final commit `5d71f88fb2240c2e04746140fdb109b2154bfcab`.
 **Last completed task:** T-065 — final validation/publication UI, final commit `5d71f88fb2240c2e04746140fdb109b2154bfcab`.
 **Last verification:** PHP `35454020791`, MySQL 5.7 `35454020803`, MySQL 8.0 `35454020808` and native video `35453927974` passed publication, migration, storage-engine and existing regression contracts.
-**Next action:** define the T-066 batch enqueue, failure inspection and retry UI contract.
+**Next action:** run the RED T-066 contract; implement batch enqueue, paged failure inspection and terminal-failure retry only after the expected missing-service failure.
 
 ## 1. Confirmed product direction
 
