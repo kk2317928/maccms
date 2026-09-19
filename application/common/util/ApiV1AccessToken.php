@@ -39,6 +39,7 @@ class ApiV1AccessToken
         $claims = json_decode(self::unb64($body), true);
         $now = $now === null ? time() : (int) $now;
         if (!is_array($claims)
+            || ($claims['iss'] ?? '') !== 'maccms'
             || ($claims['aud'] ?? '') !== self::AUDIENCE
             || !ctype_digit((string) ($claims['sub'] ?? ''))
             || (int) $claims['sub'] < 1
