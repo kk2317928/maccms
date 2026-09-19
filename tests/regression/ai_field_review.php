@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 $root = dirname(__DIR__, 2);
 $migration = @file_get_contents($root . '/application/data/migrations/20260919000100_ai_field_reviews.sql') ?: '';
-foreach (['CREATE TABLE IF NOT EXISTS `__PREFIX__content_ai_field_review`', '`baseline_hash` char(64)', "DEFAULT 'pending'", 'UNIQUE KEY `uk_run_field` (`ai_run_id`,`field_name`)', 'KEY `idx_vod_decision` (`vod_id`,`decision`)'] as $needle) {
+foreach (['CREATE TABLE IF NOT EXISTS `__PREFIX__content_ai_field_review`', 'UNIQUE KEY `uk_run_field` (`ai_run_id`,`field_name`)', 'KEY `idx_vod_decision` (`vod_id`,`decision`)'] as $needle) {
     if (strpos($migration, $needle) === false) { fwrite(STDERR, "FAIL: AI field-review migration missing {$needle}\n"); exit(1); }
+}
+$baselineMigration = @file_get_contents($root . '/application/data/migrations/20260919000200_ai_field_review_baselines.sql') ?: '';
+foreach (['information_schema.COLUMNS', '`baseline_hash` char(64)', "DEFAULT 'pending'", 'PREPARE ai_review_baseline_stmt'] as $needle) {
+    if (strpos($baselineMigration, $needle) === false) { fwrite(STDERR, "FAIL: AI baseline migration missing {$needle}\n"); exit(1); }
 }
 
 foreach (['FieldGovernance.php', 'ContentAdminAudit.php', 'AiFieldReviewService.php'] as $file) {
@@ -103,6 +107,8 @@ $service->review(7, 'vod_year', 'lock', null, 55, 'reviewer');
 fieldReviewAssert($governance->values[42]['vod_year'] === 2020 && $governance->states[42]['vod_year']['is_locked'] === 1, 'lock must preserve and manually lock the current value.');
 fieldReviewAssert(count($events) === 4, 'every successful field decision must append one audit event.');
 fieldReviewAssert($events[0]['subject_public_id'] === 'ABC234', 'field-review audit events must identify videos by stable public ID.');
+$service->review(7, 'vod_name', 'edit', 'Quoted " Name', 55, 'reviewer');
+fieldReviewAssert($governance->values[42]['vod_name'] === 'Quoted &quot; Name', 'reviewed titles must use the native XSS canonicalization boundary.');
 
 $failing = new MemoryAiFieldReviewService($governance, new ContentAdminAudit(static fn (array $row): int => 0), static fn (): int => 130);
 $failing->run = $service->run;
@@ -124,6 +130,8 @@ $service->decisions['title_cn']['candidate_value_json'] = $safeCandidate;
 $missingIdentity = new MemoryAiFieldReviewService($governance, $audit, static fn (): int => 120);
 $missingIdentity->run = array_merge($service->run, ['public_id' => '']);
 try { $missingIdentity->preview(7); fieldReviewAssert(false, 'missing stable public ID must fail closed.'); } catch (RuntimeException $exception) {}
+$missingIdentity->run = array_merge($service->run, ['public_id' => '000000']);
+try { $missingIdentity->preview(7); fieldReviewAssert(false, 'non-canonical stable public ID must fail closed.'); } catch (RuntimeException $exception) {}
 
 $service->review(7, 'title_cn', 'reject', null, 55, 'reviewer');
 $service->review(7, 'title_en', 'reject', null, 55, 'reviewer');

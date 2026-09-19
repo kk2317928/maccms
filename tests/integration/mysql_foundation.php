@@ -31,7 +31,7 @@ if (strpos($version, $expectedFamily . '.') !== 0) {
 }
 
 $ledger = $pdo->query('SELECT version, checksum FROM mac_schema_migration ORDER BY version')->fetchAll(PDO::FETCH_ASSOC);
-if (count($ledger) !== 9
+if (count($ledger) !== 10
     || $ledger[0]['version'] !== '20260918000100'
     || $ledger[1]['version'] !== '20260918000200'
     || $ledger[2]['version'] !== '20260918000300'
@@ -41,6 +41,7 @@ if (count($ledger) !== 9
     || $ledger[6]['version'] !== '20260918000700'
     || $ledger[7]['version'] !== '20260918000800'
     || $ledger[8]['version'] !== '20260919000100'
+    || $ledger[9]['version'] !== '20260919000200'
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[0]['checksum'])
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[1]['checksum'])
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[2]['checksum'])
@@ -49,7 +50,8 @@ if (count($ledger) !== 9
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[5]['checksum'])
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[6]['checksum'])
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[7]['checksum'])
-    || !preg_match('/^[a-f0-9]{64}$/', $ledger[8]['checksum'])) {
+    || !preg_match('/^[a-f0-9]{64}$/', $ledger[8]['checksum'])
+    || !preg_match('/^[a-f0-9]{64}$/', $ledger[9]['checksum'])) {
     fwrite(STDERR, "FAIL: migration ledger does not contain all expected checksummed versions.\n");
     exit(1);
 }
@@ -89,6 +91,10 @@ foreach ($requiredIndexes as $table => $expectedIndexes) {
             exit(1);
         }
     }
+}
+$reviewColumns = $pdo->query("SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'mac_content_ai_field_review'")->fetchAll(PDO::FETCH_COLUMN);
+foreach (['baseline_value_json', 'baseline_hash'] as $column) {
+    if (!in_array($column, $reviewColumns, true)) { fwrite(STDERR, "FAIL: AI field review is missing {$column}.\n"); exit(1); }
 }
 
 fwrite(STDOUT, "OK: MySQL {$version} foundation migration invariants passed for {$database}.\n");
