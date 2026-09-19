@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `{PREFIX}api_refresh_session` (
+CREATE TABLE IF NOT EXISTS `__PREFIX__api_refresh_session` (
   `refresh_id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `session_id` char(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
   `family_id` char(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
