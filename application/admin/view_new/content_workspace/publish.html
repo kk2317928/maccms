@@ -23,10 +23,10 @@
     <h4 style="color:#c0392b;">發布阻擋</h4><ul>{foreach name="preview.blockers" item="message"}<li>{$message|htmlentities}</li>{/foreach}{empty name="preview.blockers"}<li>無</li>{/empty}</ul>
     <h4 style="color:#e67e22;">發布提醒</h4><ul>{foreach name="preview.warnings" item="message"}<li>{$message|htmlentities}</li>{/foreach}{empty name="preview.warnings"}<li>無</li>{/empty}</ul>
     <label><input type="checkbox" name="confirmed" id="publish-confirmed" value="1"> 我已確認預覽內容及提醒</label>
-    <button class="layui-btn layui-btn-danger" id="publish-submit" data-confirm="publish" {if condition="!$preview.publishable"}disabled{/if}>確認發布</button>
+    <button class="layui-btn layui-btn-danger" id="publish-submit" data-confirm="publish" data-revision="{$preview.ext.revision|htmlentities}" {if condition="!$preview.publishable"}disabled{/if}>確認發布</button>
     {/if}
 </div>
 {include file="../../../application/admin/view_new/public/foot" /}
 <script>
-layui.use(['layer'],function(){var layer=layui.layer;$('#publish-submit').on('click',function(){if(!$('#publish-confirmed').prop('checked')){layer.msg('請先勾選確認。');return;}layer.confirm('確定發布此影片？',function(index){layer.close(index);$.post("{:url('content_workspace/publish')}",{__token__:$('#publish-token').val(),vod_id:'{$preview.video.vod_id|default=0}',confirmed:1},function(res){if(res.code===1){location.href="{:url('content_workspace/publish')}";return;}layer.msg(res.msg||'操作失敗');});});});});
+layui.use(['layer'],function(){var layer=layui.layer;$('#publish-submit').on('click',function(){if(!$('#publish-confirmed').prop('checked')){layer.msg('請先勾選確認。');return;}var revision=$(this).data('revision');layer.confirm('確定發布此影片？',function(index){layer.close(index);$.post("{:url('content_workspace/publish')}",{__token__:$('#publish-token').val(),vod_id:'{$preview.video.vod_id|default=0}',confirmed:1,revision:revision},function(res){if(res.code===1){location.href="{:url('content_workspace/publish')}";return;}layer.msg(res.msg||'操作失敗');});});});});
 </script>

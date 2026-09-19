@@ -13,8 +13,9 @@ class FinalPublicationWorkspace
     private $videoReader;
     private $localeReader;
     private $termReader;
+    private $allowedPlaybackHosts;
 
-    public function __construct(callable $queueReader = null, callable $queueCounter = null, callable $videoReader = null, callable $localeReader = null, callable $termReader = null)
+    public function __construct(callable $queueReader = null, callable $queueCounter = null, callable $videoReader = null, callable $localeReader = null, callable $termReader = null, array $allowedPlaybackHosts = null)
     {
         $this->queueReader = $queueReader ?: static function (int $offset, int $limit): array {
             return Db::name('vod_ext')->alias('ve')->join('__VOD__ v', 'v.vod_id=ve.vod_id')
@@ -44,6 +45,13 @@ class FinalPublicationWorkspace
                 ->field('mt.term_id,mt.kind,mt.slug,mt.name_tw,mt.name_cn,mt.name_en')
                 ->where('vmt.vod_id', $vodId)->where('mt.status', 1)->order('mt.sort asc,mt.term_id asc')->select();
         };
+        if ($allowedPlaybackHosts === null) {
+            $configured = function_exists('config') ? config('maccms.playback_allowed_hosts') : [];
+            $allowedPlaybackHosts = is_array($configured) ? $configured : preg_split('/[\s,]+/', (string) $configured, -1, PREG_SPLIT_NO_EMPTY);
+        }
+        $this->allowedPlaybackHosts = array_values(array_unique(array_filter(array_map(static function ($host): string {
+            return strtolower(rtrim(trim((string) $host), '.'));
+        }, $allowedPlaybackHosts))));
     }
 
     public function queue(int $page = 1, int $pageSize = 20): array
@@ -65,12 +73,12 @@ class FinalPublicationWorkspace
         return $this->previewRow($row);
     }
 
-    public function previewRow(array $row): array
+    public function previewRow(array $row, array $rawLocales = null, array $terms = null): array
     {
         $vodId = (int) ($row['vod_id'] ?? 0);
         if ($vodId <= 0) { throw new InvalidArgumentException('Publication candidate has no video identity.'); }
-        $rawLocales = (array) call_user_func($this->localeReader, $vodId);
-        $terms = (array) call_user_func($this->termReader, $vodId);
+        $rawLocales = $rawLocales === null ? (array) call_user_func($this->localeReader, $vodId) : $rawLocales;
+        $terms = $terms === null ? (array) call_user_func($this->termReader, $vodId) : $terms;
         $taxonomy = ['region' => [], 'genre' => [], 'tag' => []];
         foreach ($terms as $term) {
             $kind = (string) ($term['kind'] ?? '');
@@ -105,7 +113,11 @@ class FinalPublicationWorkspace
             $playable = false;
             foreach ($playback as $source) {
                 foreach ($source['episodes'] as $episode) {
-                    if (trim((string) $episode['url']) !== '') { $playable = true; break 2; }
+                    $url = trim((string) $episode['url']);
+                    if ($url !== '') {
+                        $this->assertAllowedPlaybackUrl($url);
+                        $playable = true;
+                    }
                 }
             }
             if (!$playable) { $blockers[] = '缺少可播放網址。'; }
@@ -128,11 +140,40 @@ class FinalPublicationWorkspace
         if ($media['trailer'] === '') { $warnings[] = '尚未提供預告片。'; }
         if (trim((string) ($row['vod_blurb'] ?? '')) === '') { $warnings[] = '尚未提供短摘要。'; }
 
+        $revisionData = ['row' => $row, 'locales' => $rawLocales, 'terms' => $terms];
+        $this->sortRevisionData($revisionData);
+        $revision = hash('sha256', (string) json_encode($revisionData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         return [
             'video' => $row,
-            'ext' => ['public_id' => $publicId, 'workflow_status' => (string) ($row['workflow_status'] ?? ''), 'merged_into_vod_id' => (int) ($row['merged_into_vod_id'] ?? 0), 'published_at' => (int) ($row['published_at'] ?? 0)],
+            'ext' => ['public_id' => $publicId, 'workflow_status' => (string) ($row['workflow_status'] ?? ''), 'merged_into_vod_id' => (int) ($row['merged_into_vod_id'] ?? 0), 'published_at' => (int) ($row['published_at'] ?? 0), 'revision' => $revision],
             'locales' => $locales, 'taxonomy' => $taxonomy, 'media' => $media, 'playback' => $playback,
-            'blockers' => $blockers, 'warnings' => $warnings, 'publishable' => $blockers === [],
+            'blockers' => $blockers, 'warnings' => $warnings, 'publishable' => $blockers === [], 'revision' => $revision,
         ];
+    }
+
+    private function assertAllowedPlaybackUrl(string $url): void
+    {
+        $parts = parse_url($url);
+        $scheme = strtolower((string) ($parts['scheme'] ?? ''));
+        $host = strtolower(rtrim((string) ($parts['host'] ?? ''), '.'));
+        if (!is_array($parts) || !in_array($scheme, ['http', 'https'], true) || $host === '' || isset($parts['user']) || isset($parts['pass'])) {
+            throw new InvalidArgumentException('Playback URL must use an allowed HTTP scheme and host.');
+        }
+        if (!$this->allowedPlaybackHosts || !in_array($host, $this->allowedPlaybackHosts, true)) {
+            throw new InvalidArgumentException('Playback URL host is not allowlisted.');
+        }
+        if ($host === 'localhost' || (filter_var($host, FILTER_VALIDATE_IP) !== false
+            && filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false)) {
+            throw new InvalidArgumentException('Playback URL host is not public.');
+        }
+    }
+
+    private function sortRevisionData(array &$value): void
+    {
+        foreach ($value as &$item) {
+            if (is_array($item)) { $this->sortRevisionData($item); }
+        }
+        unset($item);
+        if (array_keys($value) !== range(0, count($value) - 1)) { ksort($value); }
     }
 }

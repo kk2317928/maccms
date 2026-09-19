@@ -249,7 +249,7 @@ class ContentWorkspace extends Base
                 if ($actorId === 1) { $grants[] = 'content_workspace/publish'; }
                 $confirmed = (int) ($param['confirmed'] ?? 0) === 1;
                 (new ContentAdminPolicy())->assertAllowed('publish', $grants, $confirmed);
-                $result = (new FinalPublicationService($workspace, new ContentAdminAudit()))->publish((int) ($param['vod_id'] ?? 0), $actorId, $actorName, $grants, $confirmed);
+                $result = (new FinalPublicationService($workspace, new ContentAdminAudit()))->publish((int) ($param['vod_id'] ?? 0), $actorId, $actorName, $grants, $confirmed, (string) ($param['revision'] ?? ''));
                 return json(['code' => 1, 'msg' => '發布完成。', 'data' => $result]);
             } catch (Throwable $exception) {
                 return json(['code' => 0, 'msg' => '發布未完成，請重新整理並檢查阻擋項目。']);

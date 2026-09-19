@@ -79,6 +79,9 @@ class Base extends All
         }
 
         if ($c === 'content_workspace' && $a === 'publish') {
+            if ((string)$this->_admin['admin_id'] === '1') {
+                return true;
+            }
             $authStr = ',' . strtolower((string) $this->_admin['admin_auth']) . ',';
             return strpos($authStr, ',content_workspace/publish,') !== false;
         }
