@@ -107,8 +107,8 @@ tmdbUiAssert(strpos($dashboard, 'content_workspace/tmdb_review') !== false, 'wor
 $workspaceSource = @file_get_contents($root . '/application/common/util/TmdbReviewWorkspace.php') ?: '';
 tmdbUiAssert(strpos($workspaceSource, 'orderRaw(') !== false, 'pending-first queue ordering must use ThinkPHP raw-order support.');
 tmdbUiAssert(strpos($workspaceSource, 'lockForUpdate') !== false && strpos($workspaceSource, 'lock(true)') !== false, 'selection must lock review, video and governance rows before rechecking.');
-$base = @file_get_contents($root . '/application/admin/controller/Base.php') ?: '';
-tmdbUiAssert(strpos($base, "\$a === 'tmdb_review'") !== false && strpos($base, 'content_workspace/review') !== false && strpos($base, 'content_workspace/run_tmdb') !== false, 'native route authorization must admit exact TMDB review permissions for non-superadmins.');
+$routePolicy = @file_get_contents($root . '/application/common/util/ContentAdminRoutePolicy.php') ?: '';
+tmdbUiAssert(strpos($routePolicy, "'tmdb_review'") !== false && strpos($routePolicy, 'content_workspace/review') !== false && strpos($routePolicy, 'content_workspace/run_tmdb') !== false, 'native route authorization must admit exact TMDB review permissions for non-superadmins.');
 $command = @file_get_contents($root . '/application/command/MaccmsJobs.php') ?: '';
 tmdbUiAssert(strpos($command, "\$handlers['tmdb_match']") !== false && strpos($command, "\$handlers['tmdb_manual_match']") !== false, 'Cron worker must register both TMDB review job handlers.');
 
