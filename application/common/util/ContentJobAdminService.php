@@ -26,8 +26,12 @@ class ContentJobAdminService
         callable $clock = null
     ) {
         $this->audit = $audit ?: new ContentAdminAudit();
-        $repository = new ContentJobRepository();
-        $this->enqueue = $enqueue ?: static fn (string $type, array $payload, string $key): array => $repository->enqueue($type, $payload, $key);
+        if ($enqueue !== null) {
+            $this->enqueue = $enqueue;
+        } else {
+            $repository = new ContentJobRepository();
+            $this->enqueue = static fn (string $type, array $payload, string $key): array => $repository->enqueue($type, $payload, $key);
+        }
         $this->jobPage = $jobPage ?: static function (string $type, string $status, int $offset, int $limit): array {
             $query = Db::name('content_job');
             if ($type !== '') { $query->where('job_type', $type); }
