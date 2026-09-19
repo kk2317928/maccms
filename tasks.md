@@ -645,7 +645,10 @@ Use `application/admin/view_new`; do not add a parallel obsolete `view/` tree.
 - GREEN evidence: PHP `35465825379`, MySQL 5.7 `35465825407`, MySQL 8.0 `35465825384`, native video `35465825364`.
 - Independent review found home nested-DTO serialization and empty S3-poster fallback issues; both were covered by regression tests and fixed. Summary queries also avoid loading full synopsis HTML.
 
-### T-072 Locale fallback and canonical redirects — `READY`
+### T-072 Locale fallback and canonical redirects — `IN_PROGRESS`
+
+- Approved design: `docs/superpowers/specs/2026-09-19-api-v1-locale-canonical-design.md`.
+- Execution plan: `docs/superpowers/plans/2026-09-19-api-v1-locale-canonical.md`.
 ### T-073 Access plus rotating hashed refresh sessions — `TODO`
 ### T-074 Favorites/history/progress DTO and anonymous merge — `TODO`
 ### T-075 Playback source policy and optional signing — `TODO`
