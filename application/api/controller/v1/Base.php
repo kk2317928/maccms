@@ -22,10 +22,10 @@ class Base extends \app\api\controller\Base
         return $this->jsonResponse(ApiV1Response::success($data, $requestId, $meta), $status, $requestId);
     }
 
-    protected function collectionResponse(array $items, ApiV1Pagination $pagination, $totalItems, Request $request = null)
+    protected function collectionResponse(array $items, ApiV1Pagination $pagination, $totalItems, Request $request = null, array $meta = array())
     {
         $requestId = $this->requestId($request);
-        return $this->jsonResponse(ApiV1Response::collection($items, $pagination, $totalItems, $requestId), 200, $requestId);
+        return $this->jsonResponse(ApiV1Response::collection($items, $pagination, $totalItems, $requestId, $meta), 200, $requestId);
     }
 
     protected function errorResponse($code, $message, $status, Request $request = null, array $details = array())
@@ -47,6 +47,16 @@ class Base extends \app\api\controller\Base
                 array($exception->getMessage() => 'invalid')
             );
         }
+    }
+
+    protected function canonicalRedirectResponse($canonicalPublicId, $location, Request $request = null)
+    {
+        $requestId = $this->requestId($request);
+        return json(
+            ApiV1Response::success(array('canonical_public_id'=>(string)$canonicalPublicId), $requestId),
+            308,
+            array('Content-Type'=>'application/json; charset=utf-8','X-Request-ID'=>$requestId,'Location'=>(string)$location)
+        );
     }
 
     protected function internalError(Request $request = null)
