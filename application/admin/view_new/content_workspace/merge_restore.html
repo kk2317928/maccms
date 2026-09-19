@@ -1,0 +1,36 @@
+{include file="../../../application/admin/view_new/public/head" /}
+<div class="page-container p10">
+    <input type="hidden" id="duplicate-token" value="{:mac_admin_csrf_token()}">
+    <h2>重複內容比較、合併與還原</h2>
+    <table class="layui-table"><thead><tr><th>候選</th><th>影片</th><th>分數</th><th>狀態</th><th>操作</th></tr></thead><tbody>
+    {volist name="queue.rows" id="row"}
+    <tr><td>#{$row.duplicate_candidate_id}</td><td>#{$row.vod_id_low} / #{$row.vod_id_high}</td><td>{$row.score}</td><td>{$row.decision|htmlentities}</td><td><a class="layui-btn layui-btn-xs" href="{:url('content_workspace/merge_restore',['candidate_id'=>$row['duplicate_candidate_id']])}">比較</a>{if condition="$row.merge_snapshot_id gt 0"} <a class="layui-btn layui-btn-xs layui-btn-warm" href="{:url('content_workspace/merge_restore',['snapshot_id'=>$row['merge_snapshot_id']])}">Snapshot</a>{/if}</td></tr>
+    {/volist}
+    {empty name="queue.rows"}<tr><td colspan="5">目前沒有重複候選。</td></tr>{/empty}
+    </tbody></table>
+
+    {if condition="$comparison neq null"}
+    <h3>候選 #{$comparison.candidate.duplicate_candidate_id}（{$comparison.candidate.score}）</h3>
+    <p>證據：{foreach name="comparison.evidence" item="evidence"}<span class="layui-badge layui-bg-blue">{$evidence|htmlentities}</span> {/foreach}</p>
+    <table class="layui-table"><thead><tr><th>項目</th><th>左側</th><th>右側</th></tr></thead><tbody>
+    <tr><td>主影片選擇</td><td><input type="radio" name="primary_vod_id" value="{$comparison.candidate.vod_id_low}" checked> 保留左側</td><td><input type="radio" name="primary_vod_id" value="{$comparison.candidate.vod_id_high}"> 保留右側</td></tr>
+    <tr><td>Public ID</td><td>{$comparison.left.ext.public_id|htmlentities}</td><td>{$comparison.right.ext.public_id|htmlentities}</td></tr>
+    <tr><td>名稱</td><td>{$comparison.left.vod.vod_name|htmlentities}</td><td>{$comparison.right.vod.vod_name|htmlentities}</td></tr>
+    <tr><td>年份／類型</td><td>{$comparison.left.vod.vod_year|htmlentities}／{$comparison.left.ext.type2|htmlentities}</td><td>{$comparison.right.vod.vod_year|htmlentities}／{$comparison.right.ext.type2|htmlentities}</td></tr>
+    <tr><td>播放來源</td><td><pre>{$comparison.left.vod.vod_play_from|htmlentities}\n{$comparison.left.vod.vod_play_url|htmlentities}</pre></td><td><pre>{$comparison.right.vod.vod_play_from|htmlentities}\n{$comparison.right.vod.vod_play_url|htmlentities}</pre></td></tr>
+    <tr><td>人工鎖</td><td>{foreach name="comparison.left.field_states" item="state"}{if condition="$state.is_locked"}{$state.field_name|htmlentities} {/if}{/foreach}</td><td>{foreach name="comparison.right.field_states" item="state"}{if condition="$state.is_locked"}{$state.field_name|htmlentities} {/if}{/foreach}</td></tr>
+    </tbody></table>
+    <button class="layui-btn layui-btn-danger j-duplicate-action" data-action="merge" data-candidate="{$comparison.candidate.duplicate_candidate_id}">確認合併</button>
+    <button class="layui-btn layui-btn-primary j-duplicate-action" data-action="different" data-candidate="{$comparison.candidate.duplicate_candidate_id}">確認為不同作品</button>
+    {/if}
+
+    {if condition="$snapshot_preview neq null"}
+    <h3>Snapshot #{$snapshot_preview.snapshot.merge_snapshot_id}</h3>
+    <p>主影片：{$snapshot_preview.payload.primary.ext.public_id|htmlentities}；副影片：{$snapshot_preview.payload.secondary.ext.public_id|htmlentities}</p>
+    <button class="layui-btn layui-btn-warm j-duplicate-action" data-action="restore" data-snapshot="{$snapshot_preview.snapshot.merge_snapshot_id}">確認還原</button>
+    {/if}
+</div>
+{include file="../../../application/admin/view_new/public/foot" /}
+<script>
+layui.use(['layer'],function(){var layer=layui.layer;$('.j-duplicate-action').on('click',function(){var button=$(this),action=button.data('action');if(!window.confirm('此操作會寫入不可變更的稽核紀錄，確定繼續？')){return;}$.post("{:url('content_workspace/merge_restore')}",{__token__:$('#duplicate-token').val(),review_action:action,confirmed:1,candidate_id:button.data('candidate')||0,snapshot_id:button.data('snapshot')||0,primary_vod_id:$('input[name=primary_vod_id]:checked').val()||0},function(res){if(res.code===1){location.reload();return;}layer.msg(res.msg||'操作失敗');});});});
+</script>

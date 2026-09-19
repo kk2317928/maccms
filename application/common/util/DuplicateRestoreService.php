@@ -21,7 +21,8 @@ class DuplicateRestoreService
         int $snapshotId,
         int $reviewerId,
         bool $confirmed,
-        callable $authorize
+        callable $authorize,
+        callable $beforeCommit = null
     ): void {
         if ($snapshotId <= 0 || $reviewerId <= 0) {
             throw new InvalidArgumentException('Restore IDs must be positive.');
@@ -71,6 +72,7 @@ class DuplicateRestoreService
             $now = (int) call_user_func($this->clock);
             $this->reopenCandidate($candidateId, $now);
             $this->markSnapshotRestored($snapshotId, $reviewerId, $now);
+            if ($beforeCommit) { $beforeCommit(); }
             $this->commitTransaction();
         } catch (Throwable $exception) {
             $this->rollbackTransaction();

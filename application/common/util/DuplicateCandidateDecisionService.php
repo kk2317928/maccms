@@ -3,7 +3,9 @@
 namespace app\common\util;
 
 use InvalidArgumentException;
+use RuntimeException;
 use think\Db;
+use Throwable;
 
 class DuplicateCandidateDecisionService
 {
@@ -14,7 +16,7 @@ class DuplicateCandidateDecisionService
         $this->clock = $clock ?: 'time';
     }
 
-    public function markDifferent(int $candidateId, int $reviewerId): bool
+    public function markDifferent(int $candidateId, int $reviewerId, callable $beforeCommit = null): bool
     {
         $this->assertPositive($candidateId, 'Candidate ID');
         $this->assertPositive($reviewerId, 'Reviewer ID');
@@ -25,14 +27,21 @@ class DuplicateCandidateDecisionService
         if (($candidate['decision'] ?? '') === 'different') {
             return true;
         }
-        $now = (int) call_user_func($this->clock);
-        return $this->updateCandidate($candidateId, [
-            'decision' => 'different',
-            'reviewed_by' => $reviewerId,
-            'reviewed_at' => $now,
-            'invalidated_at' => 0,
-            'updated_at' => $now,
-        ], 'pending');
+        $this->beginTransaction();
+        try {
+            $now = (int) call_user_func($this->clock);
+            $updated = $this->updateCandidate($candidateId, [
+                'decision' => 'different', 'reviewed_by' => $reviewerId,
+                'reviewed_at' => $now, 'invalidated_at' => 0, 'updated_at' => $now,
+            ], 'pending');
+            if (!$updated) { throw new RuntimeException('Duplicate candidate decision changed.'); }
+            if ($beforeCommit) { $beforeCommit(); }
+            $this->commitTransaction();
+            return true;
+        } catch (Throwable $exception) {
+            $this->rollbackTransaction();
+            throw $exception;
+        }
     }
 
     public function isPermanentlyDifferent(int $firstVodId, int $secondVodId): bool
@@ -85,6 +94,9 @@ class DuplicateCandidateDecisionService
             'duplicate_candidate_id' => $candidateId, 'decision' => $expectedDecision,
         ])->update($changes) > 0;
     }
+    protected function beginTransaction(): void { Db::startTrans(); }
+    protected function commitTransaction(): void { Db::commit(); }
+    protected function rollbackTransaction(): void { Db::rollback(); }
 
     private function assertPositive(int $value, string $label): void
     {

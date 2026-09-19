@@ -17,7 +17,7 @@ class DuplicateMergeService
         $this->clock = $clock ?: 'time';
     }
 
-    public function merge(int $candidateId, int $primaryVodId, int $secondaryVodId, int $reviewerId): int
+    public function merge(int $candidateId, int $primaryVodId, int $secondaryVodId, int $reviewerId, callable $beforeCommit = null): int
     {
         foreach ([$candidateId, $primaryVodId, $secondaryVodId, $reviewerId] as $value) {
             if ($value <= 0) {
@@ -85,6 +85,7 @@ class DuplicateMergeService
             ]);
             $this->markSecondaryMerged($secondaryVodId, $primaryVodId, $now);
             $this->markCandidateMerged($candidateId, $reviewerId, $now);
+            if ($beforeCommit) { $beforeCommit(); }
             $this->commitTransaction();
             return $snapshotId;
         } catch (Throwable $exception) {
