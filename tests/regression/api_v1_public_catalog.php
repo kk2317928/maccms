@@ -21,6 +21,7 @@ require_once $root.'/application/common/util/ApiV1Pagination.php';
 require_once $root.'/application/common/util/ApiV1Bootstrap.php';
 require_once $root.'/application/common/util/VodPlaybackCodec.php';
 require_once $root.'/application/common/util/ApiV1CatalogQuery.php';
+require_once $root.'/application/common/util/ApiV1Locale.php';
 require_once $root.'/application/common/util/ApiV1VideoDto.php';
 require_once $root.'/application/common/util/ApiV1EpisodeDto.php';
 require_once $root.'/application/common/util/ApiV1CatalogRepository.php';
