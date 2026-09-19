@@ -94,7 +94,7 @@ class Activity extends Base
 
     private function userId(Request $request) { return ApiV1AuthContext::userId($request); }
     private function locale(Request $request) { return ApiV1Locale::resolve($request->get(),$request->header('Accept-Language')); }
-    private function unauthorized(Request $request) { return $this->errorResponse('UNAUTHORIZED','Authentication is required.',401,$request); }
+    private function unauthorized(Request $request) { return $this->errorResponse('UNAUTHENTICATED','Authentication is required.',401,$request); }
     private function notFound(Request $request) { return $this->errorResponse('NOT_FOUND','The requested resource was not found.',404,$request); }
     private function validation(InvalidArgumentException $e,Request $request) { return $this->errorResponse('VALIDATION_ERROR','The request parameters are invalid.',422,$request,array($e->getMessage()=>'invalid')); }
 }
