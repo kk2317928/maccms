@@ -70,6 +70,8 @@ $summary = ApiV1VideoDto::summary($row)->toArray();
 catalogSame(array('public_id','title','titles','poster','year','remarks','score','published_at'), array_keys($summary), 'Summary DTO fields changed.');
 catalogTrue(strpos(json_encode($summary), 'vod_id') === false && strpos(json_encode($summary), 'secret') === false, 'Summary leaked internal fields.');
 catalogSame('繁體', $summary['title'], 'Traditional Chinese title must be initial display title.');
+$row['poster_s3'] = '';
+catalogSame('poster.jpg', ApiV1VideoDto::summary($row)->toArray()['poster'], 'Empty S3 poster must fall back to the native poster.');
 
 $decoded = array(array('source'=>'m3u8','server'=>'secret-host','note'=>'vip','episodes'=>array(
     array('name'=>'第1集','url'=>'https://secret/1.m3u8?token=x','format'=>'named'),
@@ -88,6 +90,9 @@ $predicate = ApiV1CatalogRepository::PUBLICATION_SQL;
 foreach (array('vod_status','workflow_status','published','merged_into_vod_id','published_at') as $needle) {
     catalogTrue(strpos($predicate, $needle) !== false, 'Publication predicate missing '.$needle);
 }
+$serviceSource = file_get_contents($root.'/application/common/util/ApiV1CatalogService.php');
+catalogTrue(strpos($serviceSource, "'latest'=>\$this->summaryArrays") !== false, 'Home payload must contain arrays, not nested DTO objects.');
+
 $repositorySource = file_get_contents($root.'/application/common/util/ApiV1CatalogRepository.php');
 $episodeBoundary = strpos($repositorySource, 'function findEpisodeData');
 catalogTrue($episodeBoundary !== false, 'Episode repository boundary is missing.');
