@@ -2,6 +2,7 @@
 namespace app\api\controller\v1;
 
 use app\common\util\ApiV1Pagination;
+use app\common\util\ApiV1Locale;
 use app\common\util\ApiV1RequestId;
 use app\common\util\ApiV1Response;
 use InvalidArgumentException;
@@ -49,11 +50,11 @@ class Base extends \app\api\controller\Base
         }
     }
 
-    protected function canonicalRedirectResponse($canonicalPublicId, $location, Request $request = null)
+    protected function canonicalRedirectResponse($canonicalPublicId, $location, ApiV1Locale $locale, Request $request = null)
     {
         $requestId = $this->requestId($request);
         return json(
-            ApiV1Response::success(array('canonical_public_id'=>(string)$canonicalPublicId), $requestId),
+            ApiV1Response::success(array('canonical_public_id'=>(string)$canonicalPublicId), $requestId, array('locale'=>$locale->code())),
             308,
             array('Content-Type'=>'application/json; charset=utf-8','X-Request-ID'=>$requestId,'Location'=>(string)$location)
         );
