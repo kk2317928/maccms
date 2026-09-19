@@ -589,7 +589,10 @@ No task may introduce automatic merge.
 
 - Added a `view_new` field-level AI review queue with current/candidate values, provenance, lock/stale state, accept/edit/reject/lock decisions, stable CSRF protection, escaped rendering and immutable audit events. Canonical candidates and pre-provider baselines are staged atomically with each valid run; acceptance locks and rechecks native rows, fails closed without canonical public identity, never crosses locks/conflicts, and leaves the queue after all seven fields are decided.
 - Preserved the checksum of `20260919000100`; baseline columns/defaults use idempotent follow-up migration `20260919000200` for MySQL 5.7/8.0 compatibility. RED commits: `6ac318a4678759a971446d0844d3ed29bd7c7925`, `abdbfc52301432a4a1cc7a3c6eec52dce7215454`, `deb90294af3083141bfcf8dc8165d77e83c2d798`, `8054a1a7041905f55f44fc5afb8b9041c8c43ff7`; final commit: `5f9d85e55c1ed0148ab2137022cd96fa3fac623e`. PHP `35431481425`, MySQL 5.7 `35431315407`, MySQL 8.0 `35431315406`, native video `35431205533` passed.
-### T-063 Duplicate comparison, merge and restore UI — `IN_PROGRESS`
+### T-063 Duplicate comparison, merge and restore UI — `DONE`
+
+- Added a discoverable `view_new` duplicate workspace with pending-first paging, side-by-side native/multilingual/external-ID/playback/provenance/lock comparison, explicit primary selection, different-work decisions, merge confirmation, integrity-checked snapshot detail, active-state restoration and safe conflict feedback. The native authorization boundary now normalizes `ContentWorkspace` to the exact `content_workspace/*` permission namespace, and the snake-case action is directly routable.
+- Extended different/merge/restore services with transaction-internal immutable audit callbacks so audit failure rolls back every decision, snapshot and content mutation. No path auto-merges. RED commits: `b23746abfe4e37b8009bc2473b404abdb88f3289`, `a989804e464358005067226b95449d21bc181a20`; final commit: `5f95252e851f545073f24c0c9e60854e28248716`; PHP regression `35442328780` passed.
 ### T-064 TMDB candidate and manual-match UI — `TODO`
 ### T-065 Final validation/publication UI — `TODO`
 ### T-066 Batch enqueue and failure/retry UI — `TODO`
@@ -643,10 +646,10 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 
 ```text
 Checkpoint: CP-06
-Next task: T-063
-Task status: IN_PROGRESS
-Required starting state: feature/headless-ai-v1 at `5f9d85e55c1ed0148ab2137022cd96fa3fac623e`
-First verification: PHP regression plus duplicate comparison/merge/restore UI contract
-Task commit: test: define duplicate review UI contract
+Next task: T-064
+Task status: TODO
+Required starting state: feature/headless-ai-v1 at `5f95252e851f545073f24c0c9e60854e28248716`
+First verification: PHP regression plus TMDB candidate/manual-match UI contract
+Task commit: test: define TMDB review UI contract
 Push required: yes, immediately after task verification
 ```

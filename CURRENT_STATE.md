@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-19
-State document version: 56
+State document version: 57
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.
 **Active checkpoint:** CP-06 — intelligent-content administration.
-**Active task:** T-063 — duplicate comparison, merge and restore UI (`IN_PROGRESS`).
-**Starting commit:** T-062 final implementation commit `5f9d85e55c1ed0148ab2137022cd96fa3fac623e`.
-**Last completed task:** T-062 — AI field review UI, final commit `5f9d85e55c1ed0148ab2137022cd96fa3fac623e`.
-**Last verification:** PHP regression `35431481425`, MySQL 5.7 `35431315407`, MySQL 8.0 `35431315406`, and native video `35431205533` passed for the final T-062 implementation chain.
-**Next action:** make the RED duplicate comparison, explicit merge confirmation, audit rollback and restore-preview contract pass.
+**Active task:** T-064 — TMDB candidate and manual-match UI (`TODO`).
+**Starting commit:** T-063 final implementation commit `5f95252e851f545073f24c0c9e60854e28248716`.
+**Last completed task:** T-063 — duplicate comparison, merge and restore UI, final commit `5f95252e851f545073f24c0c9e60854e28248716`.
+**Last verification:** PHP regression `35442328780` passed the duplicate/TMDB lifecycle, intelligent-content admin suite, audit rollback and T-063 UI contract.
+**Next action:** define TMDB candidate, manual-ID, no-match, rematch and field-difference UI contracts for T-064.
 
 ## 1. Confirmed product direction
 
