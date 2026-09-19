@@ -45,6 +45,7 @@ foreach(array(
     array('favorites'=>array(array('public_id'=>'bad','updated_at'=>1))),
     array('progress'=>array(array('public_id'=>'ABC234','source_id'=>'','episode_id'=>'e','position_seconds'=>1,'duration_seconds'=>2,'updated_at'=>1))),
     array('progress'=>array(array('public_id'=>'ABC234','source_id'=>'s','episode_id'=>'e','position_seconds'=>3,'duration_seconds'=>2,'updated_at'=>1))),
+    array('progress'=>array(array('public_id'=>'ABC234','source_id'=>'s1','episode_id'=>'s1e1','position_seconds'=>'4294967296','duration_seconds'=>'4294967296','updated_at'=>1))),
     array('favorites'=>array_fill(0,51,array('public_id'=>'ABC234','updated_at'=>1))),
 ) as $invalid) {
     try { ApiV1ActivityMerge::normalize($invalid); activityFail('Invalid merge payload accepted.'); }
@@ -79,6 +80,12 @@ activityAssert(strpos($repository,'ApiV1CatalogRepository::PUBLICATION_SQL')!==f
 activityAssert(strpos($repository,"'ulog_type'=>2")!==false,'Favorites must reuse native ulog type 2.');
 activityAssert(strpos($repository,"'ulog_type'=>4")!==false,'History/progress must reuse native ulog type 4.');
 activityAssert(strpos($repository,'client_updated_at')!==false,'Merge must compare client and server timestamps.');
-activityAssert(strpos($repository,'Db::transaction')!==false,'Anonymous merge must be atomic.');
+activityAssert(strpos($repository,'Db::transaction')!==false,'Anonymous merge must retain the transaction boundary for transactional deployments.');
+activityAssert(strpos($repository,'GET_LOCK')!==false && strpos($repository,'RELEASE_LOCK')!==false,'MyISAM ulog writes must use an advisory lock.');
+activityAssert(substr_count($repository,'ulog_duration')>=4,'Progress duration must be persisted and returned.');
+activityAssert(strpos($repository,'VodPlaybackCodec::decode')!==false,'Progress must validate the published episode inventory.');
+activityAssert(strpos($repository,'4294967295')!==false,'Progress fields must respect unsigned integer storage bounds.');
+$controller=file_get_contents($root.'/application/api/controller/v1/Activity.php');
+activityAssert(strpos($controller,"'UNAUTHENTICATED'")!==false,'Member activity must use the established authentication error code.');
 
 fwrite(STDOUT,"API v1 member activity contract passed.".PHP_EOL);
