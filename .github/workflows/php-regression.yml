@@ -87,6 +87,7 @@ jobs:
           php -l application/common/util/ContentAdminPolicy.php
           php -l application/common/util/ContentAdminAudit.php
           php -l application/common/util/ContentWorkspaceDashboard.php
+          php -l application/common/util/AiFieldReviewService.php
           php -l application/admin/controller/ContentWorkspace.php
           php -l application/common/model/VodExt.php
           php -l application/common/model/MetaTerm.php

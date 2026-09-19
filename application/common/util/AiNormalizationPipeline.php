@@ -74,20 +74,8 @@ class AiNormalizationPipeline
             throw $exception;
         }
 
-        $mapping = [
-            'normalized_title' => 'vod_name', 'original_title' => 'original_title',
-            'title_tw' => 'title_tw', 'title_cn' => 'title_cn', 'title_en' => 'title_en',
-            'year' => 'vod_year', 'media_type' => 'type2',
-        ];
-        $applied = 0;
-        foreach ($mapping as $sourceField => $targetField) {
-            if ($this->fields->apply($vodId, $targetField, $normalized[$sourceField], 'ai', 'job:' . $jobId)) {
-                $applied++;
-            }
-        }
-        $run['decision_status'] = $applied ? 'applied' : 'blocked';
         $runId = $this->runs->record($run);
-        return ['ai_run_id' => $runId, 'fields_applied' => $applied, 'total_tokens' => $response['input_tokens'] + $response['output_tokens']];
+        return ['ai_run_id' => $runId, 'fields_proposed' => 7, 'total_tokens' => $response['input_tokens'] + $response['output_tokens']];
     }
 
     private function assertResponse($response): void

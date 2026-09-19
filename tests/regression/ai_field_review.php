@@ -58,7 +58,7 @@ $governance->states[42] = [
 $events = [];
 $audit = new ContentAdminAudit(static function (array $row) use (&$events): int { $events[] = $row; return count($events); }, static fn (): int => 120);
 $service = new MemoryAiFieldReviewService($governance, $audit, static fn (): int => 120);
-$service->run = ['ai_run_id' => 7, 'vod_id' => 42, 'validation_status' => 'valid', 'decision_status' => 'pending', 'provider' => 'compatible', 'model' => 'model-x', 'prompt_version' => 'v1', 'raw_response_json' => $valid, 'created_at' => 100];
+$service->run = ['ai_run_id' => 7, 'vod_id' => 42, 'public_id' => 'ABC234', 'validation_status' => 'valid', 'decision_status' => 'pending', 'provider' => 'compatible', 'model' => 'model-x', 'prompt_version' => 'v1', 'raw_response_json' => $valid, 'created_at' => 100];
 
 $preview = $service->preview(7);
 fieldReviewAssert($preview['fields']['title_tw']['current'] === '舊名' && $preview['fields']['title_tw']['candidate'] === 'AI 台灣名', 'preview must show current and AI candidate values.');
@@ -82,6 +82,7 @@ fieldReviewAssert($governance->values[42]['type2'] === $beforeType && $service->
 $service->review(7, 'vod_year', 'lock', null, 55, 'reviewer');
 fieldReviewAssert($governance->values[42]['vod_year'] === 2020 && $governance->states[42]['vod_year']['is_locked'] === 1, 'lock must preserve and manually lock the current value.');
 fieldReviewAssert(count($events) === 4, 'every successful field decision must append one audit event.');
+fieldReviewAssert($events[0]['subject_public_id'] === 'ABC234', 'field-review audit events must identify videos by stable public ID.');
 
 $failing = new MemoryAiFieldReviewService($governance, new ContentAdminAudit(static fn (array $row): int => 0), static fn (): int => 130);
 $failing->run = $service->run;

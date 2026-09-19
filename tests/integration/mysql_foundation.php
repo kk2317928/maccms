@@ -31,7 +31,7 @@ if (strpos($version, $expectedFamily . '.') !== 0) {
 }
 
 $ledger = $pdo->query('SELECT version, checksum FROM mac_schema_migration ORDER BY version')->fetchAll(PDO::FETCH_ASSOC);
-if (count($ledger) !== 8
+if (count($ledger) !== 9
     || $ledger[0]['version'] !== '20260918000100'
     || $ledger[1]['version'] !== '20260918000200'
     || $ledger[2]['version'] !== '20260918000300'
@@ -40,6 +40,7 @@ if (count($ledger) !== 8
     || $ledger[5]['version'] !== '20260918000600'
     || $ledger[6]['version'] !== '20260918000700'
     || $ledger[7]['version'] !== '20260918000800'
+    || $ledger[8]['version'] !== '20260919000100'
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[0]['checksum'])
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[1]['checksum'])
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[2]['checksum'])
@@ -47,7 +48,8 @@ if (count($ledger) !== 8
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[4]['checksum'])
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[5]['checksum'])
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[6]['checksum'])
-    || !preg_match('/^[a-f0-9]{64}$/', $ledger[7]['checksum'])) {
+    || !preg_match('/^[a-f0-9]{64}$/', $ledger[7]['checksum'])
+    || !preg_match('/^[a-f0-9]{64}$/', $ledger[8]['checksum'])) {
     fwrite(STDERR, "FAIL: migration ledger does not contain all expected checksummed versions.\n");
     exit(1);
 }
@@ -64,6 +66,7 @@ $requiredIndexes = [
     'mac_content_duplicate_candidate' => ['PRIMARY', 'uk_candidate_pair', 'idx_decision_score', 'idx_vod_high', 'idx_invalidation'],
     'mac_content_merge_snapshot' => ['PRIMARY', 'uk_duplicate_candidate', 'idx_primary_status', 'idx_secondary_status'],
     'mac_content_admin_audit_event' => ['PRIMARY', 'idx_actor_created', 'idx_event_created', 'idx_subject'],
+    'mac_content_ai_field_review' => ['PRIMARY', 'uk_run_field', 'idx_vod_decision', 'idx_decision_updated'],
 ];
 $tableStatement = $pdo->prepare(
     'SELECT ENGINE, TABLE_COLLATION FROM information_schema.TABLES WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?'

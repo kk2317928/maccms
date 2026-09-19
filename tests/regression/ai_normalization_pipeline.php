@@ -26,7 +26,7 @@ $calls = 0; $runs = new PipelineRuns(); $fields = new PipelineFields();
 $provider = static function (array $request) use (&$calls, $valid): array { $calls++; return ['raw_response' => $valid, 'input_tokens' => 100, 'output_tokens' => 50, 'estimated_cost_micros' => 750]; };
 $pipeline = new AiNormalizationPipeline($provider, new AiNormalizationValidator(), $runs, $fields, ['provider' => 'compatible', 'model' => 'model-x', 'prompt_version' => 'normalize-v1', 'daily_budget_micros' => 1000], static fn (): int => 1726704000);
 $metrics = $pipeline->handle(['vod_id' => 42, 'title' => 'Example'], ['job_id' => 7]);
-if ($calls !== 1 || $metrics['ai_run_id'] !== 1 || $metrics['fields_applied'] < 5 || $runs->rows[0]['decision_status'] !== 'applied') { fwrite(STDERR, "FAIL: valid AI output did not complete the pipeline.\n"); exit(1); }
+if ($calls !== 1 || $metrics['ai_run_id'] !== 1 || $metrics['fields_proposed'] !== 7 || $fields->writes || $runs->rows[0]['decision_status'] !== 'pending') { fwrite(STDERR, "FAIL: valid AI output must remain a pending review candidate without field mutation.\n"); exit(1); }
 
 $runs->budget = false;
 try { $pipeline->handle(['vod_id' => 42, 'title' => 'Example'], ['job_id' => 8]); } catch (RuntimeException $exception) {}

@@ -1,0 +1,28 @@
+{include file="../../../application/admin/view_new/public/head" /}
+<div class="page-container p10">
+    <input type="hidden" id="review-token" value="{$Request.token}">
+    <h2 style="margin-bottom:15px;">AI 欄位審核</h2>
+    <table class="layui-table">
+        <thead><tr><th>影片</th><th>Provider／Model</th><th>Prompt</th><th>狀態</th><th>建立時間</th><th>操作</th></tr></thead>
+        <tbody>
+        {volist name="queue.rows" id="run"}
+        <tr><td>{$run.vod_name|default='--'} (#{$run.vod_id})</td><td>{$run.provider}／{$run.model}</td><td>{$run.prompt_version}</td><td>{$run.decision_status}</td><td>{$run.created_at|date='Y-m-d H:i:s',###}</td><td><a class="layui-btn layui-btn-sm" href="{:url('content_workspace/review',['run_id'=>$run['ai_run_id']])}">逐欄審核</a></td></tr>
+        {/volist}
+        {empty name="queue.rows"}<tr><td colspan="6">目前沒有待審核 AI run。</td></tr>{/empty}
+        </tbody>
+    </table>
+    {if condition="$preview neq null"}
+    <h3 style="margin:20px 0 10px;">Run #{$preview.run.ai_run_id}／影片 #{$preview.run.vod_id}</h3>
+    <table class="layui-table"><thead><tr><th>欄位</th><th>目前值</th><th>AI 建議</th><th>來源</th><th>狀態</th><th>操作</th></tr></thead><tbody>
+        {foreach name="preview.fields" item="item" key="field"}
+        <tr><td>{$field}</td><td><pre style="white-space:pre-wrap;">{$item.current|htmlentities}</pre></td><td><pre style="white-space:pre-wrap;">{$item.candidate|htmlentities}</pre></td>
+            <td>{$item.source}<br><small>{$item.source_ref}</small></td><td>{if condition="$item.locked"}<span style="color:#c0392b;">locked</span>{/if} {if condition="$item.stale"}<span style="color:#e67e22;">stale/conflict</span>{/if} {$item.decision.decision|default=''}</td>
+            <td><button class="layui-btn layui-btn-xs j-review" data-field="{$field}" data-action="accept" {if condition="$item.locked or $item.stale"}disabled{/if}>接受</button> <button class="layui-btn layui-btn-xs layui-btn-normal j-review" data-field="{$field}" data-action="edit">修改</button> <button class="layui-btn layui-btn-xs layui-btn-danger j-review" data-field="{$field}" data-action="reject">拒絕</button> <button class="layui-btn layui-btn-xs layui-btn-warm j-review" data-field="{$field}" data-action="lock">鎖定目前值</button></td></tr>
+        {/foreach}
+    </tbody></table>
+    {/if}
+</div>
+{include file="../../../application/admin/view_new/public/foot" /}
+<script>
+layui.use(['layer'],function(){var layer=layui.layer;$('.j-review').on('click',function(){var button=$(this),action=button.data('action'),value='';if(action==='edit'){value=window.prompt('輸入人工審核值：','');if(value===null){return;}}$.post("{:url('content_workspace/review')}",{__token__:$('#review-token').val(),run_id:'{$preview.run.ai_run_id|default=0}',field:button.data('field'),review_action:action,edited_value:value},function(res){if(res.code===1){location.reload();return;}layer.msg(res.msg||'操作失敗');});});});
+</script>
