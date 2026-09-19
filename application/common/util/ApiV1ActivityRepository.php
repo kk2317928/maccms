@@ -64,7 +64,7 @@ final class ApiV1ActivityRepository
     {
         $video=$this->video($publicId);
         if ($video===null) return null;
-        $row=Db::name('ulog')->where($this->ulogWhere($userId,4,$video['vod_id']))->order('ulog_time desc,ulog_id desc')->find();
+        $row=Db::name('ulog')->where($this->ulogWhere($userId,4,$video['vod_id']))->where('ulog_sid','>',0)->where('ulog_nid','>',0)->order('ulog_time desc,ulog_id desc')->find();
         return $row && (int)$row['ulog_sid']>0 && (int)$row['ulog_nid']>0 ? $this->progressDto($video,$row) : array();
     }
 
