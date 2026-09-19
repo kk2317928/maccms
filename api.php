@@ -21,6 +21,12 @@ try {
     define('MAC_HOME_COMM', __DIR__.'/application/index/common/');
     define('MAC_ADMIN_COMM', __DIR__.'/application/admin/common/');
     define('MAC_START_TIME', microtime(true) );
+    require_once APP_PATH . 'common/util/ApiV1Bootstrap.php';
+    $apiV1Dispatch = \app\common\util\ApiV1Bootstrap::resolve($_SERVER);
+    if ($apiV1Dispatch !== null) {
+        define('MAC_API_V1_REQUEST', true);
+        $_SERVER['PATH_INFO'] = $apiV1Dispatch['path_info'];
+    }
     define('BIND_MODULE','api');
     define('ENTRANCE', 'api');
     $in_file = rtrim($_SERVER['SCRIPT_NAME'],'/');

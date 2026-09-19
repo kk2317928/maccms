@@ -14,6 +14,9 @@ return [
     // | 应用设置
     // +----------------------------------------------------------------------
 
+    // API v1 requests use an isolated JSON exception boundary.
+    'exception_handle'       => defined('MAC_API_V1_REQUEST') && MAC_API_V1_REQUEST ? '\\app\\common\\exception\\ApiV1ExceptionHandler' : '',
+
     // 应用命名空间
     'app_namespace'          => 'app',
     // 应用调试模式

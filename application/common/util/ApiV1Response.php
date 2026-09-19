@@ -8,7 +8,7 @@ class ApiV1Response
     public static function success($data, $requestId, array $meta = array())
     {
         self::assertRequestId($requestId);
-        $meta = array_merge(array('request_id' => $requestId), $meta);
+        $meta = array_merge($meta, array('request_id' => $requestId));
         return array(
             'data' => self::normalize($data),
             'meta' => $meta,

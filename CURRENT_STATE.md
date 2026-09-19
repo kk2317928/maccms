@@ -54,7 +54,7 @@ Upstream Composer metadata declares PHP `>=7.0`; the new programme's primary sup
 | Legacy/broad API | `application/api/controller/` | 39 controllers |
 | Public web | `application/index/controller/` | 24 controllers |
 | Shared models | `application/common/model/` | 68 models after T-052 added immutable merge snapshots |
-| Shared services/utilities | `application/common/util/` | 111 utility/service classes after T-070 added the API v1 contract foundation |
+| Shared services/utilities | `application/common/util/` | 112 utility/service classes after T-070 added the API v1 contract foundation |
 | Request behaviors | `application/common/behavior/` | Security, audit, monitoring, preview and initialization hooks |
 | Upgrade schema | `application/data/update/database.php` | Large monolithic legacy upgrade script |
 | Tests | `tests/regression/` | Only `user_register_validate.php` currently exists |

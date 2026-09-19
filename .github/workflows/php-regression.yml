@@ -71,6 +71,10 @@ jobs:
           php -l application/common/util/ApiV1RequestId.php
           php -l application/common/util/ApiV1Pagination.php
           php -l application/common/util/ApiV1Response.php
+          php -l application/common/util/ApiV1Bootstrap.php
+          php -l application/common/exception/ApiV1ExceptionHandler.php
+          php -l index.php
+          php -l api.php
           php -l application/api/controller/v1/Base.php
           php -l application/api/controller/v1/Index.php
           php -l application/common/util/SchemaMigrationService.php

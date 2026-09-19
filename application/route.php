@@ -38,28 +38,6 @@ return array (
     'score' => '\\d+',
     'limit' => '\\d+',
   ),
-  'api/v1$' =>
-  array (
-    0 => 'api/v1.index/index',
-    1 =>
-    array (
-    ),
-    2 =>
-    array (
-      'method' => 'get',
-    ),
-  ),
-  'api/v1/<path>' =>
-  array (
-    0 => 'api/v1.index/notFound',
-    1 =>
-    array (
-      'path' => '[\\s\\S]+',
-    ),
-    2 =>
-    array (
-    ),
-  ),
   'sitehome' =>
   array (
     0 => 'index/home',
