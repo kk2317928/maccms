@@ -19,7 +19,9 @@ class Auth extends Base
         }
         if ($this->secret() === '') { return $this->internalError($request); }
         $result = model('User')->login(array(
-            'user_name'=>$name, 'user_pwd'=>$password, 'verify'=>'', 'openid'=>'', 'col'=>'',
+            'user_name'=>$name, 'user_pwd'=>$password,
+            'verify'=>isset($input['verify']) && is_string($input['verify']) ? $input['verify'] : '',
+            'openid'=>'', 'col'=>'',
         ), array('set_cookie'=>false,'return_meta'=>true,'rotate_legacy_session'=>false));
         if ((int)($result['code'] ?? 0) !== 1 || empty($result['meta']['user_id'])) {
             return $this->errorResponse('INVALID_CREDENTIALS', 'The credentials are invalid.', 401, $request);
