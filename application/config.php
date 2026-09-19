@@ -163,7 +163,7 @@ return [
     // 显示错误信息
     'show_error_msg'         => true,
     // 异常处理handle类 留空使用 \think\exception\Handle
-    'exception_handle'       => '',
+    // API v1 exception handler is selected at application bootstrap.
 
     // +----------------------------------------------------------------------
     // | 日志设置
