@@ -14,7 +14,7 @@ final class ApiV1VideoDto implements ApiV1Dto
             'public_id' => (string) self::value($row, 'public_id', ''),
             'title' => $titles['tw'] !== '' ? $titles['tw'] : (string) self::value($row, 'vod_name', ''),
             'titles' => $titles,
-            'poster' => (string) self::value($row, 'poster_s3', self::value($row, 'vod_pic', '')),
+            'poster' => (string) (self::value($row, 'poster_s3', '') !== '' ? self::value($row, 'poster_s3', '') : self::value($row, 'vod_pic', '')),
             'year' => (string) self::value($row, 'vod_year', ''),
             'remarks' => (string) self::value($row, 'vod_remarks', ''),
             'score' => (float) self::value($row, 'vod_score', 0),
