@@ -50,6 +50,14 @@ class ApiV1SessionService
         });
     }
 
+    public function isActive($userId, $sessionId, $now = null)
+    {
+        $now = $now === null ? time() : (int)$now;
+        return Db::name('api_refresh_session')->where(array(
+            'user_id'=>(int)$userId, 'session_id'=>(string)$sessionId,
+        ))->whereNull('consumed_at')->whereNull('revoked_at')->where('expires_at', '>', $now)->count() > 0;
+    }
+
     public function revokeFamily($userId, $sessionId, $reason = 'logout', $now = null)
     {
         $now = $now === null ? time() : (int)$now;
