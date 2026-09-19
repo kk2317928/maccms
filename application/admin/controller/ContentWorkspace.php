@@ -13,6 +13,8 @@ use app\common\util\DuplicateRestoreService;
 use app\common\util\DuplicateReviewWorkspace;
 use app\common\util\TmdbImportService;
 use app\common\util\TmdbReviewWorkspace;
+use app\common\util\FinalPublicationWorkspace;
+use app\common\util\FinalPublicationService;
 use think\Db;
 use think\Session;
 use Throwable;
@@ -227,5 +229,38 @@ class ContentWorkspace extends Base
         $this->assign('preview', $preview);
         $this->assign('title', 'TMDB 候選與手動配對');
         return $this->fetch('content_workspace/tmdb_review');
+    }
+
+    public function publish()
+    {
+        $workspace = new FinalPublicationWorkspace();
+        if (request()->isPost()) {
+            $param = input('post.');
+            $token = (string) ($param['__token__'] ?? '');
+            $stable = function_exists('mac_admin_csrf_token') ? (string) mac_admin_csrf_token() : (string) Session::get('admin_csrf');
+            $legacy = Session::has('__token__') ? (string) Session::get('__token__') : '';
+            if ($token === '' || !(($stable !== '' && hash_equals($stable, $token)) || ($legacy !== '' && hash_equals($legacy, $token)))) {
+                return json(['code' => 0, 'msg' => lang('token_err')]);
+            }
+            try {
+                $actorId = (int) $this->_admin['admin_id'];
+                $actorName = (string) ($this->_admin['admin_name'] ?? ('admin-' . $actorId));
+                $grants = array_filter(array_map('trim', explode(',', strtolower((string) ($this->_admin['admin_auth'] ?? '')))));
+                if ($actorId === 1) { $grants[] = 'content_workspace/publish'; }
+                $confirmed = (int) ($param['confirmed'] ?? 0) === 1;
+                (new ContentAdminPolicy())->assertAllowed('publish', $grants, $confirmed);
+                $result = (new FinalPublicationService($workspace, new ContentAdminAudit()))->publish((int) ($param['vod_id'] ?? 0), $actorId, $actorName, $grants, $confirmed);
+                return json(['code' => 1, 'msg' => '發布完成。', 'data' => $result]);
+            } catch (Throwable $exception) {
+                return json(['code' => 0, 'msg' => '發布未完成，請重新整理並檢查阻擋項目。']);
+            }
+        }
+        $vodId = (int) input('param.vod_id/d', 0);
+        try { $preview = $vodId > 0 ? $workspace->preview($vodId) : null; }
+        catch (Throwable $exception) { $preview = null; }
+        $this->assign('queue', $workspace->queue(max(1, (int) input('param.page/d', 1)), 20));
+        $this->assign('preview', $preview);
+        $this->assign('title', '最終驗證與發布');
+        return $this->fetch('content_workspace/publish');
     }
 }

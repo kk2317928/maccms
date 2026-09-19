@@ -1,0 +1,32 @@
+{include file="../../../application/admin/view_new/public/head" /}
+<div class="page-container p10">
+    <input type="hidden" id="publish-token" value="{:mac_admin_csrf_token()}">
+    <h2 style="margin-bottom:15px;">最終驗證與發布</h2>
+    <table class="layui-table"><thead><tr><th>公開 ID</th><th>片名</th><th>狀態</th><th>操作</th></tr></thead><tbody>
+    {volist name="queue.rows" id="item"}<tr><td>{$item.public_id|htmlentities}</td><td>{$item.vod_name|htmlentities}</td><td>{$item.workflow_status|htmlentities}</td><td><a class="layui-btn layui-btn-xs" href="{:url('content_workspace/publish',['vod_id'=>$item['vod_id']])}">驗證</a></td></tr>{/volist}
+    {empty name="queue.rows"}<tr><td colspan="4">目前沒有等待最終驗證的影片。</td></tr>{/empty}
+    </tbody></table>
+
+    {if condition="$preview neq null"}
+    <h3 style="margin:20px 0 10px;">{$preview.video.vod_name|htmlentities}／{$preview.ext.public_id|htmlentities}</h3>
+    <h4>多語標題與摘要</h4>
+    <table class="layui-table"><thead><tr><th>語系</th><th>多語標題</th><th>摘要</th></tr></thead><tbody>
+    {foreach name="preview.locales" item="locale" key="code"}<tr><td>{$code|htmlentities}</td><td>{$locale.title|htmlentities}</td><td>{$locale.summary|htmlentities}</td></tr>{/foreach}
+    </tbody></table>
+    <h4>分類與地區</h4>
+    <table class="layui-table"><thead><tr><th>種類</th><th>詞條</th></tr></thead><tbody>
+    {foreach name="preview.taxonomy" item="items" key="kind"}<tr><td>{$kind|htmlentities}</td><td>{foreach name="items" item="term"}{$term.name_tw|htmlentities} {/foreach}</td></tr>{/foreach}
+    </tbody></table>
+    <h4>圖片與預告</h4><p>海報：{$preview.media.poster|htmlentities}<br>背景：{$preview.media.backdrop|htmlentities}<br>預告：{$preview.media.trailer|htmlentities}</p>
+    <h4>播放來源</h4>
+    {foreach name="preview.playback" item="source"}<div><strong>{$source.source|htmlentities}</strong><ul>{foreach name="source.episodes" item="episode"}<li>{$episode.name|htmlentities} — {$episode.url|htmlentities}</li>{/foreach}</ul></div>{/foreach}
+    <h4 style="color:#c0392b;">發布阻擋</h4><ul>{foreach name="preview.blockers" item="message"}<li>{$message|htmlentities}</li>{/foreach}{empty name="preview.blockers"}<li>無</li>{/empty}</ul>
+    <h4 style="color:#e67e22;">發布提醒</h4><ul>{foreach name="preview.warnings" item="message"}<li>{$message|htmlentities}</li>{/foreach}{empty name="preview.warnings"}<li>無</li>{/empty}</ul>
+    <label><input type="checkbox" name="confirmed" id="publish-confirmed" value="1"> 我已確認預覽內容及提醒</label>
+    <button class="layui-btn layui-btn-danger" id="publish-submit" data-confirm="publish" {if condition="!$preview.publishable"}disabled{/if}>確認發布</button>
+    {/if}
+</div>
+{include file="../../../application/admin/view_new/public/foot" /}
+<script>
+layui.use(['layer'],function(){var layer=layui.layer;$('#publish-submit').on('click',function(){if(!$('#publish-confirmed').prop('checked')){layer.msg('請先勾選確認。');return;}layer.confirm('確定發布此影片？',function(index){layer.close(index);$.post("{:url('content_workspace/publish')}",{__token__:$('#publish-token').val(),vod_id:'{$preview.video.vod_id|default=0}',confirmed:1},function(res){if(res.code===1){location.href="{:url('content_workspace/publish')}";return;}layer.msg(res.msg||'操作失敗');});});});});
+</script>

@@ -78,6 +78,11 @@ class Base extends All
                 || strpos($authStr, ',content_workspace/run_tmdb,') !== false;
         }
 
+        if ($c === 'content_workspace' && $a === 'publish') {
+            $authStr = ',' . strtolower((string) $this->_admin['admin_auth']) . ',';
+            return strpos($authStr, ',content_workspace/publish,') !== false;
+        }
+
         // 安全体检一键修复：已授权 checkup 的子管理员可 POST fix（fix 为 auth.php 中 show=0 隐藏项）
         if ($c === 'safety' && $a === 'fix') {
             $authStr = ',' . (string)$this->_admin['admin_auth'] . ',';
