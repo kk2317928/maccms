@@ -608,7 +608,7 @@ No task may introduce automatic merge.
 - Enqueue and terminal-failure retry require stable CSRF, explicit confirmation and exact `run_ai`/`run_tmdb` grants, with immutable audit inside the same transaction. Retry preserves monotonic attempt identifiers and historical `content_job_run` rows while adding one retry allowance and clearing lease/error/terminal fields.
 - RED commit: `8a22c0adf78fad7dcdf291916415433fae594366`; implementation/fix commits through `aaef8a5aef6a60fd507485946ec3a7d87571b04b`. RED PHP run `35454565365` failed only for the missing service; GREEN PHP run `35455134189` passed. Independent review found the attempt-history uniqueness conflict; the monotonic-attempt fix and regression contract resolved it.
 
-### T-067 Admin permission and compatibility regression — `READY`
+### T-067 Admin permission and compatibility regression — `IN_PROGRESS`
 
 Use `application/admin/view_new`; do not add a parallel obsolete `view/` tree.
 
