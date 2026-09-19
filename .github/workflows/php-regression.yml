@@ -75,6 +75,8 @@ jobs:
           php -l application/common/util/ApiV1Response.php
           php -l application/common/util/ApiV1Bootstrap.php
           php -l application/common/util/ApiV1CatalogQuery.php
+          php -l application/common/util/ApiV1Locale.php
+          php -l application/common/util/ApiV1CanonicalResource.php
           php -l application/common/util/ApiV1VideoDto.php
           php -l application/common/util/ApiV1EpisodeDto.php
           php -l application/common/util/ApiV1CatalogRepository.php
