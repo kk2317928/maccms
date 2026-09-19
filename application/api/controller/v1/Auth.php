@@ -89,7 +89,11 @@ class Auth extends Base
     private function claims(Request $request)
     {
         $token = ApiV1AccessToken::bearer($request->header('Authorization'));
-        return $token === '' ? null : ApiV1AccessToken::verify($token, $this->secret());
+        $claims = $token === '' ? null : ApiV1AccessToken::verify($token, $this->secret());
+        if ($claims === null || !(new ApiV1SessionService())->isActive((int)$claims['sub'], $claims['sid'])) {
+            return null;
+        }
+        return $claims;
     }
 
     private function secret()
