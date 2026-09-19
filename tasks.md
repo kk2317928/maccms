@@ -670,11 +670,11 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 ## Current execution pointer
 
 ```text
-Checkpoint: CP-06
-Next task: T-066
+Checkpoint: CP-07
+Next task: T-070
 Task status: READY
-Required starting state: feature/headless-ai-v1 after T-065 final commit `5d71f88fb2240c2e04746140fdb109b2154bfcab`
-First verification: RED PHP regression for the batch enqueue/failure/retry UI contract
-Task commit: test: define batch job administration UI contract
+Required starting state: feature/headless-ai-v1 after T-067 implementation commit `34611dacc75a2f3a1800aa1c9649f0965ab02a6d`
+First verification: define the versioned route, error envelope, pagination and DTO foundation contract
+Task commit: test: define headless API v1 foundation contract
 Push required: yes, immediately after task verification
 ```
