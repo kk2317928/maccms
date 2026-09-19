@@ -15,15 +15,14 @@ class ApiV1Response
         );
     }
 
-    public static function collection(array $items, ApiV1Pagination $pagination, $totalItems, $requestId)
+    public static function collection(array $items, ApiV1Pagination $pagination, $totalItems, $requestId, array $meta = array())
     {
         $data = array();
         foreach ($items as $item) {
             $data[] = self::normalize($item);
         }
-        return self::success($data, $requestId, array(
-            'pagination' => $pagination->meta($totalItems),
-        ));
+        $meta['pagination'] = $pagination->meta($totalItems);
+        return self::success($data, $requestId, $meta);
     }
 
     public static function error($code, $message, $requestId, array $details = array())
