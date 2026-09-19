@@ -11,17 +11,25 @@ class ApiV1Bootstrap
         if ($path !== '/api/v1' && strpos($path, '/api/v1/') !== 0) { return null; }
 
         $target = null;
+        $allowed = array('GET');
         if ($path === '/api/v1') { $target = '/v1.index/index'; }
         elseif ($path === '/api/v1/home') { $target = '/v1.catalog/home'; }
         elseif ($path === '/api/v1/videos') { $target = '/v1.catalog/videos'; }
         elseif ($path === '/api/v1/search') { $target = '/v1.catalog/search'; }
         elseif ($path === '/api/v1/taxonomies') { $target = '/v1.catalog/taxonomies'; }
+        elseif ($path === '/api/v1/auth/login') { $target = '/v1.auth/login'; $allowed = array('POST'); }
+        elseif ($path === '/api/v1/auth/refresh') { $target = '/v1.auth/refresh'; $allowed = array('POST'); }
+        elseif ($path === '/api/v1/auth/logout') { $target = '/v1.auth/logout'; $allowed = array('POST'); }
+        elseif ($path === '/api/v1/auth/sessions') { $target = '/v1.auth/sessions'; }
+        elseif (preg_match('#\A/api/v1/auth/sessions/([a-f0-9]{32})\z#D', $path, $matches)) {
+            $target = '/v1.auth/revoke/session_id/'.$matches[1]; $allowed = array('DELETE');
+        }
         elseif (preg_match('#\A/api/v1/videos/([A-Za-z0-9]{6})/episodes\z#D', $path, $matches)) { $target = '/v1.catalog/episodes/public_id/'.$matches[1]; }
         elseif (preg_match('#\A/api/v1/videos/([A-Za-z0-9]{6})\z#D', $path, $matches)) { $target = '/v1.catalog/detail/public_id/'.$matches[1]; }
 
         if ($target === null) { return array('module'=>'api','path_info'=>'/v1.index/notFound'); }
-        $method = isset($server['REQUEST_METHOD']) ? strtoupper((string) $server['REQUEST_METHOD']) : 'GET';
-        return array('module'=>'api','path_info'=>$method === 'GET' ? $target : '/v1.index/methodNotAllowed');
+        $method = isset($server['REQUEST_METHOD']) ? strtoupper((string)$server['REQUEST_METHOD']) : 'GET';
+        return array('module'=>'api','path_info'=>in_array($method, $allowed, true) ? $target : '/v1.index/methodNotAllowed');
     }
 
     private static function requestPath(array $server)
