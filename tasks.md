@@ -629,7 +629,7 @@ Use `application/admin/view_new`; do not add a parallel obsolete `view/` tree.
 
 ## CP-07 — Headless API v1 and sessions
 
-### T-070 Versioned route/error/pagination/DTO foundation — `READY`
+### T-070 Versioned route/error/pagination/DTO foundation — `IN_PROGRESS`
 ### T-071 Public home/list/detail/episodes/search/taxonomy endpoints — `TODO`
 ### T-072 Locale fallback and canonical redirects — `TODO`
 ### T-073 Access plus rotating hashed refresh sessions — `TODO`

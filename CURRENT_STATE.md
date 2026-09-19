@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-06 — intelligent-content administration workspace.
 **Active checkpoint:** CP-07 — Headless API v1 and member sessions.
-**Active task:** T-070 — versioned route/error/pagination/DTO foundation (`READY`).
-**Starting commit:** T-067 implementation commit `34611dacc75a2f3a1800aa1c9649f0965ab02a6d`.
+**Active task:** T-070 — versioned route/error/pagination/DTO foundation (`IN_PROGRESS`).
+**Starting commit:** T-070 approved implementation plan commit `6822c23a66c290d8096c9e404f2c64782f6c3c10`.
 **Last completed task:** T-067 — admin permission and native compatibility regression, implementation commit `34611dacc75a2f3a1800aa1c9649f0965ab02a6d`.
 **Last verification:** PHP `35457611728`, MySQL 5.7 `35457611738`, MySQL 8.0 `35457611727` and native video `35457611759` passed the CP-06 permission matrix, database migrations, native admin/collection writes and playback compatibility.
-**Next action:** define the T-070 versioned route, stable error envelope, pagination and explicit DTO foundation contract.
+**Next action:** run the T-070 RED API v1 foundation contract, then implement the isolated route, stable envelopes, page pagination and DTO allowlist.
 
 ## 1. Confirmed product direction
 

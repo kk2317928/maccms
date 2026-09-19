@@ -62,6 +62,8 @@ jobs:
           php -l tests/regression/run_admin.php
           php -l tests/regression/admin_permission_compatibility.php
           php -l tests/regression/run_ai_jobs.php
+          php -l tests/regression/api_v1_foundation.php
+          php -l tests/regression/run_api_v1.php
           php -l tests/integration/mysql_foundation.php
           php -l tests/integration/native_vod_paths.php
           php -l application/common/util/SchemaMigrationService.php
@@ -126,3 +128,5 @@ jobs:
         run: php tests/regression/run_duplicate_tmdb.php
       - name: Intelligent-content admin regression suite
         run: php tests/regression/run_admin.php
+      - name: API v1 regression suite
+        run: php tests/regression/run_api_v1.php
