@@ -87,7 +87,7 @@ foreach ($blockedCases as $label => $row) {
     $caseWorkspace = new FinalPublicationWorkspace(
         static fn (): array => [], static fn (): int => 0, static fn (): array => $row,
         static fn (): array => $locales[42],
-        static fn () use ($label, $terms): array { return $label === 'missing taxonomy' ? [] : $terms[42]; }
+        static function () use ($label, $terms): array { return $label === 'missing taxonomy' ? [] : $terms[42]; }
     );
     $casePreview = $caseWorkspace->preview(42);
     publicationAssert($casePreview['publishable'] === false && $casePreview['blockers'] !== [], "{$label} must block publication.");
