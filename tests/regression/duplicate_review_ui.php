@@ -54,12 +54,18 @@ $service->snapshot['snapshot_hash'] = str_repeat('0', 64);
 try { $service->snapshotPreview(8); duplicateUiAssert(false, 'tampered snapshot was previewed.'); } catch (RuntimeException $exception) {}
 
 $controller = @file_get_contents($root . '/application/admin/controller/ContentWorkspace.php') ?: '';
+$baseController = @file_get_contents($root . '/application/admin/controller/Base.php') ?: '';
+$workspaceSource = @file_get_contents($root . '/application/common/util/DuplicateReviewWorkspace.php') ?: '';
 $template = @file_get_contents($root . '/application/admin/view_new/content_workspace/merge_restore.html') ?: '';
-foreach (['function mergeRestore', "assertAllowed('merge_restore'", 'DuplicateCandidateDecisionService', 'DuplicateMergeService', 'DuplicateRestoreService', 'mac_admin_csrf_token'] as $needle) {
+foreach (['function merge_restore', "assertAllowed('merge_restore'", 'DuplicateCandidateDecisionService', 'DuplicateMergeService', 'DuplicateRestoreService', 'mac_admin_csrf_token', 'Restoration conflict'] as $needle) {
     duplicateUiAssert(strpos($controller, $needle) !== false, 'merge/restore controller contract missing ' . $needle . '.');
 }
-foreach (['mac_admin_csrf_token()', '|htmlentities', 'data-action="merge"', 'data-action="restore"', 'data-action="different"', 'confirm'] as $needle) {
+duplicateUiAssert(strpos($baseController, "contentworkspace' ? 'content_workspace'") !== false, 'native authorization must normalize ContentWorkspace to the exact permission namespace.');
+duplicateUiAssert(strpos($workspaceSource, "c.decision='pending' DESC") !== false, 'pending duplicate candidates must sort ahead of merge history.');
+foreach (['mac_admin_csrf_token()', '|htmlentities', 'data-action="merge"', 'data-action="restore"', 'data-action="different"', 'confirm', 'content_lang', 'external_maps', 'source_ref', 'vod_actor', 'vod_director', 'vod_area', 'vod_pic', 'snapshot.status', '上一頁', '下一頁'] as $needle) {
     duplicateUiAssert(strpos($template, $needle) !== false, 'merge/restore view contract missing ' . $needle . '.');
 }
+$dashboard = @file_get_contents($root . '/application/admin/view_new/content_workspace/index.html') ?: '';
+duplicateUiAssert(strpos($dashboard, 'content_workspace/merge_restore') !== false, 'workspace dashboard must link to duplicate review.');
 
 fwrite(STDOUT, "OK: duplicate comparison, merge confirmation and restore preview UI contract passed.\n");
