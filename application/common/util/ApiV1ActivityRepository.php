@@ -46,8 +46,7 @@ final class ApiV1ActivityRepository
         $time=$this->safeTime($updatedAt);
         $this->withUserLock($userId,function() use($where,$video,$time) {
             $existing=Db::name('ulog')->where($where)->find();
-            if ($existing) Db::name('ulog')->where('ulog_id',(int)$existing['ulog_id'])->update(array('ulog_time'=>$time));
-            else Db::name('ulog')->insert($where+array('ulog_rid'=>(int)$video['vod_id'],'ulog_sid'=>0,'ulog_nid'=>0,'ulog_time'=>$time));
+            if (!$existing) Db::name('ulog')->insert($where+array('ulog_rid'=>(int)$video['vod_id'],'ulog_sid'=>0,'ulog_nid'=>0,'ulog_time'=>$time));
         });
         return (string)$video['public_id'];
     }
