@@ -31,8 +31,8 @@ final class ApiV1ActivityMerge
             $publicId = self::publicId(isset($item['public_id']) ? $item['public_id'] : '');
             $sourceId = self::identifier(isset($item['source_id']) ? $item['source_id'] : '', 'source_id');
             $episodeId = self::identifier(isset($item['episode_id']) ? $item['episode_id'] : '', 'episode_id');
-            $position = self::nonNegativeInt(isset($item['position_seconds']) ? $item['position_seconds'] : null, 'position_seconds');
-            $duration = self::nonNegativeInt(isset($item['duration_seconds']) ? $item['duration_seconds'] : null, 'duration_seconds');
+            $position = self::nonNegativeInt(isset($item['position_seconds']) ? $item['position_seconds'] : null, 'position_seconds', 4294967295);
+            $duration = self::nonNegativeInt(isset($item['duration_seconds']) ? $item['duration_seconds'] : null, 'duration_seconds', 4294967295);
             if ($duration > 0 && $position > $duration) { throw new InvalidArgumentException('position_seconds'); }
             $updatedAt = self::positiveInt(isset($item['updated_at']) ? $item['updated_at'] : null, 'updated_at');
             $key = $publicId."\0".$sourceId."\0".$episodeId;
@@ -71,12 +71,12 @@ final class ApiV1ActivityMerge
         return $value;
     }
 
-    private static function nonNegativeInt($value, $field)
+    private static function nonNegativeInt($value, $field, $maximum = PHP_INT_MAX)
     {
         if (is_int($value)) { $integer = $value; }
         elseif (is_string($value) && preg_match('/\A(?:0|[1-9][0-9]*)\z/D', $value) === 1) { $integer = (int)$value; }
         else { throw new InvalidArgumentException($field); }
-        if ($integer < 0) { throw new InvalidArgumentException($field); }
+        if ($integer < 0 || $integer > $maximum) { throw new InvalidArgumentException($field); }
         return $integer;
     }
 }
