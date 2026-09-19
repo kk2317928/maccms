@@ -7,12 +7,13 @@ final class ApiV1VideoDto implements ApiV1Dto
     private function __construct(array $data) { $this->data = $data; }
     public function toArray() { return $this->data; }
 
-    public static function summary(array $row)
+    public static function summary(array $row, ApiV1Locale $locale = null)
     {
+        $locale = $locale ?: ApiV1Locale::fromCode('zh-TW');
         $titles = self::titles($row);
         return new self(array(
             'public_id' => (string) self::value($row, 'public_id', ''),
-            'title' => $titles['tw'] !== '' ? $titles['tw'] : (string) self::value($row, 'vod_name', ''),
+            'title' => $locale->selectTitle($titles + array('native'=>(string) self::value($row,'vod_name',''))),
             'titles' => $titles,
             'poster' => (string) (self::value($row, 'poster_s3', '') !== '' ? self::value($row, 'poster_s3', '') : self::value($row, 'vod_pic', '')),
             'year' => (string) self::value($row, 'vod_year', ''),
@@ -22,9 +23,10 @@ final class ApiV1VideoDto implements ApiV1Dto
         ));
     }
 
-    public static function detail(array $row, array $taxonomies)
+    public static function detail(array $row, array $taxonomies, ApiV1Locale $locale = null)
     {
-        $data = self::summary($row)->toArray();
+        $locale = $locale ?: ApiV1Locale::fromCode('zh-TW');
+        $data = self::summary($row, $locale)->toArray();
         $data += array(
             'synopsis' => (string) self::value($row, 'vod_content', ''),
             'actors' => self::csv(self::value($row, 'vod_actor', '')),
@@ -43,16 +45,19 @@ final class ApiV1VideoDto implements ApiV1Dto
         return new self($data);
     }
 
-    public static function taxonomy(array $row)
+    public static function taxonomy(array $row, ApiV1Locale $locale = null)
     {
+        $locale = $locale ?: ApiV1Locale::fromCode('zh-TW');
+        $names = array(
+            'tw' => (string) self::value($row, 'name_tw', ''),
+            'cn' => (string) self::value($row, 'name_cn', ''),
+            'en' => (string) self::value($row, 'name_en', ''),
+        );
         return array(
             'kind' => (string) self::value($row, 'kind', ''),
             'slug' => (string) self::value($row, 'slug', ''),
-            'names' => array(
-                'tw' => (string) self::value($row, 'name_tw', ''),
-                'cn' => (string) self::value($row, 'name_cn', ''),
-                'en' => (string) self::value($row, 'name_en', ''),
-            ),
+            'name' => $locale->selectName($names, (string) self::value($row, 'slug', '')),
+            'names' => $names,
             'sort' => (int) self::value($row, 'sort', 0),
         );
     }
