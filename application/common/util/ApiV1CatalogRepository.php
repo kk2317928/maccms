@@ -4,11 +4,12 @@ namespace app\common\util;
 final class ApiV1CatalogRepository
 {
     const PUBLICATION_SQL = "v.vod_status = 1 AND e.workflow_status = 'published' AND e.merged_into_vod_id = 0 AND e.published_at > 0";
-    const VIDEO_FIELDS = 'v.vod_name,v.vod_pic,v.vod_year,v.vod_remarks,v.vod_score,v.vod_content,v.vod_actor,v.vod_director,v.vod_area,v.vod_lang,v.vod_serial,v.vod_total,v.vod_isend,v.vod_hits,e.public_id,e.title_tw,e.title_cn,e.title_en,e.original_title,e.poster_s3,e.type2,e.trailer_url,e.preview_url,e.published_at';
+    const SUMMARY_FIELDS = 'v.vod_name,v.vod_pic,v.vod_year,v.vod_remarks,v.vod_score,v.vod_hits,e.public_id,e.title_tw,e.title_cn,e.title_en,e.original_title,e.poster_s3,e.type2,e.published_at';
+    const DETAIL_FIELDS = self::SUMMARY_FIELDS . ',v.vod_content,v.vod_actor,v.vod_director,v.vod_area,v.vod_lang,v.vod_serial,v.vod_total,v.vod_isend,e.trailer_url,e.preview_url';
 
     public function listVideos(ApiV1Pagination $pagination, array $filters, $search = null)
     {
-        $query = $this->published()->field(self::VIDEO_FIELDS);
+        $query = $this->published()->field(self::SUMMARY_FIELDS);
         $this->applyFilters($query, $filters, $search);
         $countQuery = clone $query;
         $sort = isset($filters['sort']) ? $filters['sort'] : 'latest';
