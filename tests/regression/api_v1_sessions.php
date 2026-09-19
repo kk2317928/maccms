@@ -62,4 +62,11 @@ authAssert(strpos($service, "'revoke_reason'=>'replay'") !== false, 'Replay must
 authAssert(strpos($service, "'refresh_token'=>\$next") !== false, 'Rotation must return only the successor plaintext.');
 authAssert(strpos($service, "'token_hash'=>ApiV1RefreshToken::digest(\$token)") !== false, 'Storage must use the digest.');
 
+$authController = file_get_contents($root.'/application/api/controller/v1/Auth.php');
+foreach (array('use app\\common\\util\\ApiV1Response;', "'rotate_legacy_session'=>false", "'Cache-Control'=>'no-store'") as $needle) {
+    authAssert(strpos($authController, $needle) !== false, 'Auth controller missing '.$needle);
+}
+$userModel = file_get_contents($root.'/application/common/model/User.php');
+authAssert(strpos($userModel, "isset(\$options['rotate_legacy_session'])") !== false, 'v1 login must preserve legacy sessions.');
+
 fwrite(STDOUT, "API v1 session security contract passed.".PHP_EOL);
