@@ -113,6 +113,7 @@ $authorizationDependencies = [
     'application/admin/controller/ContentWorkspace.php',
     'application/common/util/ContentAdminPolicy.php',
     'application/common/util/ContentAdminRoutePolicy.php',
+    'application/common/util/ContentAdminAudit.php',
     'application/common/util/ContentJobAdminService.php',
     'tests/regression/admin_permission_compatibility.php',
 ];
