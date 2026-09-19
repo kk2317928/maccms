@@ -55,7 +55,8 @@ localeSame(array('status'=>'not_found'),ApiV1CanonicalResource::resolve('MISS23'
 localeSame(array('status'=>'not_found'),ApiV1CanonicalResource::resolve('ALIAS2',$canonical,function(){return false;}),'Unavailable canonical target must fail closed.');
 
 $controller=file_get_contents($root.'/application/api/controller/v1/Catalog.php');
-localeTrue(strpos($controller,'308')!==false && strpos($controller,'Location')!==false,'Catalog controller must emit explicit canonical 308 redirects.');
+$baseController=file_get_contents($root.'/application/api/controller/v1/Base.php');
+localeTrue(strpos($controller,'canonicalRedirectResponse')!==false && strpos($baseController,'308')!==false && strpos($baseController,'Location')!==false,'Catalog controller must emit explicit canonical 308 redirects.');
 localeTrue(strpos($controller,"'canonical_public_id'")!==false,'Redirect payload must use public ID only.');
 $repository=file_get_contents($root.'/application/common/util/ApiV1CatalogRepository.php');
 localeTrue(strpos($repository,'self::VIDEO_FIELDS')===false,'Detail query must not reference the removed VIDEO_FIELDS constant.');
