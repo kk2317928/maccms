@@ -22,8 +22,13 @@ final class ApiV1CatalogRepository
 
     public function findVideo($publicId)
     {
-        $row = $this->published()->field(self::VIDEO_FIELDS)->where('e.public_id', $publicId)->find();
+        $row = $this->published()->field(self::DETAIL_FIELDS)->where('e.public_id', $publicId)->find();
         return $row ?: null;
+    }
+
+    public function isPublished($publicId)
+    {
+        return $this->published()->where('e.public_id', $publicId)->count() > 0;
     }
 
     public function taxonomiesByPublicId($publicId)
