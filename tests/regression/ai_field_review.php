@@ -118,7 +118,7 @@ $beforeDecisions = $failing->decisions;
 try { $failing->review(7, 'title_cn', 'accept', null, 55, 'reviewer'); fieldReviewAssert(false, 'audit failure must fail closed.'); } catch (RuntimeException $exception) {}
 fieldReviewAssert($governance->values[42]['title_cn'] === $before && $failing->decisions === $beforeDecisions, 'audit failure must not mutate field value or decision state.');
 
-foreach ([['vod_name', '<img src=x onerror=alert(1)>'], ['vod_year', 'not-a-year'], ['type2', 'series']] as $invalidEdit) {
+foreach ([['vod_name', '<img src=x onerror=alert(1)>'], ['vod_name', str_repeat('"', 255)], ['vod_year', 'not-a-year'], ['type2', 'series']] as $invalidEdit) {
     try { $service->review(7, $invalidEdit[0], 'edit', $invalidEdit[1], 55, 'reviewer'); fieldReviewAssert(false, 'invalid manual edit was accepted.'); }
     catch (InvalidArgumentException $exception) {}
 }
