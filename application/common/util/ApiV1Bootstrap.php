@@ -21,6 +21,19 @@ class ApiV1Bootstrap
         elseif ($path === '/api/v1/auth/refresh') { $target = '/v1.auth/refresh'; $allowed = array('POST'); }
         elseif ($path === '/api/v1/auth/logout') { $target = '/v1.auth/logout'; $allowed = array('POST'); }
         elseif ($path === '/api/v1/auth/sessions') { $target = '/v1.auth/sessions'; }
+        elseif ($path === '/api/v1/me/favorites') { $target = '/v1.activity/favorites'; }
+        elseif ($path === '/api/v1/me/history') { $target = '/v1.activity/history'; }
+        elseif ($path === '/api/v1/me/activity/merge') { $target = '/v1.activity/merge'; $allowed = array('POST'); }
+        elseif (preg_match('#\\A/api/v1/me/favorites/([A-Za-z0-9]{6})\\z#D', $path, $matches)) {
+            $target = '/v1.activity/'.((isset($server['REQUEST_METHOD']) && strtoupper((string)$server['REQUEST_METHOD']) === 'DELETE') ? 'unfavorite' : 'favorite').'/public_id/'.$matches[1];
+            $allowed = array('PUT','DELETE');
+        }
+        elseif (preg_match('#\\A/api/v1/me/progress/([A-Za-z0-9]{6})\\z#D', $path, $matches)) {
+            $method = isset($server['REQUEST_METHOD']) ? strtoupper((string)$server['REQUEST_METHOD']) : 'GET';
+            $actions = array('GET'=>'progress','PUT'=>'saveProgress','DELETE'=>'deleteProgress');
+            $target = '/v1.activity/'.(isset($actions[$method]) ? $actions[$method] : 'progress').'/public_id/'.$matches[1];
+            $allowed = array('GET','PUT','DELETE');
+        }
         elseif (preg_match('#\A/api/v1/auth/sessions/([a-f0-9]{32})\z#D', $path, $matches)) {
             $target = '/v1.auth/revoke/session_id/'.$matches[1]; $allowed = array('DELETE');
         }
