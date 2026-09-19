@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-19
-State document version: 61
+State document version: 62
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.
 **Active checkpoint:** CP-06 — intelligent-content administration.
-**Active task:** T-066 — batch enqueue and failure/retry UI (`IN_PROGRESS`).
-**Starting commit:** T-065 final commit `5d71f88fb2240c2e04746140fdb109b2154bfcab`.
-**Last completed task:** T-065 — final validation/publication UI, final commit `5d71f88fb2240c2e04746140fdb109b2154bfcab`.
-**Last verification:** PHP `35454020791`, MySQL 5.7 `35454020803`, MySQL 8.0 `35454020808` and native video `35453927974` passed publication, migration, storage-engine and existing regression contracts.
-**Next action:** run the RED T-066 contract; implement batch enqueue, paged failure inspection and terminal-failure retry only after the expected missing-service failure.
+**Active task:** T-067 — admin permission and compatibility regression (`READY`).
+**Starting commit:** T-066 implementation commit `aaef8a5aef6a60fd507485946ec3a7d87571b04b`.
+**Last completed task:** T-066 — batch enqueue and failure/retry UI, implementation commit `aaef8a5aef6a60fd507485946ec3a7d87571b04b`.
+**Last verification:** PHP `35455134189` passed T-066 batch enqueue, exact permissions, idempotency, paging, redaction, audit and monotonic terminal-failure retry plus all existing regression suites.
+**Next action:** define the T-067 cross-page permission and native compatibility regression contract.
 
 ## 1. Confirmed product direction
 
@@ -152,6 +152,7 @@ Absence was established by repository text search against the pinned snapshot. I
 | AI field review UI and conflict controls | PASS | PHP `35431481425`, MySQL 5.7 `35431315407`, MySQL 8.0 `35431315406`, native video `35431205533` |
 | TMDB candidate and manual-match UI | PASS | PHP `35443519455`, MySQL 5.7 `35443519424`, MySQL 8.0 `35443519411`; candidate-bound preview, exact permissions, locking, Cron handlers and revision storage passed |
 | Final validation and publication UI | PASS | PHP `35454020791`, MySQL 5.7 `35454020803`, MySQL 8.0 `35454020808`, native video `35453927974`; locked revision validation, atomic audit/state activation, InnoDB conversion, playback-source checks, cache and search synchronization passed |
+| Batch enqueue and terminal-failure retry UI | PASS | PHP `35455134189`; explicit ID cap, exact permissions, CSRF/confirmation, idempotency, redaction, immutable audit, pagination and monotonic attempt history passed |
 | Video workflow state machine | PASS | PHP 8.1 run `35344911819`; exhaustive transition matrix passed |
 | Lossless native playback codec | PASS | PHP 8.1 run `35345369100`; record-form, validation, round-trip and merge contracts passed |
 | Foundation migration MySQL 5.7 | PASS | Disposable `maccms_ci_57`, MySQL 5.7.44; Actions run `35348332012` |

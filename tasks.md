@@ -602,8 +602,13 @@ No task may introduce automatic merge.
 - Added a discoverable `view_new` manual-review publication queue and revision-bound preview with canonical identity, locale, taxonomy, media and native playback validation. Publication requires exact `content_workspace/publish` authorization, stable CSRF, explicit confirmation and locked revalidation; it atomically activates native visibility, advances the separate workflow, writes immutable audit data, clears detail caches and synchronizes Meilisearch.
 - Added versioned migration `20260919000400` to convert an installed native `vod` table to InnoDB while remaining safe in extension-only migration environments. Empty, unknown or disabled native playback sources and unsafe/unplayable URLs fail closed. RED commits: `3e65445bf178b17fbbf72d616cb6ab288736910c`, `4dd0830315c7b7479b6c54e3940712b9dff037e1`, `f0c15f64ba94953b1c363c631100794b8aebbfb5`, `731e530bf2c85788a14fa2c32b0ca4b6e6563d4c`; final commit: `5d71f88fb2240c2e04746140fdb109b2154bfcab`. PHP `35454020791`, MySQL 5.7 `35454020803`, MySQL 8.0 `35454020808`, and native video `35453927974` passed.
 - Deferred minor: add visible queue pagination/total controls; the controller already accepts `page` and the service returns paging metadata.
-### T-066 Batch enqueue and failure/retry UI — `IN_PROGRESS`
-### T-067 Admin permission and compatibility regression — `TODO`
+### T-066 Batch enqueue and failure/retry UI — `DONE`
+
+- Added a discoverable `view_new` batch-job administration page for explicit lists of at most 100 video IDs, deterministic idempotent AI-normalization/TMDB-match enqueueing, type/status paging, redacted failure summaries and recent immutable run history. HTTP requests enqueue only and never invoke external handlers.
+- Enqueue and terminal-failure retry require stable CSRF, explicit confirmation and exact `run_ai`/`run_tmdb` grants, with immutable audit inside the same transaction. Retry preserves monotonic attempt identifiers and historical `content_job_run` rows while adding one retry allowance and clearing lease/error/terminal fields.
+- RED commit: `8a22c0adf78fad7dcdf291916415433fae594366`; implementation/fix commits through `aaef8a5aef6a60fd507485946ec3a7d87571b04b`. RED PHP run `35454565365` failed only for the missing service; GREEN PHP run `35455134189` passed. Independent review found the attempt-history uniqueness conflict; the monotonic-attempt fix and regression contract resolved it.
+
+### T-067 Admin permission and compatibility regression — `READY`
 
 Use `application/admin/view_new`; do not add a parallel obsolete `view/` tree.
 
