@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 $tests = array(
     __DIR__ . '/api_v1_foundation.php',
+    __DIR__ . '/api_v1_public_catalog.php',
 );
 
 foreach ($tests as $test) {
