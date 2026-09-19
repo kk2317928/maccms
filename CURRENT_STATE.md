@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-19
-State document version: 63
+State document version: 64
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -10,13 +10,13 @@ Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
 
 Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to the approved upstream while the programme is implemented incrementally on the integration branch.
 
-**Last completed checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.
-**Active checkpoint:** CP-06 — intelligent-content administration.
-**Active task:** T-067 — admin permission and compatibility regression (`IN_PROGRESS`).
-**Starting commit:** T-066 implementation commit `aaef8a5aef6a60fd507485946ec3a7d87571b04b`.
-**Last completed task:** T-066 — batch enqueue and failure/retry UI, implementation commit `aaef8a5aef6a60fd507485946ec3a7d87571b04b`.
-**Last verification:** PHP `35455134189` passed T-066 batch enqueue, exact permissions, idempotency, paging, redaction, audit and monotonic terminal-failure retry plus all existing regression suites.
-**Next action:** run the RED T-067 permission matrix/native compatibility contract; implement the tested route-policy boundary only after the expected missing-policy failure.
+**Last completed checkpoint:** CP-06 — intelligent-content administration workspace.
+**Active checkpoint:** CP-07 — Headless API v1 and member sessions.
+**Active task:** T-070 — versioned route/error/pagination/DTO foundation (`READY`).
+**Starting commit:** T-067 implementation commit `34611dacc75a2f3a1800aa1c9649f0965ab02a6d`.
+**Last completed task:** T-067 — admin permission and native compatibility regression, implementation commit `34611dacc75a2f3a1800aa1c9649f0965ab02a6d`.
+**Last verification:** PHP `35457611728`, MySQL 5.7 `35457611738`, MySQL 8.0 `35457611727` and native video `35457611759` passed the CP-06 permission matrix, database migrations, native admin/collection writes and playback compatibility.
+**Next action:** define the T-070 versioned route, stable error envelope, pagination and explicit DTO foundation contract.
 
 ## 1. Confirmed product direction
 
@@ -153,6 +153,7 @@ Absence was established by repository text search against the pinned snapshot. I
 | TMDB candidate and manual-match UI | PASS | PHP `35443519455`, MySQL 5.7 `35443519424`, MySQL 8.0 `35443519411`; candidate-bound preview, exact permissions, locking, Cron handlers and revision storage passed |
 | Final validation and publication UI | PASS | PHP `35454020791`, MySQL 5.7 `35454020803`, MySQL 8.0 `35454020808`, native video `35453927974`; locked revision validation, atomic audit/state activation, InnoDB conversion, playback-source checks, cache and search synchronization passed |
 | Batch enqueue and terminal-failure retry UI | PASS | PHP `35455134189`; explicit ID cap, exact permissions, CSRF/confirmation, idempotency, redaction, immutable audit, pagination and monotonic attempt history passed |
+| CP-06 permission and native compatibility gate | PASS | PHP `35457611728`, MySQL 5.7 `35457611738`, MySQL 8.0 `35457611727`, native video `35457611759`; exact route/action grants and native admin/collection/playback paths passed |
 | Video workflow state machine | PASS | PHP 8.1 run `35344911819`; exhaustive transition matrix passed |
 | Lossless native playback codec | PASS | PHP 8.1 run `35345369100`; record-form, validation, round-trip and merge contracts passed |
 | Foundation migration MySQL 5.7 | PASS | Disposable `maccms_ci_57`, MySQL 5.7.44; Actions run `35348332012` |

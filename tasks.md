@@ -22,8 +22,8 @@ Do not mark a task `DONE` with a future or local-only SHA. A checkpoint complete
 | CP-03 | Verify foundation on real MySQL and native write paths | DONE | CP-02 |
 | CP-04 | Add content job queue, AI normalization, provenance and locks | DONE | CP-03 |
 | CP-05 | Add duplicate review, reversible merge and TMDB workflow | DONE | CP-04 |
-| CP-06 | Add intelligent-content admin workspace and permissions | READY | CP-05 |
-| CP-07 | Add versioned Headless API, sessions, favorites and progress | TODO | CP-06 |
+| CP-06 | Add intelligent-content admin workspace and permissions | DONE | CP-05 |
+| CP-07 | Add versioned Headless API, sessions, favorites and progress | READY | CP-06 |
 | CP-08 | Add event deduplication, rankings and recommendations | TODO | CP-07 |
 | CP-09 | Remove prohibited communication and complete release hardening | TODO | CP-08 |
 
@@ -608,7 +608,20 @@ No task may introduce automatic merge.
 - Enqueue and terminal-failure retry require stable CSRF, explicit confirmation and exact `run_ai`/`run_tmdb` grants, with immutable audit inside the same transaction. Retry preserves monotonic attempt identifiers and historical `content_job_run` rows while adding one retry allowance and clearing lease/error/terminal fields.
 - RED commit: `8a22c0adf78fad7dcdf291916415433fae594366`; implementation/fix commits through `aaef8a5aef6a60fd507485946ec3a7d87571b04b`. RED PHP run `35454565365` failed only for the missing service; GREEN PHP run `35455134189` passed. Independent review found the attempt-history uniqueness conflict; the monotonic-attempt fix and regression contract resolved it.
 
-### T-067 Admin permission and compatibility regression — `IN_PROGRESS`
+### T-067 Admin permission and compatibility regression — `DONE`
+
+- Added a centralized, pure `ContentAdminRoutePolicy` with exact case-insensitive grants for dashboard, AI review, merge/restore, TMDB review, publication and batch jobs; unknown routes and permission substrings fail closed, while the numeric super administrator retains access.
+- Added a cross-permission/action matrix plus active-`view_new`, CSRF/confirmation, enqueue-only HTTP, native `Vod::saveData()`, `Collect::vod_data()` and `vod_play_*` compatibility contracts. The three database/native workflows now trigger for the complete admin authorization boundary.
+- RED commit: `dfca19ded57a2fa2e8fb35867604e404070b9134`; implementation and review-fix commits through `34611dacc75a2f3a1800aa1c9649f0965ab02a6d`.
+- RED PHP run `35457184767` failed only for the missing route policy. GREEN: PHP `35457611728`, MySQL 5.7 `35457611738`, MySQL 8.0 `35457611727`, native video `35457611759` passed. Independent review found incomplete future workflow triggers; contract run `35457563047` reproduced it before the fix.
+
+### CP-06 gate
+
+- [x] Every intelligent-content route and action defaults to deny and requires its exact grant.
+- [x] Confirmation, stable CSRF and immutable audit boundaries remain covered for high-risk mutations.
+- [x] Large AI/TMDB batches enqueue traceable Cron jobs and do not call external handlers in HTTP requests.
+- [x] Native admin save, collection insert/update and playback compatibility pass on the disposable MySQL 5.7 environment.
+- [x] PHP, MySQL 5.7, MySQL 8.0 and native compatibility workflows passed at `34611dacc75a2f3a1800aa1c9649f0965ab02a6d`.
 
 Use `application/admin/view_new`; do not add a parallel obsolete `view/` tree.
 
@@ -616,7 +629,7 @@ Use `application/admin/view_new`; do not add a parallel obsolete `view/` tree.
 
 ## CP-07 — Headless API v1 and sessions
 
-### T-070 Versioned route/error/pagination/DTO foundation — `TODO`
+### T-070 Versioned route/error/pagination/DTO foundation — `READY`
 ### T-071 Public home/list/detail/episodes/search/taxonomy endpoints — `TODO`
 ### T-072 Locale fallback and canonical redirects — `TODO`
 ### T-073 Access plus rotating hashed refresh sessions — `TODO`
