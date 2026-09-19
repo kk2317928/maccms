@@ -637,7 +637,11 @@ Use `application/admin/view_new`; do not add a parallel obsolete `view/` tree.
 - RED PHP run `35461612663` passed all existing suites and failed only at the missing API v1 foundation. GREEN: PHP `35462362148`, MySQL 5.7 `35462362150`, MySQL 8.0 `35462362152`, and native video `35462362293` passed.
 - Independent review found module-binding, route option/pattern, exception leakage and request-ID override risks; the entrypoint dispatcher, scoped exception handler and reserved metadata fix resolved them.
 
-### T-071 Public home/list/detail/episodes/search/taxonomy endpoints — `READY`
+### T-071 Public home/list/detail/episodes/search/taxonomy endpoints — `IN_PROGRESS`
+
+- Approved design: `docs/superpowers/specs/2026-09-19-api-v1-public-catalog-design.md`.
+- Execution plan: `docs/superpowers/plans/2026-09-19-api-v1-public-catalog.md`.
+- Security boundary: episode DTOs expose structure only; playback URLs remain deferred to T-075.
 ### T-072 Locale fallback and canonical redirects — `TODO`
 ### T-073 Access plus rotating hashed refresh sessions — `TODO`
 ### T-074 Favorites/history/progress DTO and anonymous merge — `TODO`
