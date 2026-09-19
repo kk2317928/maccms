@@ -52,5 +52,8 @@ $failing = new MemoryDuplicateMergeService($candidate, $bundles, static fn (): i
 $failing->failAfterPrimary = true;
 try { $failing->merge(3, 7, 42, 99); } catch (RuntimeException $exception) {}
 if ($failing->bundles !== $bundles || $failing->candidate !== $candidate || $failing->snapshots) { fwrite(STDERR, "FAIL: any merge failure must roll back snapshot and content mutations.\n"); exit(1); }
+$auditFailing = new MemoryDuplicateMergeService($candidate, $bundles, static fn (): int => 1726704200);
+try { $auditFailing->merge(3, 7, 42, 99, static function (): void { throw new RuntimeException('audit failed'); }); } catch (RuntimeException $exception) {}
+if ($auditFailing->bundles !== $bundles || $auditFailing->candidate !== $candidate || $auditFailing->snapshots) { fwrite(STDERR, "FAIL: failed merge audit must roll back the snapshot and mutations.\n"); exit(1); }
 try { $service->merge(3, 42, 7, 0); } catch (InvalidArgumentException $exception) { fwrite(STDOUT, "OK: transactional duplicate merge contract passed.\n"); exit(0); }
 fwrite(STDERR, "FAIL: merge reviewer must be validated.\n"); exit(1);

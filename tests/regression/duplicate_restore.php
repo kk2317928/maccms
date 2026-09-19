@@ -59,6 +59,9 @@ $service->restore(8, 55, true, $authorized);
 restore_assert($service->bundles[7] === $primaryBefore && $service->bundles[42] === $secondaryBefore, 'restore must return every snapshotted value and relationship.');
 restore_assert($service->candidate['decision'] === 'pending' && $service->candidate['reviewed_by'] === 0, 'restore must reopen the duplicate candidate.');
 restore_assert($service->snapshot['status'] === 'restored' && $service->snapshot['restored_by'] === 55 && $service->snapshot['restored_at'] === 300, 'restore must retain a complete actor/timestamp audit record.');
+$auditFailing = new MemoryDuplicateRestoreService($snapshot, $candidate, [7 => $primaryAfter, 42 => $secondaryAfter], static fn (): int => 300);
+try { $auditFailing->restore(8, 55, true, $authorized, static function (): void { throw new RuntimeException('audit failed'); }); } catch (RuntimeException $exception) {}
+restore_assert($auditFailing->snapshot === $snapshot && $auditFailing->candidate === $candidate && $auditFailing->bundles[7] === $primaryAfter, 'failed restore audit must roll back every restored row.');
 
 foreach ([[54, true], [55, false]] as [$reviewerId, $confirmed]) {
     $denied = new MemoryDuplicateRestoreService($snapshot, $candidate, [7 => $primaryAfter, 42 => $secondaryAfter], static fn (): int => 300);

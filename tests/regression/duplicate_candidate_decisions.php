@@ -42,10 +42,14 @@ if (count($repo->rows) !== 1) { fwrite(STDERR, "FAIL: malformed fingerprints mus
 final class MemoryCandidateDecisionService extends DuplicateCandidateDecisionService
 {
     public $rows;
+    private $transactionState;
     public function __construct(array $rows, callable $clock) { parent::__construct($clock); $this->rows = $rows; }
     protected function loadCandidate(int $candidateId): ?array { return $this->rows[$candidateId] ?? null; }
     protected function loadPair(int $low, int $high): ?array { foreach ($this->rows as $row) { if ($row['vod_id_low'] === $low && $row['vod_id_high'] === $high) return $row; } return null; }
     protected function updateCandidate(int $candidateId, array $changes, string $expectedDecision): bool { if (($this->rows[$candidateId]['decision'] ?? '') !== $expectedDecision) return false; $this->rows[$candidateId] = array_merge($this->rows[$candidateId], $changes); return true; }
+    protected function beginTransaction(): void { $this->transactionState = $this->rows; }
+    protected function commitTransaction(): void { $this->transactionState = null; }
+    protected function rollbackTransaction(): void { $this->rows = $this->transactionState; }
 }
 
 $rows = [
@@ -56,6 +60,9 @@ $service = new MemoryCandidateDecisionService($rows, static fn (): int => 172670
 if (!$service->markDifferent(1, 99) || !$service->isPermanentlyDifferent(42, 7)) { fwrite(STDERR, "FAIL: reviewed different-work decision was not persisted.\n"); exit(1); }
 $different = $service->rows[1];
 if ($different['decision'] !== 'different' || $different['reviewed_by'] !== 99 || $different['reviewed_at'] !== 1726704100) { fwrite(STDERR, "FAIL: different-work review metadata is incomplete.\n"); exit(1); }
+$auditFailing = new MemoryCandidateDecisionService($rows, static fn (): int => 1726704100);
+try { $auditFailing->markDifferent(1, 99, static function (): void { throw new RuntimeException('audit failed'); }); } catch (RuntimeException $exception) {}
+if ($auditFailing->rows !== $rows) { fwrite(STDERR, "FAIL: failed different-work audit must roll back the decision.\n"); exit(1); }
 if ($service->invalidateIfStale(1, hash('sha256', 'right-v2'), $leftFingerprint) || $service->rows[1]['decision'] !== 'different') { fwrite(STDERR, "FAIL: permanent different-work decisions must survive content changes.\n"); exit(1); }
 if (!$service->invalidateIfStale(2, hash('sha256', 'other-v1'), hash('sha256', 'left-v2'))) { fwrite(STDERR, "FAIL: changed content fingerprint must invalidate a pending candidate.\n"); exit(1); }
 if ($service->rows[2]['decision'] !== 'invalidated' || $service->rows[2]['invalidated_at'] !== 1726704100) { fwrite(STDERR, "FAIL: stale candidate invalidation metadata is incomplete.\n"); exit(1); }

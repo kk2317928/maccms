@@ -57,6 +57,7 @@ jobs:
           php -l tests/regression/content_admin_security.php
           php -l tests/regression/content_workspace_dashboard.php
           php -l tests/regression/ai_field_review.php
+          php -l tests/regression/duplicate_review_ui.php
           php -l tests/regression/run_admin.php
           php -l tests/regression/run_ai_jobs.php
           php -l tests/integration/mysql_foundation.php
@@ -88,6 +89,7 @@ jobs:
           php -l application/common/util/ContentAdminAudit.php
           php -l application/common/util/ContentWorkspaceDashboard.php
           php -l application/common/util/AiFieldReviewService.php
+          php -l application/common/util/DuplicateReviewWorkspace.php
           php -l application/admin/controller/ContentWorkspace.php
           php -l application/common/model/VodExt.php
           php -l application/common/model/MetaTerm.php
