@@ -77,6 +77,10 @@ class ApiV1SessionService
                     'created_at'=>(int)$row['created_at'], 'last_used_at'=>(int)$row['last_used_at'],
                     'expires_at'=>(int)$row['expires_at'], 'revoked'=>(bool)$row['revoked_at'],
                 );
+            } else {
+                $sessions[$row['session_id']]['created_at'] = min(
+                    $sessions[$row['session_id']]['created_at'], (int)$row['created_at']
+                );
             }
         }
         return array_values($sessions);
