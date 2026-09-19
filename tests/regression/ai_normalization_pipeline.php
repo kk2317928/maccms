@@ -12,8 +12,8 @@ foreach (['AiNormalizationValidator.php', 'AiNormalizationPipeline.php'] as $fil
 use app\common\util\AiNormalizationPipeline;
 use app\common\util\AiNormalizationValidator;
 
-final class PipelineRuns { public $budget = true; public $rows = []; public function withinDailyBudget(int $limit, int $now): bool { return $this->budget; } public function record(array $row): int { $this->rows[] = $row; return count($this->rows); } }
-final class PipelineFields { public $writes = []; public function apply(int $vodId, string $field, $value, string $source, string $ref = ''): bool { $this->writes[] = compact('vodId', 'field', 'value', 'source', 'ref'); return true; } }
+final class PipelineRuns { public $budget = true; public $rows = []; public $staged = []; public function withinDailyBudget(int $limit, int $now): bool { return $this->budget; } public function record(array $row): int { $this->rows[] = $row; return count($this->rows); } public function stageReviews(int $runId, int $vodId, array $fields, int $now): void { $this->staged = $fields; } }
+final class PipelineFields { public $writes = []; public $values = ['vod_name' => 'Before']; public function inspect(int $vodId, string $field): array { return ['value' => $this->values[$field] ?? null, 'state' => null]; } public function apply(int $vodId, string $field, $value, string $source, string $ref = ''): bool { $this->writes[] = compact('vodId', 'field', 'value', 'source', 'ref'); return true; } }
 
 $valid = json_encode([
     'normalized_title' => 'Example', 'original_title' => 'Original', 'title_tw' => '範例', 'title_cn' => '范例', 'title_en' => 'Example',
@@ -27,6 +27,7 @@ $provider = static function (array $request) use (&$calls, $valid): array { $cal
 $pipeline = new AiNormalizationPipeline($provider, new AiNormalizationValidator(), $runs, $fields, ['provider' => 'compatible', 'model' => 'model-x', 'prompt_version' => 'normalize-v1', 'daily_budget_micros' => 1000], static fn (): int => 1726704000);
 $metrics = $pipeline->handle(['vod_id' => 42, 'title' => 'Example'], ['job_id' => 7]);
 if ($calls !== 1 || $metrics['ai_run_id'] !== 1 || $metrics['fields_proposed'] !== 7 || $fields->writes || $runs->rows[0]['decision_status'] !== 'pending') { fwrite(STDERR, "FAIL: valid AI output must remain a pending review candidate without field mutation.\n"); exit(1); }
+if (count($runs->staged) !== 7 || $runs->staged[0]['candidate'] !== 'Example' || $runs->staged[0]['baseline'] !== 'Before' || strlen($runs->staged[0]['baseline_hash']) !== 64) { fwrite(STDERR, "FAIL: valid output must stage canonical candidates with immutable baselines.\n"); exit(1); }
 
 $runs->budget = false;
 try { $pipeline->handle(['vod_id' => 42, 'title' => 'Example'], ['job_id' => 8]); } catch (RuntimeException $exception) {}

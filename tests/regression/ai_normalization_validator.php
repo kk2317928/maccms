@@ -35,6 +35,7 @@ $badYear = $valid; $badYear['year'] = '2025'; aiReject($validator, $badYear, 'ye
 $badConfidence = $valid; $badConfidence['confidence'] = 1.1; aiReject($validator, $badConfidence, 'confidence must be within zero and one');
 $badType = $valid; $badType['media_type'] = 'podcast'; aiReject($validator, $badType, 'unsupported media type must fail');
 $badTaxonomy = $valid; $badTaxonomy['taxonomy']['genres'] = [['name' => 'Drama']]; aiReject($validator, $badTaxonomy, 'taxonomy suggestions must be strings');
+$htmlTitle = $valid; $htmlTitle['normalized_title'] = '<img src=x onerror=alert(1)>'; aiReject($validator, $htmlTitle, 'HTML in display fields must fail');
 
 try { $validator->validate('{bad json'); } catch (InvalidArgumentException $exception) { fwrite(STDOUT, "OK: AI normalization schema contract passed.\n"); exit(0); }
 fwrite(STDERR, "FAIL: malformed JSON must fail.\n"); exit(1);

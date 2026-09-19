@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 $root = dirname(__DIR__, 2);
 $migration = @file_get_contents($root . '/application/data/migrations/20260919000100_ai_field_reviews.sql') ?: '';
-foreach (['CREATE TABLE IF NOT EXISTS `__PREFIX__content_ai_field_review`', 'UNIQUE KEY `uk_run_field` (`ai_run_id`,`field_name`)', 'KEY `idx_vod_decision` (`vod_id`,`decision`)'] as $needle) {
+foreach (['CREATE TABLE IF NOT EXISTS `__PREFIX__content_ai_field_review`', '`baseline_hash` char(64)', "DEFAULT 'pending'", 'UNIQUE KEY `uk_run_field` (`ai_run_id`,`field_name`)', 'KEY `idx_vod_decision` (`vod_id`,`decision`)'] as $needle) {
     if (strpos($migration, $needle) === false) { fwrite(STDERR, "FAIL: AI field-review migration missing {$needle}\n"); exit(1); }
 }
 
@@ -12,6 +12,12 @@ foreach (['FieldGovernance.php', 'ContentAdminAudit.php', 'AiFieldReviewService.
     $path = $root . '/application/common/util/' . $file;
     if (!is_file($path)) { fwrite(STDERR, "FAIL: {$file} is missing.\n"); exit(1); }
     require_once $path;
+}
+$controller = @file_get_contents($root . '/application/admin/controller/ContentWorkspace.php') ?: '';
+$template = @file_get_contents($root . '/application/admin/view_new/content_workspace/review.html') ?: '';
+fieldReviewAssert(strpos($controller, "mac_admin_csrf_token") !== false && strpos($template, '{:mac_admin_csrf_token()}') !== false, 'review POSTs must use the stable admin CSRF token.');
+foreach (['run.vod_name|default=\'--\'|htmlentities', 'run.provider|htmlentities', 'item.source_ref|htmlentities'] as $escaped) {
+    fieldReviewAssert(strpos($template, $escaped) !== false, 'review output must escape ' . $escaped . '.');
 }
 
 use app\common\util\AiFieldReviewService;
@@ -40,7 +46,8 @@ final class MemoryAiFieldReviewService extends AiFieldReviewService
     protected function loadRun(int $runId): ?array { return $runId === (int) $this->run['ai_run_id'] ? $this->run : null; }
     protected function loadDecision(int $runId, string $field): ?array { return $this->decisions[$field] ?? null; }
     protected function persistDecision(array $row): void { $this->decisions[$row['field_name']] = $row; }
-    protected function countDecisions(int $runId): int { return count($this->decisions); }
+    protected function countDecisions(int $runId): int { return count(array_filter($this->decisions, static fn (array $row): bool => $row['decision'] !== 'pending')); }
+    protected function lockVideoRows(int $vodId): void {}
     protected function updateRunDecision(int $runId, string $status): void { $this->run['decision_status'] = $status; }
     protected function transactional(callable $callback) { return $callback(); }
 }
@@ -60,6 +67,18 @@ $events = [];
 $audit = new ContentAdminAudit(static function (array $row) use (&$events): int { $events[] = $row; return count($events); }, static fn (): int => 120);
 $service = new MemoryAiFieldReviewService($governance, $audit, static fn (): int => 120);
 $service->run = ['ai_run_id' => 7, 'vod_id' => 42, 'public_id' => 'ABC234', 'validation_status' => 'valid', 'decision_status' => 'pending', 'provider' => 'compatible', 'model' => 'model-x', 'prompt_version' => 'v1', 'raw_response_json' => $valid, 'created_at' => 100];
+$candidates = json_decode($valid, true);
+$mapping = ['vod_name' => 'normalized_title', 'original_title' => 'original_title', 'title_tw' => 'title_tw', 'title_cn' => 'title_cn', 'title_en' => 'title_en', 'vod_year' => 'year', 'type2' => 'media_type'];
+foreach ($mapping as $field => $key) {
+    $baseline = $governance->values[42][$field];
+    if ($field === 'original_title') { $baseline = 'Earlier Original'; }
+    $service->decisions[$field] = [
+        'candidate_value_json' => json_encode($candidates[$key], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        'baseline_value_json' => json_encode($baseline, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        'baseline_hash' => hash('sha256', json_encode($baseline, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION)),
+        'decision' => 'pending', 'created_at' => 100,
+    ];
+}
 
 $preview = $service->preview(7);
 fieldReviewAssert($preview['fields']['title_tw']['current'] === '舊名' && $preview['fields']['title_tw']['candidate'] === 'AI 台灣名', 'preview must show current and AI candidate values.');
@@ -87,9 +106,24 @@ fieldReviewAssert($events[0]['subject_public_id'] === 'ABC234', 'field-review au
 
 $failing = new MemoryAiFieldReviewService($governance, new ContentAdminAudit(static fn (array $row): int => 0), static fn (): int => 130);
 $failing->run = $service->run;
+$failing->decisions = $service->decisions;
 $before = $governance->values[42]['title_cn'];
+$beforeDecisions = $failing->decisions;
 try { $failing->review(7, 'title_cn', 'accept', null, 55, 'reviewer'); fieldReviewAssert(false, 'audit failure must fail closed.'); } catch (RuntimeException $exception) {}
-fieldReviewAssert($governance->values[42]['title_cn'] === $before && !$failing->decisions, 'audit failure must not mutate field value or decision state.');
+fieldReviewAssert($governance->values[42]['title_cn'] === $before && $failing->decisions === $beforeDecisions, 'audit failure must not mutate field value or decision state.');
+
+foreach ([['vod_name', '<img src=x onerror=alert(1)>'], ['vod_year', 'not-a-year'], ['type2', 'series']] as $invalidEdit) {
+    try { $service->review(7, $invalidEdit[0], 'edit', $invalidEdit[1], 55, 'reviewer'); fieldReviewAssert(false, 'invalid manual edit was accepted.'); }
+    catch (InvalidArgumentException $exception) {}
+}
+$safeCandidate = $service->decisions['title_cn']['candidate_value_json'];
+$service->decisions['title_cn']['candidate_value_json'] = json_encode('<svg onload=alert(1)>');
+try { $service->review(7, 'title_cn', 'accept', null, 55, 'reviewer'); fieldReviewAssert(false, 'unsafe stored candidate was accepted.'); }
+catch (InvalidArgumentException $exception) {}
+$service->decisions['title_cn']['candidate_value_json'] = $safeCandidate;
+$missingIdentity = new MemoryAiFieldReviewService($governance, $audit, static fn (): int => 120);
+$missingIdentity->run = array_merge($service->run, ['public_id' => '']);
+try { $missingIdentity->preview(7); fieldReviewAssert(false, 'missing stable public ID must fail closed.'); } catch (RuntimeException $exception) {}
 
 $service->review(7, 'title_cn', 'reject', null, 55, 'reviewer');
 $service->review(7, 'title_en', 'reject', null, 55, 'reviewer');

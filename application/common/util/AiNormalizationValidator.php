@@ -94,7 +94,7 @@ class AiNormalizationValidator
 
     private function text($value, int $maxLength, bool $allowEmpty): string
     {
-        if (!is_string($value) || preg_match('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', $value)) {
+        if (!is_string($value) || preg_match('/[<>]|[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', $value)) {
             throw new InvalidArgumentException('AI text value is invalid.');
         }
         $value = trim($value);

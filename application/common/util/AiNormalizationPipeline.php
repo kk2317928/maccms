@@ -9,6 +9,11 @@ use Throwable;
 
 class AiNormalizationPipeline
 {
+    private const FIELD_MAP = [
+        'normalized_title' => 'vod_name', 'original_title' => 'original_title',
+        'title_tw' => 'title_tw', 'title_cn' => 'title_cn', 'title_en' => 'title_en',
+        'year' => 'vod_year', 'media_type' => 'type2',
+    ];
     private $provider;
     private $validator;
     private $runs;
@@ -75,7 +80,24 @@ class AiNormalizationPipeline
         }
 
         $runId = $this->runs->record($run);
+        $staged = [];
+        foreach (self::FIELD_MAP as $candidateKey => $field) {
+            $current = $this->fields->inspect($vodId, $field);
+            $baseline = $current['value'] ?? null;
+            $staged[] = [
+                'field_name' => $field,
+                'candidate' => $normalized[$candidateKey],
+                'baseline' => $baseline,
+                'baseline_hash' => $this->valueHash($baseline),
+            ];
+        }
+        $this->runs->stageReviews($runId, $vodId, $staged, $now);
         return ['ai_run_id' => $runId, 'fields_proposed' => 7, 'total_tokens' => $response['input_tokens'] + $response['output_tokens']];
+    }
+
+    private function valueHash($value): string
+    {
+        return hash('sha256', json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION));
     }
 
     private function assertResponse($response): void

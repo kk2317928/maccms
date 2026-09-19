@@ -39,8 +39,9 @@ class ContentWorkspace extends Base
         if (request()->isPost()) {
             $param = input('post.');
             $token = (string) ($param['__token__'] ?? '');
-            $sessionToken = (string) Session::get('__token__');
-            if ($token === '' || $sessionToken === '' || !hash_equals($sessionToken, $token)) {
+            $stableToken = function_exists('mac_admin_csrf_token') ? (string) mac_admin_csrf_token() : (string) Session::get('admin_csrf');
+            $legacyToken = Session::has('__token__') ? (string) Session::get('__token__') : '';
+            if ($token === '' || !(($stableToken !== '' && hash_equals($stableToken, $token)) || ($legacyToken !== '' && hash_equals($legacyToken, $token)))) {
                 return json(['code' => 0, 'msg' => lang('token_err')]);
             }
             try {
@@ -55,7 +56,9 @@ class ContentWorkspace extends Base
             }
         }
         $runId = (int) input('param.run_id/d', 0);
-        $this->assign('preview', $runId > 0 ? $service->preview($runId) : null);
+        try { $preview = $runId > 0 ? $service->preview($runId) : null; }
+        catch (Throwable $exception) { $preview = null; }
+        $this->assign('preview', $preview);
         $this->assign('queue', $service->pendingRuns(max(1, (int) input('param.page/d', 1)), 20));
         $this->assign('title', 'AI 欄位審核');
         return $this->fetch('content_workspace/review');

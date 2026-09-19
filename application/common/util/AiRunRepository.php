@@ -84,6 +84,28 @@ class AiRunRepository
         return $this->dailyUsage($timestamp)['cost_micros'] < $budgetMicros;
     }
 
+    public function stageReviews(int $runId, int $vodId, array $fields, int $now): void
+    {
+        foreach ($fields as $field) {
+            Db::name('content_ai_field_review')->insert([
+                'ai_run_id' => $runId, 'vod_id' => $vodId,
+                'field_name' => (string) $field['field_name'],
+                'candidate_value_json' => $this->encodeValue($field['candidate']),
+                'baseline_value_json' => $this->encodeValue($field['baseline']),
+                'baseline_hash' => (string) $field['baseline_hash'],
+                'reviewed_value_json' => null, 'decision' => 'pending',
+                'actor_id' => 0, 'actor_name' => '', 'created_at' => $now, 'updated_at' => $now,
+            ]);
+        }
+    }
+
+    private function encodeValue($value): string
+    {
+        $json = json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION);
+        if ($json === false) { throw new InvalidArgumentException('AI review value is not JSON encodable.'); }
+        return $json;
+    }
+
     protected function insertRun(array $row): int
     {
         return (int) Db::name('content_ai_run')->insertGetId($row);

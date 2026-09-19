@@ -33,6 +33,9 @@ class AiFieldReviewService
         if ($run === null || (string) ($run['validation_status'] ?? '') !== 'valid') {
             throw new RuntimeException('Valid AI run was not found.');
         }
+        if (!preg_match('/^[A-Z0-9]{6}$/', (string) ($run['public_id'] ?? ''))) {
+            throw new RuntimeException('AI run video identity is unavailable.');
+        }
         $payload = json_decode((string) $run['raw_response_json'], true);
         if (!is_array($payload)) { throw new RuntimeException('AI run response is not reviewable.'); }
         $fields = [];
@@ -40,12 +43,15 @@ class AiFieldReviewService
             if (!array_key_exists($candidateKey, $payload)) { continue; }
             $current = $this->governance->inspect((int) $run['vod_id'], $field);
             $state = is_array($current['state'] ?? null) ? $current['state'] : [];
+            $stored = $this->loadDecision($runId, $field);
+            $candidate = $stored ? $this->decode((string) $stored['candidate_value_json']) : $payload[$candidateKey];
+            $baselineHash = (string) ($stored['baseline_hash'] ?? '');
             $fields[$field] = [
-                'current' => $current['value'] ?? null, 'candidate' => $payload[$candidateKey],
+                'current' => $current['value'] ?? null, 'candidate' => $candidate,
                 'source' => (string) ($state['source'] ?? 'import'), 'source_ref' => (string) ($state['source_ref'] ?? ''),
                 'locked' => !empty($state['is_locked']),
-                'stale' => (int) ($state['updated_at'] ?? 0) > (int) $run['created_at'],
-                'decision' => $this->loadDecision($runId, $field),
+                'stale' => $baselineHash === '' || !hash_equals($baselineHash, $this->valueHash($current['value'] ?? null)),
+                'decision' => $stored,
             ];
         }
         return ['run' => $run, 'fields' => $fields];
@@ -60,12 +66,20 @@ class AiFieldReviewService
         $item = $preview['fields'][$field];
         if ($action === 'accept' && $item['locked']) { throw new RuntimeException('AI field is locked and cannot be accepted.'); }
         if ($action === 'accept' && $item['stale']) { throw new RuntimeException('AI field is stale and must be reviewed again.'); }
-        if ($action === 'edit' && !(is_scalar($editedValue) || $editedValue === null)) { throw new InvalidArgumentException('Edited field value must be scalar.'); }
+        if ($action === 'accept') { $item['candidate'] = $this->validateFieldValue($field, $item['candidate']); }
+        if ($action === 'edit') { $editedValue = $this->validateFieldValue($field, $editedValue); }
         $run = $preview['run'];
         $decision = ['accept' => 'accepted', 'edit' => 'edited', 'reject' => 'rejected', 'lock' => 'locked'][$action];
         $reviewedValue = $action === 'accept' ? $item['candidate'] : ($action === 'edit' ? $editedValue : ($action === 'lock' ? $item['current'] : null));
         $now = (int) call_user_func($this->clock);
         return $this->transactional(function () use ($runId, $field, $action, $actorId, $actorName, $item, $run, $decision, $reviewedValue, $now) {
+            $this->lockVideoRows((int) $run['vod_id']);
+            $fresh = $this->governance->inspect((int) $run['vod_id'], $field);
+            $stored = $this->loadDecision($runId, $field);
+            if (!$stored) { throw new RuntimeException('AI field baseline is unavailable.'); }
+            if ($action === 'accept' && !hash_equals((string) $stored['baseline_hash'], $this->valueHash($fresh['value'] ?? null))) {
+                throw new RuntimeException('AI field is stale and must be reviewed again.');
+            }
             $this->audit->append($actorId, $actorName, 'content.ai_field.' . $decision, 'vod', (string) ($run['public_id'] ?? ''),
                 ['field' => $field, 'value' => $item['current'], 'source' => $item['source'], 'locked' => $item['locked']],
                 ['field' => $field, 'value' => $reviewedValue, 'decision' => $decision],
@@ -79,11 +93,13 @@ class AiFieldReviewService
             $this->persistDecision([
                 'ai_run_id' => $runId, 'vod_id' => (int) $run['vod_id'], 'field_name' => $field,
                 'candidate_value_json' => $this->encode($item['candidate']),
+                'baseline_value_json' => (string) $stored['baseline_value_json'],
+                'baseline_hash' => (string) $stored['baseline_hash'],
                 'reviewed_value_json' => $reviewedValue === null ? null : $this->encode($reviewedValue),
                 'decision' => $decision, 'actor_id' => $actorId, 'actor_name' => trim($actorName),
                 'created_at' => $now, 'updated_at' => $now,
             ]);
-            $this->updateRunDecision($runId, 'reviewing');
+            $this->updateRunDecision($runId, $this->countDecisions($runId) >= count(self::FIELD_MAP) ? 'reviewed' : 'reviewing');
             return ['decision' => $decision, 'field' => $field, 'value' => $reviewedValue];
         });
     }
@@ -106,6 +122,13 @@ class AiFieldReviewService
         return $row ?: null;
     }
     protected function loadDecision(int $runId, string $field): ?array { $row = Db::name('content_ai_field_review')->where(['ai_run_id' => $runId, 'field_name' => $field])->find(); return $row ?: null; }
+    protected function countDecisions(int $runId): int { return (int) Db::name('content_ai_field_review')->where('ai_run_id', $runId)->where('decision', '<>', 'pending')->count(); }
+    protected function lockVideoRows(int $vodId): void
+    {
+        if (!Db::name('vod')->where('vod_id', $vodId)->lock(true)->find() || !Db::name('vod_ext')->where('vod_id', $vodId)->lock(true)->find()) {
+            throw new RuntimeException('AI run video record is unavailable.');
+        }
+    }
     protected function persistDecision(array $row): void
     {
         $existing = $this->loadDecision((int) $row['ai_run_id'], (string) $row['field_name']);
@@ -121,6 +144,28 @@ class AiFieldReviewService
     {
         try { return json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION | JSON_THROW_ON_ERROR); }
         catch (JsonException $exception) { throw new InvalidArgumentException('AI field value is not JSON encodable.', 0, $exception); }
+    }
+    private function decode(string $json)
+    {
+        try { return json_decode($json, true, 32, JSON_THROW_ON_ERROR); }
+        catch (JsonException $exception) { throw new RuntimeException('Stored AI field value is invalid.', 0, $exception); }
+    }
+    private function valueHash($value): string { return hash('sha256', $this->encode($value)); }
+    private function validateFieldValue(string $field, $value)
+    {
+        if ($field === 'vod_year') {
+            if (is_string($value) && preg_match('/^[0-9]{4}$/', $value)) { $value = (int) $value; }
+            if (!is_int($value) || $value < 1870 || $value > (int) date('Y') + 2) { throw new InvalidArgumentException('Edited year is invalid.'); }
+            return $value;
+        }
+        if ($field === 'type2') {
+            if (!is_string($value) || !in_array(trim($value), ['movie', 'tv', 'anime', 'short'], true)) { throw new InvalidArgumentException('Edited media type is invalid.'); }
+            return trim($value);
+        }
+        if (!is_string($value)) { throw new InvalidArgumentException('Edited title must be text.'); }
+        $value = trim($value);
+        if (strlen($value) > 255 || preg_match('/[<>]|[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', $value)) { throw new InvalidArgumentException('Edited title is invalid.'); }
+        return $value;
     }
     private function tablePrefix(): string
     {
