@@ -85,6 +85,7 @@ activityAssert(strpos($repository,'GET_LOCK')!==false && strpos($repository,'REL
 activityAssert(substr_count($repository,'ulog_duration')>=4,'Progress duration must be persisted and returned.');
 activityAssert(strpos($repository,'VodPlaybackCodec::decode')!==false,'Progress must validate the published episode inventory.');
 activityAssert(strpos($repository,'4294967295')!==false,'Progress fields must respect unsigned integer storage bounds.');
+activityAssert(substr_count($repository,'ulog_points')>=2,'Progress operations must exclude paid entitlement rows.');
 $controller=file_get_contents($root.'/application/api/controller/v1/Activity.php');
 activityAssert(strpos($controller,"'UNAUTHENTICATED'")!==false,'Member activity must use the established authentication error code.');
 
