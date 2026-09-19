@@ -5,6 +5,13 @@ on:
     branches:
       - feature/headless-ai-v1
     paths:
+      - 'index.php'
+      - 'api.php'
+      - 'application/config.php'
+      - 'application/api/controller/v1/**'
+      - 'application/common/exception/ApiV1ExceptionHandler.php'
+      - 'application/common/util/ApiV1*.php'
+      - 'tests/regression/api_v1_foundation.php'
       - '.github/workflows/native-vod-foundation.yml'
       - 'application/install/sql/install.sql'
       - 'application/common/model/Vod.php'
