@@ -6,6 +6,7 @@ $tests = array(
     __DIR__ . '/api_v1_public_catalog.php',
     __DIR__ . '/api_v1_locale_canonical.php',
     __DIR__ . '/api_v1_sessions.php',
+    __DIR__ . '/api_v1_member_activity.php',
 );
 
 foreach ($tests as $test) {
