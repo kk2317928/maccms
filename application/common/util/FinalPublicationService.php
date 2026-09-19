@@ -72,9 +72,10 @@ final class FinalPublicationService
             $now = (int) call_user_func($this->clock);
             $nativeTaxonomy = [];
             foreach (['region' => 'vod_area', 'genre' => 'vod_class', 'tag' => 'vod_tag'] as $kind => $field) {
-                $nativeTaxonomy[$field] = implode(',', array_values(array_filter(array_map(static function (array $term): string {
+                $mapped = implode(',', array_values(array_filter(array_map(static function (array $term): string {
                     return trim((string) ($term['name_tw'] ?? $term['name_cn'] ?? $term['name_en'] ?? ''));
                 }, $preview['taxonomy'][$kind]))));
+                $nativeTaxonomy[$field] = $mapped !== '' ? $mapped : (string) ($locked[$field] ?? '');
             }
             if (!call_user_func($this->nativeUpdater, $vodId, array_merge(['vod_status' => 1, 'vod_publish_time' => 0], $nativeTaxonomy))) {
                 throw new RuntimeException('Native publication update failed.');
