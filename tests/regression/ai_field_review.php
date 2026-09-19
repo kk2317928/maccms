@@ -40,6 +40,7 @@ final class MemoryAiFieldReviewService extends AiFieldReviewService
     protected function loadRun(int $runId): ?array { return $runId === (int) $this->run['ai_run_id'] ? $this->run : null; }
     protected function loadDecision(int $runId, string $field): ?array { return $this->decisions[$field] ?? null; }
     protected function persistDecision(array $row): void { $this->decisions[$row['field_name']] = $row; }
+    protected function countDecisions(int $runId): int { return count($this->decisions); }
     protected function updateRunDecision(int $runId, string $status): void { $this->run['decision_status'] = $status; }
     protected function transactional(callable $callback) { return $callback(); }
 }
@@ -89,5 +90,10 @@ $failing->run = $service->run;
 $before = $governance->values[42]['title_cn'];
 try { $failing->review(7, 'title_cn', 'accept', null, 55, 'reviewer'); fieldReviewAssert(false, 'audit failure must fail closed.'); } catch (RuntimeException $exception) {}
 fieldReviewAssert($governance->values[42]['title_cn'] === $before && !$failing->decisions, 'audit failure must not mutate field value or decision state.');
+
+$service->review(7, 'title_cn', 'reject', null, 55, 'reviewer');
+$service->review(7, 'title_en', 'reject', null, 55, 'reviewer');
+$service->review(7, 'original_title', 'reject', null, 55, 'reviewer');
+fieldReviewAssert($service->run['decision_status'] === 'reviewed', 'a run must leave the pending queue after every proposed field is decided.');
 
 fwrite(STDOUT, "OK: AI field-level review, provenance, lock and conflict contract passed.\n");
