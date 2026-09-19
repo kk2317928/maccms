@@ -23,7 +23,7 @@ final class ApiV1ActivityRepository
 
     public function history($userId, ApiV1Pagination $pagination, ApiV1Locale $locale)
     {
-        $query=$this->publishedUlogs($userId,4)->field(ApiV1CatalogRepository::SUMMARY_FIELDS.',u.ulog_sid,u.ulog_nid,u.ulog_point,u.ulog_time');
+        $query=$this->publishedUlogs($userId,4)->field(ApiV1CatalogRepository::SUMMARY_FIELDS.',u.ulog_sid,u.ulog_nid,u.ulog_point,u.ulog_duration,u.ulog_time');
         $total=(int)(clone $query)->count();
         $rows=$query->order('u.ulog_time desc,u.ulog_id desc')->limit($pagination->offset(),$pagination->meta(0)['per_page'])->select();
         $items=array();
@@ -32,7 +32,7 @@ final class ApiV1ActivityRepository
             $items[]=ApiV1ActivityDto::history(array(
                 'public_id'=>$video['public_id'],'title'=>$video['title'],'poster'=>$video['poster'],
                 'source_id'=>'s'.max(1,(int)$row['ulog_sid']),'episode_id'=>'s'.max(1,(int)$row['ulog_sid']).'e'.max(1,(int)$row['ulog_nid']),
-                'position_seconds'=>(int)$row['ulog_point'],'duration_seconds'=>0,'updated_at'=>(int)$row['ulog_time'],
+                'position_seconds'=>(int)$row['ulog_point'],'duration_seconds'=>(int)$row['ulog_duration'],'updated_at'=>(int)$row['ulog_time'],
             ))->toArray();
         }
         return array('items'=>$items,'total'=>$total);
@@ -44,9 +44,11 @@ final class ApiV1ActivityRepository
         if ($video===null) return null;
         $where=$this->ulogWhere($userId,2,$video['vod_id']);
         $time=$this->safeTime($updatedAt);
-        $existing=Db::name('ulog')->where($where)->find();
-        if ($existing) Db::name('ulog')->where('ulog_id',(int)$existing['ulog_id'])->update(array('ulog_time'=>$time));
-        else Db::name('ulog')->insert($where+array('ulog_rid'=>(int)$video['vod_id'],'ulog_sid'=>0,'ulog_nid'=>0,'ulog_time'=>$time));
+        $this->withUserLock($userId,function() use($where,$video,$time) {
+            $existing=Db::name('ulog')->where($where)->find();
+            if ($existing) Db::name('ulog')->where('ulog_id',(int)$existing['ulog_id'])->update(array('ulog_time'=>$time));
+            else Db::name('ulog')->insert($where+array('ulog_rid'=>(int)$video['vod_id'],'ulog_sid'=>0,'ulog_nid'=>0,'ulog_time'=>$time));
+        });
         return (string)$video['public_id'];
     }
 
@@ -71,15 +73,18 @@ final class ApiV1ActivityRepository
         $video=$this->video($publicId);
         if ($video===null) return null;
         list($sid,$nid)=$this->episodeKey($input);
-        $position=$this->integer($input,'position_seconds');
-        $duration=$this->integer($input,'duration_seconds');
+        $this->assertEpisodeExists($video,$sid,$nid);
+        $position=$this->integer($input,'position_seconds',4294967295);
+        $duration=$this->integer($input,'duration_seconds',4294967295);
         if ($duration>0 && $position>$duration) throw new InvalidArgumentException('position_seconds');
         $where=$this->ulogWhere($userId,4,$video['vod_id'])+array('ulog_sid'=>$sid,'ulog_nid'=>$nid);
         $time=$this->safeTime($clientUpdatedAt);
-        $existing=Db::name('ulog')->where($where)->find();
-        $data=array('ulog_point'=>$position,'ulog_time'=>$time);
-        if ($existing) Db::name('ulog')->where('ulog_id',(int)$existing['ulog_id'])->update($data);
-        else Db::name('ulog')->insert($where+$data);
+        $data=array('ulog_point'=>$position,'ulog_duration'=>$duration,'ulog_time'=>$time);
+        $this->withUserLock($userId,function() use($where,$data) {
+            $existing=Db::name('ulog')->where($where)->find();
+            if ($existing) Db::name('ulog')->where('ulog_id',(int)$existing['ulog_id'])->update($data);
+            else Db::name('ulog')->insert($where+$data);
+        });
         return $this->progressDto($video,$where+$data);
     }
 
@@ -93,7 +98,8 @@ final class ApiV1ActivityRepository
 
     public function merge($userId,array $payload)
     {
-        return Db::transaction(function() use($userId,$payload) {
+        return $this->withUserLock($userId,function() use($userId,$payload) {
+            return Db::transaction(function() use($userId,$payload) {
             $merged=array('favorites'=>0,'progress'=>0);
             foreach($payload['favorites'] as $item) {
                 $video=$this->video($item['public_id']);
@@ -108,17 +114,19 @@ final class ApiV1ActivityRepository
                 $video=$this->video($item['public_id']);
                 if ($video===null) continue;
                 list($sid,$nid)=$this->episodeKey($item);
+                $this->assertEpisodeExists($video,$sid,$nid);
                 $where=$this->ulogWhere($userId,4,$video['vod_id'])+array('ulog_sid'=>$sid,'ulog_nid'=>$nid);
                 $existing=Db::name('ulog')->where($where)->lock(true)->find();
                 $client_updated_at=$this->safeTime($item['updated_at']);
                 if (!$existing || $client_updated_at>(int)$existing['ulog_time']) {
-                    $data=array('ulog_point'=>(int)$item['position_seconds'],'ulog_time'=>$client_updated_at);
+                    $data=array('ulog_point'=>(int)$item['position_seconds'],'ulog_duration'=>(int)$item['duration_seconds'],'ulog_time'=>$client_updated_at);
                     if ($existing) Db::name('ulog')->where('ulog_id',(int)$existing['ulog_id'])->update($data);
                     else Db::name('ulog')->insert($where+$data);
                     $merged['progress']++;
                 }
             }
             return $merged;
+            });
         });
     }
 
@@ -127,7 +135,7 @@ final class ApiV1ActivityRepository
         $resolved=\app\common\model\VodExt::resolvePublicId(strtoupper((string)$publicId));
         if (!$resolved || empty($resolved['canonical_public_id'])) return null;
         $row=Db::name('vod')->alias('v')->join('__VOD_EXT__ e','e.vod_id=v.vod_id')
-            ->field('v.vod_id,e.public_id')->where(ApiV1CatalogRepository::PUBLICATION_SQL)
+            ->field('v.vod_id,v.vod_play_from,v.vod_play_url,v.vod_play_server,v.vod_play_note,e.public_id')->where(ApiV1CatalogRepository::PUBLICATION_SQL)
             ->where('e.public_id',$resolved['canonical_public_id'])->find();
         return $row ?: null;
     }
@@ -148,18 +156,38 @@ final class ApiV1ActivityRepository
     {
         $source=(string)(isset($input['source_id'])?$input['source_id']:'');
         $episode=(string)(isset($input['episode_id'])?$input['episode_id']:'');
-        if (preg_match('/\As([1-9][0-9]*)\z/D',$source,$s)!==1 || preg_match('/\As([1-9][0-9]*)e([1-9][0-9]*)\z/D',$episode,$e)!==1 || $s[1]!==$e[1]) {
+        if (preg_match('/\As([1-9][0-9]{0,2})\z/D',$source,$s)!==1 || preg_match('/\As([1-9][0-9]{0,2})e([1-9][0-9]{0,4})\z/D',$episode,$e)!==1 || $s[1]!==$e[1]) {
             throw new InvalidArgumentException('episode_id');
         }
-        return array((int)$s[1],(int)$e[2]);
+        $sid=(int)$s[1]; $nid=(int)$e[2];
+        if ($sid>255 || $nid>65535) throw new InvalidArgumentException('episode_id');
+        return array($sid,$nid);
     }
 
-    private function integer(array $input,$key)
+    private function integer(array $input,$key,$maximum)
     {
         $value=isset($input[$key])?$input[$key]:null;
-        if (is_int($value) && $value>=0) return $value;
-        if (is_string($value) && preg_match('/\A(?:0|[1-9][0-9]*)\z/D',$value)===1) return (int)$value;
+        if (is_int($value) && $value>=0 && $value<=$maximum) return $value;
+        if (is_string($value) && preg_match('/\A(?:0|[1-9][0-9]{0,9})\z/D',$value)===1 && (float)$value<=$maximum) return (int)$value;
         throw new InvalidArgumentException($key);
+    }
+
+    private function assertEpisodeExists(array $video,$sid,$nid)
+    {
+        $sources=VodPlaybackCodec::decode((string)$video['vod_play_from'],(string)$video['vod_play_url'],(string)$video['vod_play_server'],(string)$video['vod_play_note']);
+        if (!isset($sources[$sid-1]['episodes'][$nid-1])) throw new InvalidArgumentException('episode_id');
+    }
+
+    private function withUserLock($userId,$callback)
+    {
+        $lockName='api_v1_activity_'.sha1((string)(int)$userId);
+        $lock=Db::query('SELECT GET_LOCK(?, 5) AS acquired',array($lockName));
+        if (empty($lock) || (int)$lock[0]['acquired']!==1) throw new \RuntimeException('activity_lock');
+        try { return $callback(); }
+        finally {
+            try { Db::query('SELECT RELEASE_LOCK(?)',array($lockName)); }
+            catch (\Exception $ignored) {}
+        }
     }
 
     private function safeTime($value)
@@ -173,7 +201,7 @@ final class ApiV1ActivityRepository
         $sid=max(1,(int)$row['ulog_sid']); $nid=max(1,(int)$row['ulog_nid']);
         return ApiV1ActivityDto::progress(array(
             'public_id'=>$video['public_id'],'source_id'=>'s'.$sid,'episode_id'=>'s'.$sid.'e'.$nid,
-            'position_seconds'=>(int)$row['ulog_point'],'duration_seconds'=>0,'updated_at'=>(int)$row['ulog_time'],
+            'position_seconds'=>(int)$row['ulog_point'],'duration_seconds'=>(int)$row['ulog_duration'],'updated_at'=>(int)$row['ulog_time'],
         ))->toArray();
     }
 }
