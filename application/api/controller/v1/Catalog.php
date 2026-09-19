@@ -48,7 +48,7 @@ class Catalog extends Base
             $state=$this->service()->canonicalResource($public_id);
             if ($state['status']==='not_found') return $this->notFound($request);
             if ($state['status']==='redirect') {
-                return $this->canonicalRedirectResponse($state['canonical_public_id'],$this->canonicalLocation($state['canonical_public_id'],false,$locale),$request);
+                return $this->canonicalRedirectResponse($state['canonical_public_id'],$this->canonicalLocation($state['canonical_public_id'],false,$locale),$locale,$request);
             }
             $data=$this->service()->detail($state['canonical_public_id'],$locale);
             return $data===null?$this->notFound($request):$this->successResponse($data,$request,array('locale'=>$locale->code()));
@@ -62,7 +62,7 @@ class Catalog extends Base
             $state=$this->service()->canonicalResource($public_id);
             if ($state['status']==='not_found') return $this->notFound($request);
             if ($state['status']==='redirect') {
-                return $this->canonicalRedirectResponse($state['canonical_public_id'],$this->canonicalLocation($state['canonical_public_id'],true,$locale),$request);
+                return $this->canonicalRedirectResponse($state['canonical_public_id'],$this->canonicalLocation($state['canonical_public_id'],true,$locale),$locale,$request);
             }
             $data=$this->service()->episodes($state['canonical_public_id']);
             return $data===null?$this->notFound($request):$this->successResponse($data,$request,array('locale'=>$locale->code()));
