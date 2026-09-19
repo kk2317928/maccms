@@ -23,6 +23,7 @@ final class FinalPublicationService
         $this->workspace = $workspace ?: new FinalPublicationWorkspace();
         $this->audit = $audit ?: new ContentAdminAudit();
         $this->transaction = $transaction ?: static function (callable $callback) {
+            self::assertTransactionalTables();
             Db::startTrans();
             try { $result = $callback(); Db::commit(); return $result; }
             catch (Throwable $exception) { Db::rollback(); throw $exception; }
@@ -50,9 +51,11 @@ final class FinalPublicationService
         };
         $this->clock = $clock ?: 'time';
         $this->cacheInvalidator = $cacheInvalidator ?: static function (int $vodId, string $publicId, array $row): void {
-            Cache::rm('vod_detail_' . $vodId);
-            Cache::rm('vod_detail_' . $publicId);
-            if (!empty($row['vod_en'])) { Cache::rm('vod_detail_' . $row['vod_en']); }
+            $flag = (string) ($GLOBALS['config']['app']['cache_flag'] ?? '');
+            $slug = (string) ($row['vod_en'] ?? '');
+            Cache::rm($flag . '_vod_detail_' . $vodId . '_' . $slug);
+            Cache::rm($flag . '_vod_detail_' . $vodId . '_');
+            if ($slug !== '') { Cache::rm($flag . '_vod_detail_0_' . $slug); }
         };
     }
 
@@ -73,7 +76,11 @@ final class FinalPublicationService
             $nativeTaxonomy = [];
             foreach (['region' => 'vod_area', 'genre' => 'vod_class', 'tag' => 'vod_tag'] as $kind => $field) {
                 $mapped = implode(',', array_values(array_filter(array_map(static function (array $term): string {
-                    return trim((string) ($term['name_tw'] ?? $term['name_cn'] ?? $term['name_en'] ?? ''));
+                    foreach (['name_tw', 'name_cn', 'name_en'] as $nameField) {
+                        $label = trim((string) ($term[$nameField] ?? ''));
+                        if ($label !== '') { return $label; }
+                    }
+                    return '';
                 }, $preview['taxonomy'][$kind]))));
                 $nativeTaxonomy[$field] = $mapped !== '' ? $mapped : (string) ($locked[$field] ?? '');
             }
@@ -94,4 +101,18 @@ final class FinalPublicationService
         unset($published['_row']);
         return $published;
     }
+    private static function assertTransactionalTables(): void
+    {
+        $prefix = (string) (function_exists('config') ? config('database.prefix') : '');
+        foreach (['vod', 'vod_ext', 'content_lang', 'vod_meta_term', 'meta_term', 'content_admin_audit_event'] as $name) {
+            $table = $prefix . $name;
+            $escaped = str_replace(["\\", "'"], ["\\\\", "\\'"], $table);
+            $rows = Db::query("SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = '" . $escaped . "' LIMIT 1");
+            $engine = strtoupper((string) ($rows[0]['ENGINE'] ?? $rows[0]['engine'] ?? ''));
+            if ($engine !== 'INNODB') {
+                throw new RuntimeException('Atomic publication requires InnoDB storage for every locked table.');
+            }
+        }
+    }
+
 }
