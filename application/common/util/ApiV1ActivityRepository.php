@@ -93,10 +93,7 @@ final class ApiV1ActivityRepository
         $video=$this->video($publicId);
         if ($video===null) return null;
         $where=$this->ulogWhere($userId,4,$video['vod_id']);
-        $this->withUserLock($userId,function() use($where) {
-            Db::name('ulog')->where($where)->where('ulog_points','>',0)->update(array('ulog_point'=>0,'ulog_duration'=>0));
-            Db::name('ulog')->where($where)->where('ulog_points','<=',0)->delete();
-        });
+        $this->withUserLock($userId,function() use($where) { Db::name('ulog')->where($where)->delete(); });
         return (string)$video['public_id'];
     }
 
@@ -158,12 +155,15 @@ final class ApiV1ActivityRepository
     {
         return Db::name('ulog')->alias('u')->join('__VOD__ v','v.vod_id=u.ulog_rid')
             ->join('__VOD_EXT__ e','e.vod_id=v.vod_id')->where(ApiV1CatalogRepository::PUBLICATION_SQL)
-            ->where(array('u.user_id'=>(int)$userId,'u.ulog_mid'=>self::MID,'u.ulog_type'=>(int)$type));
+            ->where(array('u.user_id'=>(int)$userId,'u.ulog_mid'=>self::MID,'u.ulog_type'=>(int)$type))
+            ->where($type===4 ? array('u.ulog_points'=>0) : array());
     }
 
     private function ulogWhere($userId,$type,$vodId)
     {
-        return array('user_id'=>(int)$userId,'ulog_mid'=>self::MID,'ulog_type'=>(int)$type,'ulog_rid'=>(int)$vodId);
+        $where=array('user_id'=>(int)$userId,'ulog_mid'=>self::MID,'ulog_type'=>(int)$type,'ulog_rid'=>(int)$vodId);
+        if ((int)$type===4) $where['ulog_points']=0;
+        return $where;
     }
 
     private function episodeKey(array $input)
