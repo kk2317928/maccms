@@ -4,6 +4,14 @@ declare(strict_types=1);
 
 $root = dirname(__DIR__, 2);
 $required = ['FinalPublicationWorkspace.php', 'FinalPublicationService.php'];
+
+$storageMigration = $root . '/application/data/migrations/20260919000400_vod_transactional_publication.sql';
+publicationAssert(is_file($storageMigration), 'publication must provide a versioned native vod InnoDB conversion migration.');
+if (is_file($storageMigration)) {
+    $storageSql = (string) file_get_contents($storageMigration);
+    publicationAssert(strpos($storageSql, 'ALTER TABLE `__PREFIX__vod` ENGINE=InnoDB') !== false, 'native vod storage migration must use the configurable prefix and InnoDB.');
+}
+
 foreach ($required as $file) {
     $path = $root . '/application/common/util/' . $file;
     if (!is_file($path)) { fwrite(STDERR, "FAIL: {$file} is missing.\n"); exit(1); }
@@ -84,6 +92,7 @@ $blockedCases = [
     'missing title' => publicationFixture(['vod_name' => '']),
     'missing taxonomy' => publicationFixture(['vod_area' => '', 'vod_class' => '']),
     'missing playback' => publicationFixture(['vod_play_url' => '']),
+    'missing playback source' => publicationFixture(['vod_play_from' => '']),
     'unsafe playback' => publicationFixture(['vod_play_url' => '第1集$javascript:alert(1)']),
 ];
 foreach ($blockedCases as $label => $row) {
@@ -120,6 +129,7 @@ $audit = new ContentAdminAudit(static function (array $row) use (&$events): int 
 $locked = publicationFixture();
 $state = $locked;
 $cacheInvalidations = [];
+$searchSynchronizations = [];
 $transaction = static function (callable $callback) use (&$state) {
     $before = $state;
     try { return $callback(); } catch (Throwable $exception) { $state = $before; throw $exception; }
@@ -130,7 +140,8 @@ $service = new FinalPublicationService(
     static function (int $vodId, array $update) use (&$state): bool { $state = array_merge($state, $update); return true; },
     static function (int $vodId, array $update) use (&$state): bool { $state = array_merge($state, $update); return true; },
     static fn (): int => 1726800000,
-    static function (int $vodId, string $publicId) use (&$cacheInvalidations): void { $cacheInvalidations[] = [$vodId, $publicId]; }
+    static function (int $vodId, string $publicId) use (&$cacheInvalidations): void { $cacheInvalidations[] = [$vodId, $publicId]; },
+    static function (int $vodId) use (&$searchSynchronizations): void { $searchSynchronizations[] = $vodId; }
 );
 $published = $service->publish(42, 9, 'editor', ['content_workspace/publish'], true, $preview['revision']);
 publicationAssert($published['workflow_status'] === 'published' && $state['workflow_status'] === 'published', 'publication must transition the separate workflow state.');
@@ -138,6 +149,7 @@ publicationAssert($state['vod_status'] === 1 && $state['vod_publish_time'] === 0
 publicationAssert($state['vod_area'] === '日本' && $state['vod_class'] === '劇情' && $state['vod_tag'] === '成長', 'publication must synchronize reviewed taxonomy into native MACCMS fields.');
 publicationAssert(count($events) === 1 && $events[0]['event_code'] === 'content.publish' && $events[0]['subject_public_id'] === 'ABC234', 'publication must append one immutable public-ID audit event.');
 publicationAssert($cacheInvalidations === [[42, 'ABC234']], 'successful publication must precisely invalidate public content caches.');
+publicationAssert($searchSynchronizations === [42], 'successful publication must synchronize the published video into the configured search index.');
 
 foreach ([[[], true], [['content_workspace/publish'], false]] as $denied) {
     try { $service->publish(42, 9, 'editor', $denied[0], $denied[1], $preview['revision']); publicationAssert(false, 'publication bypassed exact permission or confirmation.'); }
