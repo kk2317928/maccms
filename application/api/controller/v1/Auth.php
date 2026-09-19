@@ -2,6 +2,7 @@
 namespace app\api\controller\v1;
 
 use app\common\util\ApiV1AccessToken;
+use app\common\util\ApiV1Response;
 use app\common\util\ApiV1SessionService;
 use think\Db;
 use think\Request;
