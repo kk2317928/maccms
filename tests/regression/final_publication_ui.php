@@ -75,6 +75,7 @@ $warningWorkspace = new FinalPublicationWorkspace(
 );
 $warningPreview = $warningWorkspace->preview(43);
 publicationAssert($warningPreview['publishable'] === true && count($warningPreview['warnings']) >= 4, 'missing optional locales, backdrop, trailer and S3 poster must be warnings, not blockers.');
+publicationAssert($warningPreview['media']['poster'] === 'https://img.test/poster.jpg', 'empty S3 poster must fall back to the native poster.');
 
 $blockedCases = [
     'invalid public identity' => publicationFixture(['public_id' => 'bad']),
@@ -103,6 +104,15 @@ foreach (['第1集$vbscript:alert(1)', '第1集$http://127.0.0.1/video', '第1�
         static fn (): array => $locales[42], static fn (): array => $terms[42], ['video.test']
     );
     publicationAssert($unsafeWorkspace->preview(42)['publishable'] === false, 'private, custom-scheme and non-allowlisted playback URLs must block publication.');
+}
+
+foreach ([['第1集$http://127.1/video', ['127.1']], ['第1集$http://[::1]/video', ['[::1]']]] as $privateCase) {
+    $privateRow = publicationFixture(['vod_play_url' => $privateCase[0]]);
+    $privateWorkspace = new FinalPublicationWorkspace(
+        static fn (): array => [], static fn (): int => 0, static fn (): array => $privateRow,
+        static fn (): array => $locales[42], static fn (): array => $terms[42], $privateCase[1]
+    );
+    publicationAssert($privateWorkspace->preview(42)['publishable'] === false, 'alternative private-address literals must remain blocked even when allowlisted.');
 }
 
 $events = [];
