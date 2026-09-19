@@ -1,0 +1,33 @@
+{include file="../../../application/admin/view_new/public/head" /}
+<div class="page-container p10">
+<input type="hidden" id="jobs-token" value="{:mac_admin_csrf_token()}">
+<h2>批量工作與失敗重試</h2>
+<div class="layui-card"><div class="layui-card-header">批量入隊</div><div class="layui-card-body">
+<select id="batch-type" name="job_type"><option value="ai.normalize">AI 正規化</option><option value="tmdb.match">TMDB 配對</option></select>
+<textarea id="batch-vod-ids" name="vod_ids" class="layui-textarea" placeholder="輸入明確 vod_id，以逗號或換行分隔；每批最多 100 筆"></textarea>
+<label><input id="batch-confirmed" type="checkbox" name="confirmed" value="1"> 我確認只處理上列明確 ID</label>
+<button id="batch-submit" class="layui-btn layui-btn-normal" data-confirm="enqueue">批量入隊</button>
+</div></div>
+
+<form class="layui-form" method="get">
+<select name="job_type"><option value="">全部類型</option><option value="ai.normalize" {if condition="$jobs.job_type eq 'ai.normalize'"}selected{/if}>AI 正規化</option><option value="tmdb.match" {if condition="$jobs.job_type eq 'tmdb.match'"}selected{/if}>TMDB 配對</option></select>
+<select name="status"><option value="">全部狀態</option>{foreach name="['queued','running','succeeded','failed']" item="state"}<option value="{$state|htmlentities}" {if condition="$jobs.status eq $state"}selected{/if}>{$state|htmlentities}</option>{/foreach}</select>
+<button class="layui-btn layui-btn-sm">篩選</button>
+</form>
+<table class="layui-table"><thead><tr><th>ID</th><th>類型</th><th>狀態</th><th>嘗試</th><th>錯誤摘要</th><th>操作</th></tr></thead><tbody>
+{volist name="jobs.rows" id="job"}<tr><td>{$job.job_id}</td><td>{$job.job_type|htmlentities}</td><td>{$job.status|htmlentities}</td><td>{$job.attempt}/{$job.max_attempts}</td><td>{$job.error_summary|default=''|htmlentities}</td><td><a class="layui-btn layui-btn-xs" href="{:url('content_workspace/jobs',['job_id'=>$job['job_id'],'job_type'=>$jobs['job_type'],'status'=>$jobs['status'],'page'=>$jobs['page']])}">執行紀錄</a>{if condition="$job.status eq 'failed'"} <button type="button" class="layui-btn layui-btn-danger layui-btn-xs retry-job" data-id="{$job.job_id}" data-confirm="retry">失敗重試</button>{/if}</td></tr>{/volist}
+{empty name="jobs.rows"}<tr><td colspan="6">沒有符合條件的工作。</td></tr>{/empty}
+</tbody></table>
+<p>共 {$jobs.total} 筆／第 {$jobs.page} 頁
+{if condition="$jobs.page gt 1"}<a href="{:url('content_workspace/jobs',['job_type'=>$jobs['job_type'],'status'=>$jobs['status'],'page'=>$jobs['page']-1])}">上一頁</a>{/if}
+{if condition="$jobs.page lt $jobs.pages"}<a href="{:url('content_workspace/jobs',['job_type'=>$jobs['job_type'],'status'=>$jobs['status'],'page'=>$jobs['page']+1])}">下一頁</a>{/if}</p>
+
+{if condition="$selected_job_id gt 0"}<h3>工作 #{$selected_job_id} 執行紀錄</h3><table class="layui-table"><thead><tr><th>Run</th><th>嘗試</th><th>狀態</th><th>錯誤摘要</th></tr></thead><tbody>
+{volist name="runs" id="run"}<tr><td>{$run.run_id}</td><td>{$run.attempt}</td><td>{$run.status|htmlentities}</td><td>{$run.error_summary|default=''|htmlentities}</td></tr>{/volist}
+{empty name="runs"}<tr><td colspan="4">尚無執行紀錄。</td></tr>{/empty}
+</tbody></table>{/if}
+</div>
+{include file="../../../application/admin/view_new/public/foot" /}
+<script>
+layui.use(['layer'],function(){var layer=layui.layer,token=$('#jobs-token').val();$('#batch-submit').on('click',function(){if(!$('#batch-confirmed').prop('checked')){layer.msg('請先確認明確 ID。');return;}layer.confirm('確認將這些影片排入背景工作？',function(index){layer.close(index);$.post("{:url('content_workspace/jobs')}",{__token__:token,job_action:'enqueue',job_type:$('#batch-type').val(),vod_ids:$('#batch-vod-ids').val(),confirmed:1},function(res){layer.msg(res.msg||'完成');if(res.code)location.reload();});});});$('.retry-job').on('click',function(){var id=$(this).data('id');layer.confirm('確認重試這個失敗工作？',function(index){layer.close(index);$.post("{:url('content_workspace/jobs')}",{__token__:token,job_action:'retry',job_id:id,confirmed:1},function(res){layer.msg(res.msg||'完成');if(res.code)location.reload();});});});});
+</script>

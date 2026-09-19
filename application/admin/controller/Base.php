@@ -78,6 +78,16 @@ class Base extends All
                 || strpos($authStr, ',content_workspace/run_tmdb,') !== false;
         }
 
+        if ($c === 'content_workspace' && $a === 'jobs') {
+            if ((string)$this->_admin['admin_id'] === '1') {
+                return true;
+            }
+            $authStr = ',' . strtolower((string) $this->_admin['admin_auth']) . ',';
+            return strpos($authStr, ',content_workspace/view,') !== false
+                || strpos($authStr, ',content_workspace/run_ai,') !== false
+                || strpos($authStr, ',content_workspace/run_tmdb,') !== false;
+        }
+
         if ($c === 'content_workspace' && $a === 'publish') {
             if ((string)$this->_admin['admin_id'] === '1') {
                 return true;

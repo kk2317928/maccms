@@ -3,6 +3,7 @@
 namespace app\admin\controller;
 
 use app\common\util\ContentWorkspaceDashboard;
+use app\common\util\ContentJobAdminService;
 use app\common\util\AiFieldReviewService;
 use app\common\util\ContentAdminAudit;
 use app\common\util\FieldGovernance;
@@ -263,4 +264,45 @@ class ContentWorkspace extends Base
         $this->assign('title', '最終驗證與發布');
         return $this->fetch('content_workspace/publish');
     }
+    public function jobs()
+    {
+        $service = new ContentJobAdminService();
+        if (request()->isPost()) {
+            $param = input('post.');
+            $token = (string) ($param['__token__'] ?? '');
+            $stable = function_exists('mac_admin_csrf_token') ? (string) mac_admin_csrf_token() : (string) Session::get('admin_csrf');
+            $legacy = Session::has('__token__') ? (string) Session::get('__token__') : '';
+            if ($token === '' || !(($stable !== '' && hash_equals($stable, $token)) || ($legacy !== '' && hash_equals($legacy, $token)))) {
+                return json(['code' => 0, 'msg' => lang('token_err')]);
+            }
+            try {
+                $actorId = (int) $this->_admin['admin_id'];
+                $actorName = (string) ($this->_admin['admin_name'] ?? ('admin-' . $actorId));
+                $grants = array_filter(array_map('trim', explode(',', strtolower((string) ($this->_admin['admin_auth'] ?? '')))));
+                if ($actorId === 1) { $grants = array_merge($grants, ['content_workspace/run_ai', 'content_workspace/run_tmdb']); }
+                $confirmed = (int) ($param['confirmed'] ?? 0) === 1;
+                if ((string) ($param['job_action'] ?? '') === 'retry') {
+                    $result = $service->retry((int) ($param['job_id'] ?? 0), $actorId, $actorName, $grants, $confirmed);
+                    return json(['code' => 1, 'msg' => '失敗工作已重新排入佇列。', 'data' => $result]);
+                }
+                $rawIds = preg_split('/[\s,，]+/u', trim((string) ($param['vod_ids'] ?? '')), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+                $result = $service->enqueueBatch((string) ($param['job_type'] ?? ''), $rawIds, $actorId, $actorName, $grants, $confirmed);
+                return json(['code' => 1, 'msg' => '批量工作已排入佇列。', 'data' => $result]);
+            } catch (Throwable $exception) {
+                return json(['code' => 0, 'msg' => '工作操作未完成，請檢查權限、確認狀態與輸入。']);
+            }
+        }
+        $type = (string) input('param.job_type/s', '');
+        $status = (string) input('param.status/s', '');
+        $page = max(1, (int) input('param.page/d', 1));
+        $jobId = (int) input('param.job_id/d', 0);
+        try { $jobs = $service->page($type, $status, $page, 20); }
+        catch (Throwable $exception) { $jobs = $service->page('', '', 1, 20); }
+        $this->assign('jobs', $jobs);
+        $this->assign('runs', $service->runs($jobId, 10));
+        $this->assign('selected_job_id', $jobId);
+        $this->assign('title', '批量工作與失敗重試');
+        return $this->fetch('content_workspace/jobs');
+    }
+
 }

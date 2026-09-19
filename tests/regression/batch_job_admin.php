@@ -48,8 +48,9 @@ $service = new ContentJobAdminService(
         return ['rows' => array_slice($rows, $offset, $limit), 'total' => count($rows)];
     },
     static fn (int $jobId, int $limit): array => [['run_id' => 7, 'job_id' => $jobId, 'attempt' => 3, 'status' => 'failed', 'error_summary' => 'api_key=leaked']],
-    static function (int $jobId) use (&$jobs): array {
+    static function (int $jobId, callable $authorize) use (&$jobs): array {
         if (!isset($jobs[$jobId])) { throw new RuntimeException('Job not found.'); }
+        $authorize($jobs[$jobId]);
         if ($jobs[$jobId]['status'] !== 'failed') { throw new RuntimeException('Only terminal failed jobs can be retried.'); }
         $jobs[$jobId] = array_merge($jobs[$jobId], [
             'status' => 'queued', 'attempt' => 0, 'next_run_at' => 1726800000,
