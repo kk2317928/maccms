@@ -12,7 +12,7 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.
 **Active checkpoint:** CP-06 — intelligent-content administration.
-**Active task:** T-064 — TMDB candidate and manual-match UI (`TODO`).
+**Active task:** T-064 — TMDB candidate and manual-match UI (`IN_PROGRESS`).
 **Starting commit:** T-063 final implementation commit `5f95252e851f545073f24c0c9e60854e28248716`.
 **Last completed task:** T-063 — duplicate comparison, merge and restore UI, final commit `5f95252e851f545073f24c0c9e60854e28248716`.
 **Last verification:** PHP regression `35442328780` passed the duplicate/TMDB lifecycle, intelligent-content admin suite, audit rollback and T-063 UI contract.
