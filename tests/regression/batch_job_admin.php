@@ -99,7 +99,7 @@ batchAdminAssert($retried['status'] === 'queued' && $retried['attempt'] === 3 &&
 batchAdminAssert(count($runs) === 1, 'retry must preserve historical content_job_run rows.');
 $migration = @file_get_contents($root . '/application/data/migrations/20260918000200_content_jobs.sql') ?: '';
 $repository = @file_get_contents($root . '/application/common/util/ContentJobRepository.php') ?: '';
-batchAdminAssert(strpos($migration, 'UNIQUE KEY `uk_job_attempt` (`job_id`, `attempt`)') !== false, 'run history must retain unique monotonic attempt identifiers.');
+batchAdminAssert(strpos($migration, 'UNIQUE KEY `uk_job_attempt` (`job_id`,`attempt`)') !== false, 'run history must retain unique monotonic attempt identifiers.');
 batchAdminAssert(strpos($repository, "'attempt' => (int) \$job['attempt']") !== false, 'claim recording must bind history to the monotonic job attempt.');
 try {
     $service->retry(92, 9, 'editor', ['content_workspace/run_tmdb'], true);
