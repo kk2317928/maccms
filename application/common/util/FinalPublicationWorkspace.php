@@ -112,6 +112,7 @@ class FinalPublicationWorkspace
             $playback = VodPlaybackCodec::decode((string) ($row['vod_play_from'] ?? ''), (string) ($row['vod_play_url'] ?? ''), (string) ($row['vod_play_server'] ?? ''), (string) ($row['vod_play_note'] ?? ''));
             $playable = false;
             foreach ($playback as $source) {
+                if (!$this->isPlaybackSourceEnabled((string) ($source['source'] ?? ''))) { continue; }
                 foreach ($source['episodes'] as $episode) {
                     $url = trim((string) $episode['url']);
                     if ($url !== '') {
@@ -151,6 +152,15 @@ class FinalPublicationWorkspace
             'locales' => $locales, 'taxonomy' => $taxonomy, 'media' => $media, 'playback' => $playback,
             'blockers' => $blockers, 'warnings' => $warnings, 'publishable' => $blockers === [], 'revision' => $revision,
         ];
+    }
+
+    private function isPlaybackSourceEnabled(string $source): bool
+    {
+        $source = trim($source);
+        if ($source === '') { return false; }
+        if (!function_exists('config')) { return true; }
+        $players = config('vodplayer');
+        return is_array($players) && isset($players[$source]) && (string) ($players[$source]['status'] ?? '') === '1';
     }
 
     private function assertAllowedPlaybackUrl(string $url): void

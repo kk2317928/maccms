@@ -1,0 +1,1 @@
+-- Convert the native video table before enabling atomic final publication.\n-- Back up the database and schedule this potentially long table rebuild during maintenance.\nALTER TABLE `__PREFIX__vod` ENGINE=InnoDB;\n

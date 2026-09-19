@@ -31,7 +31,7 @@ if (strpos($version, $expectedFamily . '.') !== 0) {
 }
 
 $ledger = $pdo->query('SELECT version, checksum FROM mac_schema_migration ORDER BY version')->fetchAll(PDO::FETCH_ASSOC);
-if (count($ledger) !== 11
+if (count($ledger) !== 12
     || $ledger[0]['version'] !== '20260918000100'
     || $ledger[1]['version'] !== '20260918000200'
     || $ledger[2]['version'] !== '20260918000300'
@@ -43,6 +43,7 @@ if (count($ledger) !== 11
     || $ledger[8]['version'] !== '20260919000100'
     || $ledger[9]['version'] !== '20260919000200'
     || $ledger[10]['version'] !== '20260919000300'
+    || $ledger[11]['version'] !== '20260919000400'
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[0]['checksum'])
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[1]['checksum'])
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[2]['checksum'])
@@ -53,7 +54,8 @@ if (count($ledger) !== 11
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[7]['checksum'])
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[8]['checksum'])
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[9]['checksum'])
-    || !preg_match('/^[a-f0-9]{64}$/', $ledger[10]['checksum'])) {
+    || !preg_match('/^[a-f0-9]{64}$/', $ledger[10]['checksum'])
+    || !preg_match('/^[a-f0-9]{64}$/', $ledger[11]['checksum'])) {
     fwrite(STDERR, "FAIL: migration ledger does not contain all expected checksummed versions.\n");
     exit(1);
 }
@@ -79,6 +81,12 @@ $tableStatement = $pdo->prepare(
 $indexStatement = $pdo->prepare(
     'SELECT DISTINCT INDEX_NAME FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?'
 );
+$tableStatement->execute([$database, 'mac_vod']);
+$vodTableInfo = $tableStatement->fetch(PDO::FETCH_ASSOC);
+if (!$vodTableInfo || strtoupper((string) $vodTableInfo['ENGINE']) !== 'INNODB') {
+    fwrite(STDERR, "FAIL: mac_vod must use InnoDB for atomic publication.\n");
+    exit(1);
+}
 foreach ($requiredIndexes as $table => $expectedIndexes) {
     $tableStatement->execute([$database, $table]);
     $tableInfo = $tableStatement->fetch(PDO::FETCH_ASSOC);

@@ -17,8 +17,9 @@ final class FinalPublicationService
     private $extensionUpdater;
     private $clock;
     private $cacheInvalidator;
+    private $searchSynchronizer;
 
-    public function __construct(FinalPublicationWorkspace $workspace = null, ContentAdminAudit $audit = null, callable $transaction = null, callable $locker = null, callable $nativeUpdater = null, callable $extensionUpdater = null, callable $clock = null, callable $cacheInvalidator = null)
+    public function __construct(FinalPublicationWorkspace $workspace = null, ContentAdminAudit $audit = null, callable $transaction = null, callable $locker = null, callable $nativeUpdater = null, callable $extensionUpdater = null, callable $clock = null, callable $cacheInvalidator = null, callable $searchSynchronizer = null)
     {
         $this->workspace = $workspace ?: new FinalPublicationWorkspace();
         $this->audit = $audit ?: new ContentAdminAudit();
@@ -56,6 +57,9 @@ final class FinalPublicationService
             Cache::rm($flag . '_vod_detail_' . $vodId . '_' . $slug);
             Cache::rm($flag . '_vod_detail_' . $vodId . '_');
             if ($slug !== '') { Cache::rm($flag . '_vod_detail_0_' . $slug); }
+        };
+        $this->searchSynchronizer = $searchSynchronizer ?: static function (int $vodId): void {
+            MeilisearchSync::afterVodSave($vodId);
         };
     }
 
@@ -98,6 +102,7 @@ final class FinalPublicationService
             return ['vod_id' => $vodId, 'public_id' => (string) $locked['public_id'], 'workflow_status' => VodWorkflow::PUBLISHED, 'vod_status' => 1, 'published_at' => $now, '_row' => $locked];
         });
         call_user_func($this->cacheInvalidator, $vodId, $published['public_id'], $published['_row']);
+        call_user_func($this->searchSynchronizer, $vodId);
         unset($published['_row']);
         return $published;
     }
