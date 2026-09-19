@@ -593,7 +593,10 @@ No task may introduce automatic merge.
 
 - Added a discoverable `view_new` duplicate workspace with pending-first paging, side-by-side native/multilingual/external-ID/playback/provenance/lock comparison, explicit primary selection, different-work decisions, merge confirmation, integrity-checked snapshot detail, active-state restoration and safe conflict feedback. The native authorization boundary now normalizes `ContentWorkspace` to the exact `content_workspace/*` permission namespace, and the snake-case action is directly routable.
 - Extended different/merge/restore services with transaction-internal immutable audit callbacks so audit failure rolls back every decision, snapshot and content mutation. No path auto-merges. RED commits: `b23746abfe4e37b8009bc2473b404abdb88f3289`, `a989804e464358005067226b95449d21bc181a20`; final commit: `5f95252e851f545073f24c0c9e60854e28248716`; PHP regression `35442328780` passed.
-### T-064 TMDB candidate and manual-match UI — `IN_PROGRESS`
+### T-064 TMDB candidate and manual-match UI — `DONE`
+
+- Added a discoverable `view_new` TMDB review workspace with integrity-checked candidate revisions, pending-first paging, candidate-specific field differences, lock/provenance display, reviewed field allowlists, explicit no-match, manual ID and rematch actions. Exact review/run permissions, stable CSRF, row locking and transaction-internal immutable audit keep mutations fail-closed; manual and rematch requests execute through registered bounded Cron handlers rather than external HTTP inside the admin request.
+- Added prefix-aware MySQL 5.7/8.0 candidate storage and wired deterministic search/manual results into it. RED commits: `582ee4ad48ec993cd959cebd6903695f9dab5eff`, `d6a14d632edda667bb8fab5db0c6e361e2db98f5`; final commit: `5045e6bad1c821a8f6eada7f04bcb51d8ba4d4dd`. PHP `35443519455`, MySQL 5.7 `35443519424`, MySQL 8.0 `35443519411` passed.
 ### T-065 Final validation/publication UI — `TODO`
 ### T-066 Batch enqueue and failure/retry UI — `TODO`
 ### T-067 Admin permission and compatibility regression — `TODO`
@@ -646,10 +649,10 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 
 ```text
 Checkpoint: CP-06
-Next task: T-064
-Task status: IN_PROGRESS
-Required starting state: feature/headless-ai-v1 at `5f95252e851f545073f24c0c9e60854e28248716`
-First verification: PHP regression plus TMDB candidate/manual-match UI contract
-Task commit: test: define TMDB review UI contract
+Next task: T-065
+Task status: TODO
+Required starting state: feature/headless-ai-v1 at `5045e6bad1c821a8f6eada7f04bcb51d8ba4d4dd`
+First verification: PHP regression plus final validation/publication UI contract
+Task commit: test: define final publication UI contract
 Push required: yes, immediately after task verification
 ```

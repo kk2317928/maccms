@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-19
-State document version: 57
+State document version: 58
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.
 **Active checkpoint:** CP-06 — intelligent-content administration.
-**Active task:** T-064 — TMDB candidate and manual-match UI (`IN_PROGRESS`).
-**Starting commit:** T-063 final implementation commit `5f95252e851f545073f24c0c9e60854e28248716`.
-**Last completed task:** T-063 — duplicate comparison, merge and restore UI, final commit `5f95252e851f545073f24c0c9e60854e28248716`.
-**Last verification:** PHP regression `35442328780` passed the duplicate/TMDB lifecycle, intelligent-content admin suite, audit rollback and T-063 UI contract.
-**Next action:** define TMDB candidate, manual-ID, no-match, rematch and field-difference UI contracts for T-064.
+**Active task:** T-065 — final validation/publication UI (`TODO`).
+**Starting commit:** T-064 final commit `5045e6bad1c821a8f6eada7f04bcb51d8ba4d4dd`.
+**Last completed task:** T-064 — TMDB candidate and manual-match UI, final commit `5045e6bad1c821a8f6eada7f04bcb51d8ba4d4dd`.
+**Last verification:** PHP `35443519455`, MySQL 5.7 `35443519424` and MySQL 8.0 `35443519411` passed TMDB review UI, job-handler, migration and existing regression contracts.
+**Next action:** define multilingual, taxonomy, image, trailer and playback validation/publication preview contracts for T-065.
 
 ## 1. Confirmed product direction
 
@@ -54,7 +54,7 @@ Upstream Composer metadata declares PHP `>=7.0`; the new programme's primary sup
 | Legacy/broad API | `application/api/controller/` | 39 controllers |
 | Public web | `application/index/controller/` | 24 controllers |
 | Shared models | `application/common/model/` | 68 models after T-052 added immutable merge snapshots |
-| Shared services/utilities | `application/common/util/` | 100 utility/service classes after T-063 added duplicate comparison and snapshot-preview orchestration |
+| Shared services/utilities | `application/common/util/` | 102 utility/service classes after T-064 added TMDB review orchestration and bounded job handling |
 | Request behaviors | `application/common/behavior/` | Security, audit, monitoring, preview and initialization hooks |
 | Upgrade schema | `application/data/update/database.php` | Large monolithic legacy upgrade script |
 | Tests | `tests/regression/` | Only `user_register_validate.php` currently exists |
@@ -150,6 +150,7 @@ Absence was established by repository text search against the pinned snapshot. I
 | CP-05 duplicate/TMDB lifecycle suite | PASS | PHP 8.1 run `35388283844`; deterministic fail-closed suite passed all eight lifecycle contracts |
 | Granular admin permissions and immutable audit | PASS | PHP `35391110548`, MySQL 5.7 `35391110547`, MySQL 8.0 `35391110450`, native video `35390914302` |
 | AI field review UI and conflict controls | PASS | PHP `35431481425`, MySQL 5.7 `35431315407`, MySQL 8.0 `35431315406`, native video `35431205533` |
+| TMDB candidate and manual-match UI | PASS | PHP `35443519455`, MySQL 5.7 `35443519424`, MySQL 8.0 `35443519411`; candidate-bound preview, exact permissions, locking, Cron handlers and revision storage passed |
 | Video workflow state machine | PASS | PHP 8.1 run `35344911819`; exhaustive transition matrix passed |
 | Lossless native playback codec | PASS | PHP 8.1 run `35345369100`; record-form, validation, round-trip and merge contracts passed |
 | Foundation migration MySQL 5.7 | PASS | Disposable `maccms_ci_57`, MySQL 5.7.44; Actions run `35348332012` |
