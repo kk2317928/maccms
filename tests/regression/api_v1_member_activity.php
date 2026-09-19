@@ -31,8 +31,8 @@ $payload=ApiV1ActivityMerge::normalize(array(
         array('public_id'=>'ABC234','updated_at'=>1700000100),
     ),
     'progress'=>array(
-        array('public_id'=>'ABC234','source_id'=>'source-1','episode_id'=>'episode-2','position_seconds'=>180,'duration_seconds'=>1200,'updated_at'=>1700000200),
-        array('public_id'=>'ABC234','source_id'=>'source-1','episode_id'=>'episode-2','position_seconds'=>90,'duration_seconds'=>1200,'updated_at'=>1700000100),
+        array('public_id'=>'ABC234','source_id'=>'s1','episode_id'=>'s1e2','position_seconds'=>180,'duration_seconds'=>1200,'updated_at'=>1700000200),
+        array('public_id'=>'ABC234','source_id'=>'s1','episode_id'=>'s1e2','position_seconds'=>90,'duration_seconds'=>1200,'updated_at'=>1700000100),
     ),
 ));
 activitySame(1,count($payload['favorites']),'Favorite merge must deduplicate by public ID.');
@@ -54,7 +54,7 @@ foreach(array(
 
 $favorite=ApiV1ActivityDto::favorite(array('public_id'=>'ABC234','title'=>'Example','poster'=>'p.jpg','favorited_at'=>123));
 activitySame(array('public_id'=>'ABC234','title'=>'Example','poster'=>'p.jpg','favorited_at'=>123),$favorite->toArray(),'Favorite DTO allowlist mismatch.');
-$progress=ApiV1ActivityDto::progress(array('public_id'=>'ABC234','source_id'=>'s1','episode_id'=>'e2','position_seconds'=>33,'duration_seconds'=>99,'updated_at'=>456));
+$progress=ApiV1ActivityDto::progress(array('public_id'=>'ABC234','source_id'=>'s1','episode_id'=>'s1e2','position_seconds'=>33,'duration_seconds'=>99,'updated_at'=>456));
 activityAssert(!array_key_exists('vod_id',$progress->toArray()),'Activity DTO must not expose vod_id.');
 activityAssert(!array_key_exists('ulog_id',$progress->toArray()),'Activity DTO must not expose ulog_id.');
 
