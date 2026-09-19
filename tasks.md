@@ -645,11 +645,16 @@ Use `application/admin/view_new`; do not add a parallel obsolete `view/` tree.
 - GREEN evidence: PHP `35465825379`, MySQL 5.7 `35465825407`, MySQL 8.0 `35465825384`, native video `35465825364`.
 - Independent review found home nested-DTO serialization and empty S3-poster fallback issues; both were covered by regression tests and fixed. Summary queries also avoid loading full synopsis HTML.
 
-### T-072 Locale fallback and canonical redirects — `IN_PROGRESS`
+### T-072 Locale fallback and canonical redirects — `DONE`
 
-- Approved design: `docs/superpowers/specs/2026-09-19-api-v1-locale-canonical-design.md`.
-- Execution plan: `docs/superpowers/plans/2026-09-19-api-v1-locale-canonical.md`.
-### T-073 Access plus rotating hashed refresh sessions — `TODO`
+- Added strict `zh-TW`/`zh-CN`/`en` locale resolution with explicit-query precedence, quality-weighted `Accept-Language`, deterministic display-field fallback and locale response metadata.
+- Added published-target validation and HTTP 308 redirects for merged detail/episode public IDs; redirects expose only the canonical public ID and a safe relative Location.
+- Corrected the T-071 detail query to use `DETAIL_FIELDS` instead of the removed `VIDEO_FIELDS` constant.
+- RED contract commit: `d7745fa46794efe7d7610be368b54680706bb77e`; implementation and review fixes through `e8178021b6c59f0ecafca81fdc4c12b691774bbf`.
+- GREEN evidence: PHP `35466523627`, MySQL 5.7 `35466454603`, MySQL 8.0 `35466454584`, native video `35466454598`.
+- Independent review found missing locale metadata on redirects and ignored Accept-Language quality weights; both received RED→GREEN coverage and fixes.
+
+### T-073 Access plus rotating hashed refresh sessions — `READY`
 ### T-074 Favorites/history/progress DTO and anonymous merge — `TODO`
 ### T-075 Playback source policy and optional signing — `TODO`
 ### T-076 CORS, per-endpoint limits, ETag and invalidation — `TODO`
@@ -688,10 +693,10 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 
 ```text
 Checkpoint: CP-07
-Next task: T-072
+Next task: T-073
 Task status: READY
-Required starting state: feature/headless-ai-v1 after T-071 implementation commit `3eaabf1aadcd451f0e8fc5f0846aca874533aa6d`
-First verification: define locale selection/fallback and canonical alias redirect contracts
-Task commit: test: define API v1 locale and canonical redirect contract
+Required starting state: feature/headless-ai-v1 after T-072 implementation commit `e8178021b6c59f0ecafca81fdc4c12b691774bbf`
+First verification: define access-token and rotating hashed refresh-session security contracts
+Task commit: test: define API v1 session security contract
 Push required: yes, immediately after task verification
 ```
