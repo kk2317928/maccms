@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-19
-State document version: 65
+State document version: 66
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-06 — intelligent-content administration workspace.
 **Active checkpoint:** CP-07 — Headless API v1 and member sessions.
-**Active task:** T-071 — public home/list/detail/episodes/search/taxonomy endpoints (`READY`).
-**Starting commit:** T-070 final implementation commit `56e7154fd0649a356386d3809d8c4f86d3a06c92`.
-**Last completed task:** T-070 — versioned route/error/pagination/DTO foundation, implementation commit `56e7154fd0649a356386d3809d8c4f86d3a06c92`.
-**Last verification:** PHP `35462362148`, MySQL 5.7 `35462362150`, MySQL 8.0 `35462362152` and native video `35462362293` passed the API v1 foundation, database migrations and native compatibility.
-**Next action:** define T-071 published-content queries and explicit home/list/detail/episodes/search/taxonomy DTOs on the T-070 API boundary.
+**Active task:** T-072 — locale fallback and canonical redirects (`READY`).
+**Starting commit:** T-071 final implementation commit `3eaabf1aadcd451f0e8fc5f0846aca874533aa6d`.
+**Last completed task:** T-071 — public home/list/detail/episodes/search/taxonomy endpoints, implementation commit `3eaabf1aadcd451f0e8fc5f0846aca874533aa6d`.
+**Last verification:** PHP `35465825379`, MySQL 5.7 `35465825407`, MySQL 8.0 `35465825384` and native video `35465825364` passed the T-071 public catalog, database and native compatibility matrix.
+**Next action:** define T-072 locale selection/fallback and canonical alias redirect contracts on the T-071 public catalog boundary.
 
 ## 1. Confirmed product direction
 
@@ -54,7 +54,7 @@ Upstream Composer metadata declares PHP `>=7.0`; the new programme's primary sup
 | Legacy/broad API | `application/api/controller/` | 39 controllers |
 | Public web | `application/index/controller/` | 24 controllers |
 | Shared models | `application/common/model/` | 68 models after T-052 added immutable merge snapshots |
-| Shared services/utilities | `application/common/util/` | 112 utility/service classes after T-070 added the API v1 contract foundation |
+| Shared services/utilities | `application/common/util/` | 117 utility/service classes after T-071 added the public catalog boundary |
 | Request behaviors | `application/common/behavior/` | Security, audit, monitoring, preview and initialization hooks |
 | Upgrade schema | `application/data/update/database.php` | Large monolithic legacy upgrade script |
 | Tests | `tests/regression/` | Only `user_register_validate.php` currently exists |
@@ -155,6 +155,7 @@ Absence was established by repository text search against the pinned snapshot. I
 | Batch enqueue and terminal-failure retry UI | PASS | PHP `35455134189`; explicit ID cap, exact permissions, CSRF/confirmation, idempotency, redaction, immutable audit, pagination and monotonic attempt history passed |
 | CP-06 permission and native compatibility gate | PASS | PHP `35457611728`, MySQL 5.7 `35457611738`, MySQL 8.0 `35457611727`, native video `35457611759`; exact route/action grants and native admin/collection/playback paths passed |
 | API v1 route/error/pagination/DTO foundation | PASS | PHP `35462362148`, MySQL 5.7 `35462362150`, MySQL 8.0 `35462362152`, native video `35462362293`; clean dispatch, stable envelopes, strict page pagination, request-ID and DTO allowlist contracts passed |
+| API v1 public catalog | PASS | PHP `35465825379`, MySQL 5.7 `35465825407`, MySQL 8.0 `35465825384`, native video `35465825364`; published-only queries, exact routes, DTO allowlists, search/filter validation and playback-URL non-disclosure passed |
 | Video workflow state machine | PASS | PHP 8.1 run `35344911819`; exhaustive transition matrix passed |
 | Lossless native playback codec | PASS | PHP 8.1 run `35345369100`; record-form, validation, round-trip and merge contracts passed |
 | Foundation migration MySQL 5.7 | PASS | Disposable `maccms_ci_57`, MySQL 5.7.44; Actions run `35348332012` |
