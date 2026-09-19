@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-19
-State document version: 69
+State document version: 70
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -16,7 +16,7 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 **Starting commit:** T-073 final implementation commit `326515e67b85ac6e7f4509eb9dd4c3e2f99a5cea`.
 **Last completed task:** T-073 — access plus rotating hashed refresh sessions, implementation commit `326515e67b85ac6e7f4509eb9dd4c3e2f99a5cea`.
 **Last verification:** PHP `35468598811`, MySQL 5.7 `35468598872`, MySQL 8.0 `35468598851` and native video `35468598836` passed the T-073 session-security, database and native compatibility matrix.
-**Next action:** add the failing T-074 member-activity contract, then implement public-ID DTOs and timestamp-safe anonymous merge.
+**Next action:** trigger the PHP regression workflow for the current T-074 head, resolve any failures, then record green evidence and mark T-074 complete.
 
 ## 1. Confirmed product direction
 
@@ -179,11 +179,11 @@ Absence was established by repository text search against the pinned snapshot. I
 When pausing mid-task, replace this block with current facts:
 
 ```text
-Task: <task id and title>
-Starting commit: <sha>
-Changed files: <paths>
-Last command: <exact command>
-Result: <pass/fail and concise evidence>
-Next action: <one exact action>
-Blocker: <none or explicit requirement>
+Task: T-074 Favorites/history/progress DTO and anonymous merge
+Starting commit: 326515e67b85ac6e7f4509eb9dd4c3e2f99a5cea
+Changed files: API activity utilities/controller/routes, Auth context reuse, regression/workflow/inventory docs
+Last command: GitHub workflow lookup for current head
+Result: implementation and independent review fixes pushed through e4b4ed7759b4d6e20a3153def655d1a433ed7944; no workflow run was enqueued
+Next action: trigger PHP regression on current head and resolve any failures
+Blocker: GitHub App content commits did not enqueue the push workflow and the connector exposes no workflow-dispatch action
 ```
