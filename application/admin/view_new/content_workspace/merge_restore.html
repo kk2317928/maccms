@@ -8,6 +8,7 @@
     {/volist}
     {empty name="queue.rows"}<tr><td colspan="5">目前沒有重複候選。</td></tr>{/empty}
     </tbody></table>
+    <div>{if condition="$queue.page gt 1"}<a class="layui-btn layui-btn-xs" href="{:url('content_workspace/merge_restore',['page'=>$queue['page']-1])}">上一頁</a>{/if} 第 {$queue.page} 頁 {if condition="$queue.page*$queue.limit lt $queue.total"}<a class="layui-btn layui-btn-xs" href="{:url('content_workspace/merge_restore',['page'=>$queue['page']+1])}">下一頁</a>{/if}</div>
 
     {if condition="$comparison neq null"}
     <h3>候選 #{$comparison.candidate.duplicate_candidate_id}（{$comparison.candidate.score}）</h3>
@@ -16,18 +17,28 @@
     <tr><td>主影片選擇</td><td><input type="radio" name="primary_vod_id" value="{$comparison.candidate.vod_id_low}" checked> 保留左側</td><td><input type="radio" name="primary_vod_id" value="{$comparison.candidate.vod_id_high}"> 保留右側</td></tr>
     <tr><td>Public ID</td><td>{$comparison.left.ext.public_id|htmlentities}</td><td>{$comparison.right.ext.public_id|htmlentities}</td></tr>
     <tr><td>名稱</td><td>{$comparison.left.vod.vod_name|htmlentities}</td><td>{$comparison.right.vod.vod_name|htmlentities}</td></tr>
+    <tr><td>地區／演員／導演</td><td>{$comparison.left.vod.vod_area|default=''|htmlentities}<br>{$comparison.left.vod.vod_actor|default=''|htmlentities}<br>{$comparison.left.vod.vod_director|default=''|htmlentities}</td><td>{$comparison.right.vod.vod_area|default=''|htmlentities}<br>{$comparison.right.vod.vod_actor|default=''|htmlentities}<br>{$comparison.right.vod.vod_director|default=''|htmlentities}</td></tr>
+    <tr><td>海報</td><td>{$comparison.left.vod.vod_pic|default=''|htmlentities}</td><td>{$comparison.right.vod.vod_pic|default=''|htmlentities}</td></tr>
     <tr><td>年份／類型</td><td>{$comparison.left.vod.vod_year|htmlentities}／{$comparison.left.ext.type2|htmlentities}</td><td>{$comparison.right.vod.vod_year|htmlentities}／{$comparison.right.ext.type2|htmlentities}</td></tr>
     <tr><td>播放來源</td><td><pre>{$comparison.left.vod.vod_play_from|htmlentities}\n{$comparison.left.vod.vod_play_url|htmlentities}</pre></td><td><pre>{$comparison.right.vod.vod_play_from|htmlentities}\n{$comparison.right.vod.vod_play_url|htmlentities}</pre></td></tr>
-    <tr><td>人工鎖</td><td>{foreach name="comparison.left.field_states" item="state"}{if condition="$state.is_locked"}{$state.field_name|htmlentities} {/if}{/foreach}</td><td>{foreach name="comparison.right.field_states" item="state"}{if condition="$state.is_locked"}{$state.field_name|htmlentities} {/if}{/foreach}</td></tr>
+    <tr><td>多語標題</td><td>{foreach name="comparison.left.content_lang" item="lang"}{$lang.lang_code|htmlentities}: {$lang.fields.vod_name|default=''|htmlentities}<br>{/foreach}</td><td>{foreach name="comparison.right.content_lang" item="lang"}{$lang.lang_code|htmlentities}: {$lang.fields.vod_name|default=''|htmlentities}<br>{/foreach}</td></tr>
+    <tr><td>外部 ID</td><td>{foreach name="comparison.left.external_maps" item="map"}{$map.provider_code|htmlentities}: {$map.external_id|htmlentities}<br>{/foreach}</td><td>{foreach name="comparison.right.external_maps" item="map"}{$map.provider_code|htmlentities}: {$map.external_id|htmlentities}<br>{/foreach}</td></tr>
+    <tr><td>來源／人工鎖</td><td>{foreach name="comparison.left.field_states" item="state"}{$state.field_name|htmlentities}: {$state.source|htmlentities} / {$state.source_ref|default=''|htmlentities}{if condition="$state.is_locked"} [locked]{/if}<br>{/foreach}</td><td>{foreach name="comparison.right.field_states" item="state"}{$state.field_name|htmlentities}: {$state.source|htmlentities} / {$state.source_ref|default=''|htmlentities}{if condition="$state.is_locked"} [locked]{/if}<br>{/foreach}</td></tr>
     </tbody></table>
     <button class="layui-btn layui-btn-danger j-duplicate-action" data-action="merge" data-candidate="{$comparison.candidate.duplicate_candidate_id}">確認合併</button>
     <button class="layui-btn layui-btn-primary j-duplicate-action" data-action="different" data-candidate="{$comparison.candidate.duplicate_candidate_id}">確認為不同作品</button>
     {/if}
 
     {if condition="$snapshot_preview neq null"}
-    <h3>Snapshot #{$snapshot_preview.snapshot.merge_snapshot_id}</h3>
-    <p>主影片：{$snapshot_preview.payload.primary.ext.public_id|htmlentities}；副影片：{$snapshot_preview.payload.secondary.ext.public_id|htmlentities}</p>
-    <button class="layui-btn layui-btn-warm j-duplicate-action" data-action="restore" data-snapshot="{$snapshot_preview.snapshot.merge_snapshot_id}">確認還原</button>
+    <h3>Snapshot #{$snapshot_preview.snapshot.merge_snapshot_id}／{$snapshot_preview.snapshot.status|htmlentities}</h3>
+    <p>合併人員 #{$snapshot_preview.snapshot.merged_by}；合併時間 {$snapshot_preview.snapshot.merged_at|date='Y-m-d H:i:s',###}</p>
+    <table class="layui-table"><thead><tr><th>保存值</th><th>主影片</th><th>副影片</th></tr></thead><tbody>
+    <tr><td>Public ID</td><td>{$snapshot_preview.payload.primary.ext.public_id|htmlentities}</td><td>{$snapshot_preview.payload.secondary.ext.public_id|htmlentities}</td></tr>
+    <tr><td>名稱／年份</td><td>{$snapshot_preview.payload.primary.vod.vod_name|default=''|htmlentities}／{$snapshot_preview.payload.primary.vod.vod_year|default=''|htmlentities}</td><td>{$snapshot_preview.payload.secondary.vod.vod_name|default=''|htmlentities}／{$snapshot_preview.payload.secondary.vod.vod_year|default=''|htmlentities}</td></tr>
+    <tr><td>播放資料</td><td><pre>{$snapshot_preview.payload.primary.vod.vod_play_from|htmlentities}\n{$snapshot_preview.payload.primary.vod.vod_play_url|htmlentities}</pre></td><td><pre>{$snapshot_preview.payload.secondary.vod.vod_play_from|htmlentities}\n{$snapshot_preview.payload.secondary.vod.vod_play_url|htmlentities}</pre></td></tr>
+    </tbody></table>
+    <p>執行還原時會再次檢查目前資料；任何合併後修改都會顯示 conflict 並禁止覆寫。</p>
+    {if condition="$snapshot_preview.snapshot.status eq 'active'"}<button class="layui-btn layui-btn-warm j-duplicate-action" data-action="restore" data-snapshot="{$snapshot_preview.snapshot.merge_snapshot_id}">確認還原</button>{else/}<button class="layui-btn layui-btn-disabled" disabled>此 Snapshot 已不可還原</button>{/if}
     {/if}
 </div>
 {include file="../../../application/admin/view_new/public/foot" /}

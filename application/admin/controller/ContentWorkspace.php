@@ -69,7 +69,7 @@ class ContentWorkspace extends Base
         return $this->fetch('content_workspace/review');
     }
 
-    public function mergeRestore()
+    public function merge_restore()
     {
         $workspace = new DuplicateReviewWorkspace();
         if (request()->isPost()) {
@@ -130,7 +130,10 @@ class ContentWorkspace extends Base
                 }
                 return json(['code' => 1, 'msg' => 'ok', 'data' => $result]);
             } catch (Throwable $exception) {
-                return json(['code' => 0, 'msg' => '重複內容操作未完成，請重新整理並檢查衝突。']);
+                $message = strpos($exception->getMessage(), 'Restoration conflict') !== false
+                    ? '偵測到合併後資料變更（Restoration conflict），禁止還原。'
+                    : '重複內容操作未完成，請重新整理並檢查衝突。';
+                return json(['code' => 0, 'msg' => $message]);
             }
         }
         $candidateId = (int) input('param.candidate_id/d', 0);

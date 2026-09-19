@@ -67,7 +67,7 @@ class DuplicateReviewWorkspace
             ->join($this->tablePrefix() . 'content_merge_snapshot s', 's.duplicate_candidate_id=c.duplicate_candidate_id', 'left')
             ->where('c.decision', 'in', ['pending', 'merged'])
             ->field('c.*,s.merge_snapshot_id,s.status AS snapshot_status')
-            ->order('c.decision asc,c.score desc,c.updated_at asc')->limit($offset, $limit)->select();
+            ->order("c.decision='pending' DESC,c.score desc,c.updated_at asc")->limit($offset, $limit)->select();
         return $rows ?: [];
     }
 
@@ -84,7 +84,7 @@ class DuplicateReviewWorkspace
         if (!$vod || !$ext) { return null; }
         return [
             'vod' => $vod, 'ext' => $ext,
-            'content_lang' => Db::name('content_lang')->where(['content_type' => 'vod', 'content_id' => $vodId])->order('lang_code asc')->select() ?: [],
+            'content_lang' => $this->normalizeLanguageRows(Db::name('content_lang')->where(['content_type' => 'vod', 'content_id' => $vodId])->order('lang_code asc')->select() ?: []),
             'external_maps' => Db::name('ext_source_map')->where(['cms_mid' => 1, 'cms_id' => $vodId])->order('provider_code asc')->select() ?: [],
             'field_states' => Db::name('vod_field_state')->where('vod_id', $vodId)->order('field_name asc')->select() ?: [],
         ];
@@ -113,5 +113,15 @@ class DuplicateReviewWorkspace
         if (!preg_match('/^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$/', $publicId)) {
             throw new RuntimeException('Duplicate video public identity is invalid.');
         }
+    }
+    private function normalizeLanguageRows(array $rows): array
+    {
+        foreach ($rows as &$row) {
+            try { $data = json_decode((string) ($row['data'] ?? '{}'), true, 32, JSON_THROW_ON_ERROR); }
+            catch (JsonException $exception) { $data = []; }
+            $row['fields'] = is_array($data) ? $data : [];
+        }
+        unset($row);
+        return $rows;
     }
 }

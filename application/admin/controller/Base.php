@@ -54,6 +54,7 @@ class Base extends All
     {
         $c = strtolower($c);
         $a = strtolower($a);
+        $c = $c === 'contentworkspace' ? 'content_workspace' : $c;
 
         // UEditor AI proxy: logged-in admin only; API key never sent to browser.
         if ($c === 'upload' && ($a === 'ueditor_ai' || $a === 'ueditorai')) {
