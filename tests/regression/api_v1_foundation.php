@@ -140,7 +140,7 @@ assertSameValue('VALIDATION_ERROR', $error['error']['code'], 'Stable error code 
 
 $indexEntry = file_get_contents($root . '/index.php');
 assertContainsValue('ApiV1Bootstrap::resolve', $indexEntry, 'Public entrypoint must resolve the clean v1 boundary before binding.');
-assertContainsValue("define('BIND_MODULE', $apiV1Dispatch['module'])", $indexEntry, 'Public entrypoint must bind the resolved API module.');
+assertContainsValue("define('BIND_MODULE', \$apiV1Dispatch['module'])", $indexEntry, 'Public entrypoint must bind the resolved API module.');
 $apiEntry = file_get_contents($root . '/api.php');
 assertContainsValue('ApiV1Bootstrap::resolve', $apiEntry, 'Legacy API entrypoint must normalize v1 paths without changing other paths.');
 
