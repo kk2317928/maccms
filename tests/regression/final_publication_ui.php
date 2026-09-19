@@ -44,7 +44,7 @@ $locales = [42 => [
     'en' => ['vod_name' => 'Main Title', 'vod_blurb' => 'English summary'],
 ]];
 $terms = [42 => [
-    ['kind' => 'region', 'term_id' => 1, 'name_tw' => '日本', 'name_cn' => '日本', 'name_en' => 'Japan'],
+    ['kind' => 'region', 'term_id' => 1, 'name_tw' => '', 'name_cn' => '日本', 'name_en' => 'Japan'],
     ['kind' => 'genre', 'term_id' => 2, 'name_tw' => '劇情', 'name_cn' => '剧情', 'name_en' => 'Drama'],
 ]];
 $workspace = new FinalPublicationWorkspace(
@@ -168,7 +168,7 @@ foreach (['|htmlentities', '發布阻擋', '發布提醒', '多語標題', '分�
 publicationAssert(strpos($dashboard, 'content_workspace/publish') !== false, 'workspace dashboard must link to final publication.');
 $base = @file_get_contents($root . '/application/admin/controller/Base.php') ?: '';
 publicationAssert(strpos($base, "(string)\$this->_admin['admin_id'] === '1'") !== false, 'super admin must retain publication route access before exact delegated-admin checks.');
-foreach (['content_lang', 'vod_meta_term', 'lock(true)'] as $needle) {
+foreach (['content_lang', 'vod_meta_term', 'lock(true)', 'information_schema.TABLES', "cache_flag'] . '_vod_detail_'"] as $needle) {
     publicationAssert(strpos(@file_get_contents($root . '/application/common/util/FinalPublicationService.php') ?: '', $needle) !== false, 'publication transaction must lock the complete reviewed snapshot: ' . $needle . '.');
 }
 
