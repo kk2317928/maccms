@@ -26,11 +26,12 @@ class Auth extends Base
         $session = (new ApiV1SessionService())->create(
             (int)$result['meta']['user_id'], $input['device_name'] ?? '', $request->header('User-Agent'), $request->ip()
         );
-        return $this->successResponse($this->tokenPayload((int)$result['meta']['user_id'], $session), $request, array(), 201);
+        return $this->tokenResponse($this->tokenPayload((int)$result['meta']['user_id'], $session), $request, 201);
     }
 
     public function refresh(Request $request)
     {
+        if ($this->secret() === '') { return $this->internalError($request); }
         $input = $request->post();
         $token = isset($input['refresh_token']) && is_string($input['refresh_token']) ? $input['refresh_token'] : '';
         $result = (new ApiV1SessionService())->rotate($token, $request->header('User-Agent'), $request->ip());
@@ -45,7 +46,7 @@ class Auth extends Base
             (new ApiV1SessionService())->revokeFamily($result['user_id'], $result['session_id'], 'account');
             return $this->errorResponse('INVALID_REFRESH_TOKEN', 'The refresh token is invalid.', 401, $request);
         }
-        return $this->successResponse($this->tokenPayload($result['user_id'], $result), $request);
+        return $this->tokenResponse($this->tokenPayload($result['user_id'], $result), $request);
     }
 
     public function logout(Request $request)
@@ -74,6 +75,15 @@ class Auth extends Base
         return $this->successResponse(array('revoked'=>true,'session_id'=>$session_id), $request);
     }
 
+    private function tokenResponse(array $payload, Request $request, $status = 200)
+    {
+        $requestId = $this->requestId($request);
+        return json(ApiV1Response::success($payload, $requestId), $status, array(
+            'Content-Type'=>'application/json; charset=utf-8', 'X-Request-ID'=>$requestId,
+            'Cache-Control'=>'no-store', 'Pragma'=>'no-cache',
+        ));
+    }
+
     private function tokenPayload($userId, array $session)
     {
         return array(
@@ -99,7 +109,7 @@ class Auth extends Base
     private function secret()
     {
         $app = isset($GLOBALS['config']['app']) && is_array($GLOBALS['config']['app']) ? $GLOBALS['config']['app'] : array();
-        $secret = trim((string)($app['api_v1_jwt_secret'] ?? ($app['api_jwt_secret'] ?? '')));
+        $secret = trim((string)($app['api_v1_jwt_secret'] ?? getenv('MACCMS_API_V1_JWT_SECRET')));
         return strlen($secret) >= 32 ? $secret : '';
     }
 }
