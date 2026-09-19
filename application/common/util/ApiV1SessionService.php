@@ -68,7 +68,7 @@ class ApiV1SessionService
     public function listForUser($userId)
     {
         $rows = Db::name('api_refresh_session')->field('session_id,device_name,created_at,last_used_at,expires_at,revoked_at')
-            ->where('user_id', (int)$userId)->order('created_at desc')->select();
+            ->where('user_id', (int)$userId)->order('created_at desc,refresh_id desc')->select();
         $sessions = array();
         foreach ($rows as $row) {
             if (!isset($sessions[$row['session_id']])) {
@@ -82,6 +82,13 @@ class ApiV1SessionService
         return array_values($sessions);
     }
 
+    private function fingerprint($domain, $value)
+    {
+        $app = isset($GLOBALS['config']['app']) && is_array($GLOBALS['config']['app']) ? $GLOBALS['config']['app'] : array();
+        $secret = trim((string)($app['api_v1_jwt_secret'] ?? getenv('MACCMS_API_V1_JWT_SECRET')));
+        return hash_hmac('sha256', (string)$domain."\0".(string)$value, $secret);
+    }
+
     private function row($userId, $sessionId, $familyId, $token, $parentHash, $deviceName, $userAgent, $ip, $now)
     {
         $deviceName = trim((string)$deviceName);
@@ -90,8 +97,8 @@ class ApiV1SessionService
         return array(
             'session_id'=>$sessionId, 'family_id'=>$familyId, 'user_id'=>(int)$userId,
             'token_hash'=>ApiV1RefreshToken::digest($token), 'parent_hash'=>$parentHash,
-            'device_name'=>$deviceName, 'user_agent_hash'=>hash('sha256',(string)$userAgent),
-            'ip_hash'=>hash('sha256',(string)$ip), 'created_at'=>$now, 'last_used_at'=>$now,
+            'device_name'=>$deviceName, 'user_agent_hash'=>$this->fingerprint('ua', $userAgent),
+            'ip_hash'=>$this->fingerprint('ip', $ip), 'created_at'=>$now, 'last_used_at'=>$now,
             'expires_at'=>$now+self::REFRESH_TTL, 'consumed_at'=>null, 'revoked_at'=>null, 'revoke_reason'=>'',
         );
     }
