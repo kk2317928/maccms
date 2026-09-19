@@ -663,7 +663,7 @@ Use `application/admin/view_new`; do not add a parallel obsolete `view/` tree.
 - GREEN evidence: PHP `35468598811`, MySQL 5.7 `35468598872`, MySQL 8.0 `35468598851`, native video `35468598836`.
 - Independent security review found and verified fixes for deterministic device state, secret preflight/isolation, keyed fingerprints, issuer validation, no-store headers, v1 exception handling, legacy-session isolation and CAPTCHA forwarding.
 
-### T-074 Favorites/history/progress DTO and anonymous merge — `READY`
+### T-074 Favorites/history/progress DTO and anonymous merge — `IN_PROGRESS`
 ### T-075 Playback source policy and optional signing — `TODO`
 ### T-076 CORS, per-endpoint limits, ETag and invalidation — `TODO`
 ### T-077 OpenAPI v1 and contract tests — `TODO`

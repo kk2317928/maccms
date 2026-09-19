@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-19
-State document version: 68
+State document version: 69
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-06 — intelligent-content administration workspace.
 **Active checkpoint:** CP-07 — Headless API v1 and member sessions.
-**Active task:** T-074 — favorites/history/progress DTO and anonymous merge (`READY`).
+**Active task:** T-074 — favorites/history/progress DTO and anonymous merge (`IN_PROGRESS`).
 **Starting commit:** T-073 final implementation commit `326515e67b85ac6e7f4509eb9dd4c3e2f99a5cea`.
 **Last completed task:** T-073 — access plus rotating hashed refresh sessions, implementation commit `326515e67b85ac6e7f4509eb9dd4c3e2f99a5cea`.
 **Last verification:** PHP `35468598811`, MySQL 5.7 `35468598872`, MySQL 8.0 `35468598851` and native video `35468598836` passed the T-073 session-security, database and native compatibility matrix.
-**Next action:** define T-074 favorites/history/progress DTO and anonymous merge contracts.
+**Next action:** add the failing T-074 member-activity contract, then implement public-ID DTOs and timestamp-safe anonymous merge.
 
 ## 1. Confirmed product direction
 
