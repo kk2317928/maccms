@@ -11,6 +11,9 @@ use app\common\util\DuplicateCandidateDecisionService;
 use app\common\util\DuplicateMergeService;
 use app\common\util\DuplicateRestoreService;
 use app\common\util\DuplicateReviewWorkspace;
+use app\common\util\TmdbImportService;
+use app\common\util\TmdbReviewWorkspace;
+use think\Db;
 use think\Session;
 use Throwable;
 
@@ -145,5 +148,80 @@ class ContentWorkspace extends Base
         $this->assign('snapshot_preview', $snapshot);
         $this->assign('title', '重複內容比較與還原');
         return $this->fetch('content_workspace/merge_restore');
+    }
+
+    public function tmdb_review()
+    {
+        $workspace = new TmdbReviewWorkspace();
+        $fields = new FieldGovernance();
+        $importer = new TmdbImportService();
+        if (request()->isPost()) {
+            $param = input('post.');
+            $token = (string) ($param['__token__'] ?? '');
+            $stable = function_exists('mac_admin_csrf_token') ? (string) mac_admin_csrf_token() : (string) Session::get('admin_csrf');
+            $legacy = Session::has('__token__') ? (string) Session::get('__token__') : '';
+            if ($token === '' || !(($stable !== '' && hash_equals($stable, $token)) || ($legacy !== '' && hash_equals($legacy, $token)))) {
+                return json(['code' => 0, 'msg' => lang('token_err')]);
+            }
+            try {
+                $action = (string) ($param['review_action'] ?? '');
+                $actorId = (int) $this->_admin['admin_id'];
+                $actorName = (string) ($this->_admin['admin_name'] ?? ('admin-' . $actorId));
+                $grants = array_filter(array_map('trim', explode(',', strtolower((string) ($this->_admin['admin_auth'] ?? '')))));
+                if ($actorId === 1) { $grants = array_merge($grants, ['content_workspace/review', 'content_workspace/run_tmdb']); }
+                $policy = new ContentAdminPolicy();
+                $audit = new ContentAdminAudit();
+                Db::startTrans();
+                if ($action === 'select') {
+                    $policy->assertAllowed('review', $grants);
+                    $reviewId = (int) ($param['review_id'] ?? 0);
+                    $preview = $workspace->preview($reviewId, static fn (int $vodId, array $candidate): array => $importer->preview($vodId, $candidate, $fields));
+                    $type = strtolower((string) ($param['tmdb_type'] ?? ''));
+                    $tmdbId = (int) ($param['tmdb_id'] ?? 0);
+                    $candidate = null;
+                    foreach ($preview['candidates'] as $item) {
+                        if ((int) $item['id'] === $tmdbId && strtolower((string) $item['media_type']) === $type) { $candidate = $item; break; }
+                    }
+                    if (!$candidate) { throw new \InvalidArgumentException('Stored TMDB candidate was not found.'); }
+                    $approved = array_values(array_filter((array) ($param['approved_fields'] ?? []), 'is_string'));
+                    $applied = $importer->apply((int) $preview['review']['vod_id'], $candidate, $approved, $fields, $actorId, false);
+                    $result = $workspace->select($reviewId, $type, $tmdbId, $actorId);
+                    $audit->append($actorId, $actorName, 'content.tmdb.select', 'vod', (string) $preview['review']['public_id'],
+                        ['status' => 'candidate_review'], $result, ['approved_fields' => $approved, 'applied' => $applied]);
+                    $result['fields'] = $applied;
+                } elseif ($action === 'no_match') {
+                    $policy->assertAllowed('review', $grants);
+                    $reviewId = (int) ($param['review_id'] ?? 0);
+                    $preview = $workspace->preview($reviewId, static fn (): array => []);
+                    $result = $workspace->noMatch($reviewId, $actorId);
+                    $audit->append($actorId, $actorName, 'content.tmdb.no_match', 'vod', (string) $preview['review']['public_id'],
+                        ['status' => 'candidate_review'], $result, []);
+                } elseif ($action === 'manual') {
+                    $policy->assertAllowed('run_tmdb', $grants);
+                    $vodId = (int) ($param['vod_id'] ?? 0);
+                    $result = $workspace->enqueueManual($vodId, (string) ($param['tmdb_type'] ?? ''), (int) ($param['tmdb_id'] ?? 0), $actorId);
+                    $audit->append($actorId, $actorName, 'content.tmdb.manual_enqueue', 'vod', '', [], ['job_id' => (int) $result['job_id']], ['vod_id' => $vodId]);
+                } elseif ($action === 'rematch') {
+                    $policy->assertAllowed('run_tmdb', $grants);
+                    $vodId = (int) ($param['vod_id'] ?? 0);
+                    $result = $workspace->enqueueRematch($vodId, $actorId);
+                    $audit->append($actorId, $actorName, 'content.tmdb.rematch_enqueue', 'vod', '', [], ['job_id' => (int) $result['job_id']], ['vod_id' => $vodId]);
+                } else {
+                    throw new \InvalidArgumentException('Unsupported TMDB review action.');
+                }
+                Db::commit();
+                return json(['code' => 1, 'msg' => 'ok', 'data' => $result]);
+            } catch (Throwable $exception) {
+                Db::rollback();
+                return json(['code' => 0, 'msg' => 'TMDB 操作未完成，請重新整理並檢查候選狀態。']);
+            }
+        }
+        $reviewId = (int) input('param.review_id/d', 0);
+        try { $preview = $reviewId > 0 ? $workspace->preview($reviewId, static fn (int $vodId, array $candidate): array => $importer->preview($vodId, $candidate, $fields)) : null; }
+        catch (Throwable $exception) { $preview = null; }
+        $this->assign('queue', $workspace->queue(max(1, (int) input('param.page/d', 1)), 20));
+        $this->assign('preview', $preview);
+        $this->assign('title', 'TMDB 候選與手動配對');
+        return $this->fetch('content_workspace/tmdb_review');
     }
 }
