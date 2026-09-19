@@ -597,10 +597,12 @@ No task may introduce automatic merge.
 
 - Added a discoverable `view_new` TMDB review workspace with integrity-checked candidate revisions, pending-first paging, candidate-specific field differences, lock/provenance display, reviewed field allowlists, explicit no-match, manual ID and rematch actions. Exact review/run permissions, stable CSRF, row locking and transaction-internal immutable audit keep mutations fail-closed; manual and rematch requests execute through registered bounded Cron handlers rather than external HTTP inside the admin request.
 - Added prefix-aware MySQL 5.7/8.0 candidate storage and wired deterministic search/manual results into it. RED commits: `582ee4ad48ec993cd959cebd6903695f9dab5eff`, `d6a14d632edda667bb8fab5db0c6e361e2db98f5`; final commit: `5045e6bad1c821a8f6eada7f04bcb51d8ba4d4dd`. PHP `35443519455`, MySQL 5.7 `35443519424`, MySQL 8.0 `35443519411` passed.
-### T-065 Final validation/publication UI — `IN_PROGRESS`
+### T-065 Final validation/publication UI — `DONE`
 
-- Implementing the approved fail-closed manual-review preview and atomic publication contract in `docs/superpowers/plans/2026-09-19-t065-final-publication-ui.md`.
-### T-066 Batch enqueue and failure/retry UI — `TODO`
+- Added a discoverable `view_new` manual-review publication queue and revision-bound preview with canonical identity, locale, taxonomy, media and native playback validation. Publication requires exact `content_workspace/publish` authorization, stable CSRF, explicit confirmation and locked revalidation; it atomically activates native visibility, advances the separate workflow, writes immutable audit data, clears detail caches and synchronizes Meilisearch.
+- Added versioned migration `20260919000400` to convert an installed native `vod` table to InnoDB while remaining safe in extension-only migration environments. Empty, unknown or disabled native playback sources and unsafe/unplayable URLs fail closed. RED commits: `3e65445bf178b17fbbf72d616cb6ab288736910c`, `4dd0830315c7b7479b6c54e3940712b9dff037e1`, `f0c15f64ba94953b1c363c631100794b8aebbfb5`, `731e530bf2c85788a14fa2c32b0ca4b6e6563d4c`; final commit: `5d71f88fb2240c2e04746140fdb109b2154bfcab`. PHP `35454020791`, MySQL 5.7 `35454020803`, MySQL 8.0 `35454020808`, and native video `35453927974` passed.
+- Deferred minor: add visible queue pagination/total controls; the controller already accepts `page` and the service returns paging metadata.
+### T-066 Batch enqueue and failure/retry UI — `READY`
 ### T-067 Admin permission and compatibility regression — `TODO`
 
 Use `application/admin/view_new`; do not add a parallel obsolete `view/` tree.
@@ -651,10 +653,10 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 
 ```text
 Checkpoint: CP-06
-Next task: T-065
-Task status: TODO
-Required starting state: feature/headless-ai-v1 at `5045e6bad1c821a8f6eada7f04bcb51d8ba4d4dd`
-First verification: PHP regression plus final validation/publication UI contract
-Task commit: test: define final publication UI contract
+Next task: T-066
+Task status: READY
+Required starting state: feature/headless-ai-v1 after T-065 final commit `5d71f88fb2240c2e04746140fdb109b2154bfcab`
+First verification: PHP regression plus batch enqueue/failure/retry UI contract
+Task commit: test: define batch job administration UI contract
 Push required: yes, immediately after task verification
 ```
