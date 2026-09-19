@@ -50,8 +50,10 @@ class ContentJobAdminService
             $authorize($row);
             if ((string) $row['status'] !== 'failed') { throw new RuntimeException('Only terminal failed jobs can be retried.'); }
             $now = (int) call_user_func($this->clock);
+            $attempt = max(0, (int) ($row['attempt'] ?? 0));
+            $maxAttempts = max($attempt, (int) ($row['max_attempts'] ?? 0)) + 1;
             $update = [
-                'status' => 'queued', 'attempt' => 0, 'next_run_at' => $now,
+                'status' => 'queued', 'attempt' => $attempt, 'max_attempts' => $maxAttempts, 'next_run_at' => $now,
                 'lock_owner' => '', 'lock_expires_at' => 0, 'error_class' => '',
                 'error_summary' => '', 'completed_at' => 0, 'updated_at' => $now,
             ];
@@ -137,7 +139,7 @@ class ContentJobAdminService
             $this->audit->append(
                 $actorId, $actorName, 'content.job.retried', 'content_job', (string) $jobId,
                 ['status' => 'failed', 'attempt' => (int) ($before['attempt'] ?? 0)],
-                ['status' => 'queued', 'attempt' => 0], ['job_type' => (string) ($job['job_type'] ?? '')]
+                ['status' => 'queued', 'attempt' => (int) ($job['attempt'] ?? 0), 'max_attempts' => (int) ($job['max_attempts'] ?? 0)], ['job_type' => (string) ($job['job_type'] ?? '')]
             );
             return $job;
         });

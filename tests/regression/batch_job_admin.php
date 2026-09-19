@@ -53,7 +53,7 @@ $service = new ContentJobAdminService(
         $authorize($jobs[$jobId]);
         if ($jobs[$jobId]['status'] !== 'failed') { throw new RuntimeException('Only terminal failed jobs can be retried.'); }
         $jobs[$jobId] = array_merge($jobs[$jobId], [
-            'status' => 'queued', 'attempt' => 0, 'next_run_at' => 1726800000,
+            'status' => 'queued', 'attempt' => (int) $jobs[$jobId]['attempt'], 'max_attempts' => max((int) $jobs[$jobId]['attempt'], (int) $jobs[$jobId]['max_attempts']) + 1, 'next_run_at' => 1726800000,
             'lock_owner' => '', 'lock_expires_at' => 0, 'error_class' => '',
             'error_summary' => '', 'completed_at' => 0,
         ]);
@@ -95,8 +95,12 @@ $runs = $service->runs(91, 10);
 batchAdminAssert(strpos($runs[0]['error_summary'], 'leaked') === false, 'run history must redact error summaries.');
 
 $retried = $service->retry(91, 9, 'editor', ['content_workspace/run_ai'], true);
-batchAdminAssert($retried['status'] === 'queued' && $retried['attempt'] === 0 && $retried['lock_owner'] === '' && $retried['error_summary'] === '', 'retry must reset attempt, lease, error and terminal fields.');
+batchAdminAssert($retried['status'] === 'queued' && $retried['attempt'] === 3 && $retried['max_attempts'] === 4 && $retried['lock_owner'] === '' && $retried['error_summary'] === '', 'retry must preserve the monotonic attempt identifier, add one retry allowance, and reset lease, error and terminal fields.');
 batchAdminAssert(count($runs) === 1, 'retry must preserve historical content_job_run rows.');
+$migration = @file_get_contents($root . '/application/data/migrations/20260918000200_content_jobs.sql') ?: '';
+$repository = @file_get_contents($root . '/application/common/util/ContentJobRepository.php') ?: '';
+batchAdminAssert(strpos($migration, 'UNIQUE KEY `uk_job_attempt` (`job_id`, `attempt`)') !== false, 'run history must retain unique monotonic attempt identifiers.');
+batchAdminAssert(strpos($repository, "'attempt' => (int) \\$job['attempt']") !== false, 'claim recording must bind history to the monotonic job attempt.');
 try {
     $service->retry(92, 9, 'editor', ['content_workspace/run_tmdb'], true);
     batchAdminAssert(false, 'retry accepted a non-terminal job.');

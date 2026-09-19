@@ -11,7 +11,7 @@
 
 <form class="layui-form" method="get">
 <select name="job_type"><option value="">全部類型</option><option value="ai.normalize" {if condition="$jobs.job_type eq 'ai.normalize'"}selected{/if}>AI 正規化</option><option value="tmdb.match" {if condition="$jobs.job_type eq 'tmdb.match'"}selected{/if}>TMDB 配對</option></select>
-<select name="status"><option value="">全部狀態</option>{foreach name="['queued','running','succeeded','failed']" item="state"}<option value="{$state|htmlentities}" {if condition="$jobs.status eq $state"}selected{/if}>{$state|htmlentities}</option>{/foreach}</select>
+<select name="status"><option value="">全部狀態</option><option value="queued" {if condition="$jobs.status eq 'queued'"}selected{/if}>queued</option><option value="running" {if condition="$jobs.status eq 'running'"}selected{/if}>running</option><option value="succeeded" {if condition="$jobs.status eq 'succeeded'"}selected{/if}>succeeded</option><option value="failed" {if condition="$jobs.status eq 'failed'"}selected{/if}>failed</option></select>
 <button class="layui-btn layui-btn-sm">篩選</button>
 </form>
 <table class="layui-table"><thead><tr><th>ID</th><th>類型</th><th>狀態</th><th>嘗試</th><th>錯誤摘要</th><th>操作</th></tr></thead><tbody>
