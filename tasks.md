@@ -654,8 +654,16 @@ Use `application/admin/view_new`; do not add a parallel obsolete `view/` tree.
 - GREEN evidence: PHP `35466523627`, MySQL 5.7 `35466454603`, MySQL 8.0 `35466454584`, native video `35466454598`.
 - Independent review found missing locale metadata on redirects and ignored Accept-Language quality weights; both received RED→GREEN coverage and fixes.
 
-### T-073 Access plus rotating hashed refresh sessions — `READY`
-### T-074 Favorites/history/progress DTO and anonymous merge — `TODO`
+### T-073 Access plus rotating hashed refresh sessions — `DONE`
+
+- Added isolated 15-minute HS256 access tokens, a dedicated v1 signing secret, opaque refresh tokens stored only as SHA-256 digests, atomic rotation, replay-family revocation, device-session listing and immediate access-token invalidation after revocation.
+- Preserved legacy MACCMS cookie/JWT sessions during v1 login, retained configured CAPTCHA checks, returned no-store token responses, keyed IP/UA fingerprints, and documented deployment secret configuration.
+- Design and plan: `docs/superpowers/specs/2026-09-19-api-v1-session-security-design.md`, `docs/superpowers/plans/2026-09-19-api-v1-session-security.md`.
+- Implementation and review fixes through `326515e67b85ac6e7f4509eb9dd4c3e2f99a5cea`.
+- GREEN evidence: PHP `35468598811`, MySQL 5.7 `35468598872`, MySQL 8.0 `35468598851`, native video `35468598836`.
+- Independent security review found and verified fixes for deterministic device state, secret preflight/isolation, keyed fingerprints, issuer validation, no-store headers, v1 exception handling, legacy-session isolation and CAPTCHA forwarding.
+
+### T-074 Favorites/history/progress DTO and anonymous merge — `READY`
 ### T-075 Playback source policy and optional signing — `TODO`
 ### T-076 CORS, per-endpoint limits, ETag and invalidation — `TODO`
 ### T-077 OpenAPI v1 and contract tests — `TODO`
@@ -693,10 +701,10 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 
 ```text
 Checkpoint: CP-07
-Next task: T-073
+Next task: T-074
 Task status: READY
-Required starting state: feature/headless-ai-v1 after T-072 implementation commit `e8178021b6c59f0ecafca81fdc4c12b691774bbf`
-First verification: define access-token and rotating hashed refresh-session security contracts
-Task commit: test: define API v1 session security contract
+Required starting state: feature/headless-ai-v1 after T-073 implementation commit `326515e67b85ac6e7f4509eb9dd4c3e2f99a5cea`
+First verification: define favorite/history/progress DTO and anonymous merge contracts
+Task commit: test: define API v1 member activity contract
 Push required: yes, immediately after task verification
 ```
