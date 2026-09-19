@@ -9,7 +9,7 @@ final class ApiV1CatalogService
     public function home()
     {
         $result = $this->repository->home(12);
-        return array('latest'=>$this->summaries($result['items']));
+        return array('latest'=>$this->summaryArrays($result['items']));
     }
 
     public function videos(ApiV1Pagination $pagination, ApiV1CatalogQuery $query)
@@ -42,6 +42,13 @@ final class ApiV1CatalogService
     public function taxonomies()
     {
         return array_map(array(ApiV1VideoDto::class, 'taxonomy'), $this->repository->taxonomies());
+    }
+
+    private function summaryArrays(array $rows)
+    {
+        $items = array();
+        foreach ($this->summaries($rows) as $dto) { $items[] = $dto->toArray(); }
+        return $items;
     }
 
     private function summaries(array $rows)
