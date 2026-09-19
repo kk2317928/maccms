@@ -108,4 +108,13 @@ foreach (['baseline_value_json', 'baseline_hash'] as $column) {
     if (!in_array($column, $reviewColumns, true)) { fwrite(STDERR, "FAIL: AI field review is missing {$column}.\n"); exit(1); }
 }
 
+$sessionColumns = $pdo->query("SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'mac_api_refresh_session'")->fetchAll(PDO::FETCH_COLUMN);
+foreach (['session_id', 'family_id', 'user_id', 'token_hash', 'consumed_at', 'revoked_at', 'expires_at'] as $column) {
+    if (!in_array($column, $sessionColumns, true)) { fwrite(STDERR, "FAIL: API refresh session is missing {$column}.\n"); exit(1); }
+}
+$sessionIndexes = $pdo->query("SELECT INDEX_NAME FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'mac_api_refresh_session'")->fetchAll(PDO::FETCH_COLUMN);
+foreach (['uk_api_refresh_token_hash', 'idx_api_refresh_family', 'idx_api_refresh_user_session'] as $index) {
+    if (!in_array($index, $sessionIndexes, true)) { fwrite(STDERR, "FAIL: API refresh session is missing {$index}.\n"); exit(1); }
+}
+
 fwrite(STDOUT, "OK: MySQL {$version} foundation migration invariants passed for {$database}.\n");
