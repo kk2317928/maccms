@@ -2,6 +2,7 @@
 namespace app\api\controller\v1;
 
 use app\common\util\ApiV1AccessToken;
+use app\common\util\ApiV1AuthContext;
 use app\common\util\ApiV1Response;
 use app\common\util\ApiV1SessionService;
 use think\Db;
@@ -101,18 +102,11 @@ class Auth extends Base
 
     private function claims(Request $request)
     {
-        $token = ApiV1AccessToken::bearer($request->header('Authorization'));
-        $claims = $token === '' ? null : ApiV1AccessToken::verify($token, $this->secret());
-        if ($claims === null || !(new ApiV1SessionService())->isActive((int)$claims['sub'], $claims['sid'])) {
-            return null;
-        }
-        return $claims;
+        return ApiV1AuthContext::claims($request);
     }
 
     private function secret()
     {
-        $app = isset($GLOBALS['config']['app']) && is_array($GLOBALS['config']['app']) ? $GLOBALS['config']['app'] : array();
-        $secret = trim((string)($app['api_v1_jwt_secret'] ?? getenv('MACCMS_API_V1_JWT_SECRET')));
-        return strlen($secret) >= 32 ? $secret : '';
+        return ApiV1AuthContext::secret();
     }
 }
