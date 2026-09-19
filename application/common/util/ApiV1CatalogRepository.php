@@ -25,6 +25,16 @@ final class ApiV1CatalogRepository
         return $row ?: null;
     }
 
+    public function taxonomiesByPublicId($publicId)
+    {
+        return db('meta_term')->alias('t')->field('t.kind,t.slug,t.name_tw,t.name_cn,t.name_en,t.sort')
+            ->join('__VOD_META_TERM__ vm', 'vm.term_id=t.term_id')
+            ->join('__VOD_EXT__ e', 'e.vod_id=vm.vod_id')
+            ->join('__VOD__ v', 'v.vod_id=e.vod_id')
+            ->where(self::PUBLICATION_SQL)->where('t.status', 1)->where('e.public_id', $publicId)
+            ->order('t.kind asc,t.sort desc,t.slug asc')->select();
+    }
+
     public function findEpisodeData($publicId)
     {
         $row = $this->published()->field('e.public_id,v.vod_play_from,v.vod_play_url,v.vod_play_server,v.vod_play_note')->where('e.public_id', $publicId)->find();
