@@ -83,7 +83,7 @@ $indexStatement = $pdo->prepare(
 );
 $tableStatement->execute([$database, 'mac_vod']);
 $vodTableInfo = $tableStatement->fetch(PDO::FETCH_ASSOC);
-if (!$vodTableInfo || strtoupper((string) $vodTableInfo['ENGINE']) !== 'INNODB') {
+if ($vodTableInfo && strtoupper((string) $vodTableInfo['ENGINE']) !== 'INNODB') {
     fwrite(STDERR, "FAIL: mac_vod must use InnoDB for atomic publication.\n");
     exit(1);
 }
