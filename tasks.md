@@ -637,12 +637,15 @@ Use `application/admin/view_new`; do not add a parallel obsolete `view/` tree.
 - RED PHP run `35461612663` passed all existing suites and failed only at the missing API v1 foundation. GREEN: PHP `35462362148`, MySQL 5.7 `35462362150`, MySQL 8.0 `35462362152`, and native video `35462362293` passed.
 - Independent review found module-binding, route option/pattern, exception leakage and request-ID override risks; the entrypoint dispatcher, scoped exception handler and reserved metadata fix resolved them.
 
-### T-071 Public home/list/detail/episodes/search/taxonomy endpoints — `IN_PROGRESS`
+### T-071 Public home/list/detail/episodes/search/taxonomy endpoints — `DONE`
 
-- Approved design: `docs/superpowers/specs/2026-09-19-api-v1-public-catalog-design.md`.
-- Execution plan: `docs/superpowers/plans/2026-09-19-api-v1-public-catalog.md`.
-- Security boundary: episode DTOs expose structure only; playback URLs remain deferred to T-075.
-### T-072 Locale fallback and canonical redirects — `TODO`
+- Added exact GET routes for home, videos, detail, episodes, search and taxonomies with shared published/canonical visibility filtering and explicit public DTOs.
+- Episode DTOs expose deterministic source/episode identifiers, names and positions only; raw URL/server/note/format fields remain deferred to T-075.
+- RED contract commit: `9a67b146336391b11cb2bb6e20cc28094e9f1907`; implementation and review fixes through `3eaabf1aadcd451f0e8fc5f0846aca874533aa6d`.
+- GREEN evidence: PHP `35465825379`, MySQL 5.7 `35465825407`, MySQL 8.0 `35465825384`, native video `35465825364`.
+- Independent review found home nested-DTO serialization and empty S3-poster fallback issues; both were covered by regression tests and fixed. Summary queries also avoid loading full synopsis HTML.
+
+### T-072 Locale fallback and canonical redirects — `READY`
 ### T-073 Access plus rotating hashed refresh sessions — `TODO`
 ### T-074 Favorites/history/progress DTO and anonymous merge — `TODO`
 ### T-075 Playback source policy and optional signing — `TODO`
@@ -682,10 +685,10 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 
 ```text
 Checkpoint: CP-07
-Next task: T-070
+Next task: T-072
 Task status: READY
-Required starting state: feature/headless-ai-v1 after T-067 implementation commit `34611dacc75a2f3a1800aa1c9649f0965ab02a6d`
-First verification: define the versioned route, error envelope, pagination and DTO foundation contract
-Task commit: test: define headless API v1 foundation contract
+Required starting state: feature/headless-ai-v1 after T-071 implementation commit `3eaabf1aadcd451f0e8fc5f0846aca874533aa6d`
+First verification: define locale selection/fallback and canonical alias redirect contracts
+Task commit: test: define API v1 locale and canonical redirect contract
 Push required: yes, immediately after task verification
 ```
