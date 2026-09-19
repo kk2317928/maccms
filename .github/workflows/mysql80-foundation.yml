@@ -14,6 +14,9 @@ on:
       - 'tests/integration/mysql_foundation.php'
       - 'tests/integration/content_job_lifecycle.php'
       - 'application/common/util/ContentJobRepository.php'
+      - 'application/common/util/ContentAdminRoutePolicy.php'
+      - 'application/admin/controller/Base.php'
+      - 'tests/regression/admin_permission_compatibility.php'
   workflow_dispatch:
 
 permissions:

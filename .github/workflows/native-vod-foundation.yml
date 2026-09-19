@@ -12,6 +12,9 @@ on:
       - 'application/common/model/VodExt.php'
       - 'application/common/util/VodExtensionService.php'
       - 'application/common/util/VodPlaybackCodec.php'
+      - 'application/common/util/ContentAdminRoutePolicy.php'
+      - 'application/admin/controller/Base.php'
+      - 'tests/regression/admin_permission_compatibility.php'
       - 'application/data/migrations/**'
       - 'tests/integration/native_vod_paths.php'
       - 'think'
@@ -54,6 +57,8 @@ jobs:
         run: mysql --protocol=tcp --host=127.0.0.1 --port=3306 --user=root --database=maccms_ci_native < application/install/sql/install.sql
       - name: Apply foundation migration
         run: php think maccms:migrate
+      - name: Verify admin permission compatibility
+        run: php tests/regression/admin_permission_compatibility.php
       - name: Verify native video paths
         run: |
           set +e
