@@ -80,7 +80,8 @@ $handler = new TmdbReviewJobHandler(
     $handlerWorkspace,
     static fn (int $vodId): array => ['original_title' => 'Original', 'year' => 2024, 'media_type' => 'movie'],
     static fn (array $video): array => ['status' => 'candidate_review', 'candidates' => [$GLOBALS['candidate']], 'preselected_id' => 123],
-    static fn (string $type, int $id): array => ['status' => 'candidate_review', 'candidates' => [array_merge($GLOBALS['candidate'], ['id' => $id, 'media_type' => $type])], 'preselected_id' => $id, 'manual' => true]
+    static fn (string $type, int $id): array => ['status' => 'candidate_review', 'candidates' => [array_merge($GLOBALS['candidate'], ['id' => $id, 'media_type' => $type])], 'preselected_id' => $id, 'manual' => true],
+    static fn (callable $callback) => $callback()
 );
 $handler->match(['vod_id' => 42]);
 $handler->manual(['vod_id' => 42, 'media_type' => 'tv', 'tmdb_id' => 777]);

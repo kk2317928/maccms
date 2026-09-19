@@ -72,6 +72,8 @@ jobs:
           php -l application/common/util/ContentJobRepository.php
           php -l application/common/util/ContentJobWorker.php
           php -l application/common/util/TmdbReviewWorkspace.php
+          php -l application/common/util/TmdbReviewJobHandler.php
+          php -l application/common/util/TmdbExternalSourceProvider.php
           php -l application/admin/controller/ContentWorkspace.php
           php -l application/common/util/ContentJobFailure.php
           php -l application/common/util/ExternalHttpPolicy.php

@@ -4,6 +4,7 @@ namespace app\command;
 
 use app\common\util\ContentJobRepository;
 use app\common\util\ContentJobWorker;
+use app\common\util\TmdbReviewJobHandler;
 use think\console\Command;
 use think\console\Input;
 use think\console\input\Option;
@@ -28,6 +29,9 @@ class MaccmsJobs extends Command
         if (is_callable($aiHandler)) {
             $handlers['ai.normalize'] = $aiHandler;
         }
+        $tmdbHandler = new TmdbReviewJobHandler();
+        $handlers['tmdb_match'] = [$tmdbHandler, 'match'];
+        $handlers['tmdb_manual_match'] = [$tmdbHandler, 'manual'];
         $worker = new ContentJobWorker(new ContentJobRepository(), $handlers);
         $result = $worker->run(
             (string) $input->getOption('worker'),

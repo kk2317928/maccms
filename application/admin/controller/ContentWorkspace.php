@@ -175,9 +175,10 @@ class ContentWorkspace extends Base
                 if ($action === 'select') {
                     $policy->assertAllowed('review', $grants);
                     $reviewId = (int) ($param['review_id'] ?? 0);
-                    $preview = $workspace->preview($reviewId, static fn (int $vodId, array $candidate): array => $importer->preview($vodId, $candidate, $fields));
                     $type = strtolower((string) ($param['tmdb_type'] ?? ''));
                     $tmdbId = (int) ($param['tmdb_id'] ?? 0);
+                    $workspace->lockForUpdate($reviewId);
+                    $preview = $workspace->preview($reviewId, static fn (int $vodId, array $candidate): array => $importer->preview($vodId, $candidate, $fields), $type, $tmdbId);
                     $candidate = null;
                     foreach ($preview['candidates'] as $item) {
                         if ((int) $item['id'] === $tmdbId && strtolower((string) $item['media_type']) === $type) { $candidate = $item; break; }
@@ -192,6 +193,7 @@ class ContentWorkspace extends Base
                 } elseif ($action === 'no_match') {
                     $policy->assertAllowed('review', $grants);
                     $reviewId = (int) ($param['review_id'] ?? 0);
+                    $workspace->lockForUpdate($reviewId);
                     $preview = $workspace->preview($reviewId, static fn (): array => []);
                     $result = $workspace->noMatch($reviewId, $actorId);
                     $audit->append($actorId, $actorName, 'content.tmdb.no_match', 'vod', (string) $preview['review']['public_id'],
@@ -217,7 +219,9 @@ class ContentWorkspace extends Base
             }
         }
         $reviewId = (int) input('param.review_id/d', 0);
-        try { $preview = $reviewId > 0 ? $workspace->preview($reviewId, static fn (int $vodId, array $candidate): array => $importer->preview($vodId, $candidate, $fields)) : null; }
+        $candidateType = (string) input('param.candidate_type/s', '');
+        $candidateId = (int) input('param.candidate_id/d', 0);
+        try { $preview = $reviewId > 0 ? $workspace->preview($reviewId, static fn (int $vodId, array $candidate): array => $importer->preview($vodId, $candidate, $fields), $candidateType, $candidateId) : null; }
         catch (Throwable $exception) { $preview = null; }
         $this->assign('queue', $workspace->queue(max(1, (int) input('param.page/d', 1)), 20));
         $this->assign('preview', $preview);

@@ -28,7 +28,7 @@ class TmdbReviewWorkspace
         ];
     }
 
-    public function preview(int $reviewId, callable $differenceBuilder): array
+    public function preview(int $reviewId, callable $differenceBuilder, string $candidateType = '', int $candidateId = 0): array
     {
         if ($reviewId <= 0) { throw new InvalidArgumentException('TMDB review ID must be positive.'); }
         $review = $this->loadReview($reviewId);
@@ -41,11 +41,14 @@ class TmdbReviewWorkspace
         catch (JsonException $exception) { throw new RuntimeException('TMDB candidates are invalid.', 0, $exception); }
         if (!is_array($candidates)) { throw new RuntimeException('TMDB candidates are invalid.'); }
         $selected = null;
-        $preferred = (int) ($review['preselected_tmdb_id'] ?? 0);
+        $candidateType = strtolower(trim($candidateType));
+        $preferred = $candidateId > 0 ? $candidateId : (int) ($review['preselected_tmdb_id'] ?? 0);
         foreach ($candidates as $candidate) {
             if (!is_array($candidate)) { throw new RuntimeException('TMDB candidate is invalid.'); }
             $this->assertCandidate($candidate);
-            if ($selected === null || (int) $candidate['id'] === $preferred) { $selected = $candidate; }
+            $matchesRequested = (int) $candidate['id'] === $preferred
+                && ($candidateType === '' || strtolower((string) $candidate['media_type']) === $candidateType);
+            if ($selected === null || $matchesRequested) { $selected = $candidate; }
         }
         return [
             'review' => $review,
@@ -99,13 +102,47 @@ class TmdbReviewWorkspace
         return $this->enqueueJob('tmdb_match', ['vod_id' => $vodId, 'force' => true, 'requested_by' => $reviewerId], 'tmdb-rematch:' . $vodId . ':' . $now);
     }
 
+    public function recordResult(int $vodId, array $result): array
+    {
+        if ($vodId <= 0 || (string) ($result['status'] ?? '') !== 'candidate_review' || !isset($result['candidates']) || !is_array($result['candidates'])) {
+            throw new InvalidArgumentException('TMDB match result is invalid.');
+        }
+        foreach ($result['candidates'] as $candidate) { if (!is_array($candidate)) { throw new InvalidArgumentException('TMDB candidate is invalid.'); } $this->assertCandidate($candidate); }
+        try { $json = json_encode($result['candidates'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION | JSON_THROW_ON_ERROR); }
+        catch (JsonException $exception) { throw new InvalidArgumentException('TMDB candidates are not JSON encodable.', 0, $exception); }
+        $now = (int) call_user_func($this->clock);
+        $row = [
+            'vod_id' => $vodId, 'revision' => $this->nextRevision($vodId), 'status' => 'candidate_review',
+            'candidates_json' => $json, 'candidates_hash' => hash('sha256', $json),
+            'preselected_tmdb_id' => max(0, (int) ($result['preselected_id'] ?? 0)),
+            'selected_tmdb_id' => 0, 'selected_type' => '', 'reviewed_by' => 0, 'reviewed_at' => 0,
+            'created_at' => $now, 'updated_at' => $now,
+        ];
+        $reviewId = $this->persistReview($row);
+        if ($reviewId <= 0) { throw new RuntimeException('TMDB review could not be persisted.'); }
+        return ['review_id' => $reviewId, 'revision' => $row['revision'], 'candidate_count' => count($result['candidates'])];
+    }
+
+    public function lockForUpdate(int $reviewId): array
+    {
+        $review = Db::name('content_tmdb_review')->where('tmdb_review_id', $reviewId)->lock(true)->find();
+        if (!$review) { throw new RuntimeException('TMDB review was not found.'); }
+        $vodId = (int) $review['vod_id'];
+        if (!Db::name('vod')->where('vod_id', $vodId)->lock(true)->find() || !Db::name('vod_ext')->where('vod_id', $vodId)->lock(true)->find()) {
+            throw new RuntimeException('TMDB review video is unavailable.');
+        }
+        Db::name('vod_field_state')->where('vod_id', $vodId)->lock(true)->select();
+        return $review;
+    }
+
     protected function readQueueRows(int $offset, int $limit): array
     {
         return Db::name('content_tmdb_review')->alias('r')
             ->join('__VOD_EXT__ e', 'e.vod_id=r.vod_id')
             ->join('__VOD__ v', 'v.vod_id=r.vod_id')
             ->field('r.*,e.public_id,e.workflow_status,v.vod_name,v.vod_year')
-            ->order("r.status='candidate_review' DESC,r.updated_at ASC,r.tmdb_review_id ASC")
+            ->orderRaw("r.status='candidate_review' DESC")
+            ->order('r.updated_at asc,r.tmdb_review_id asc')
             ->limit($offset, $limit)->select();
     }
 
@@ -127,6 +164,12 @@ class TmdbReviewWorkspace
     {
         return (new ContentJobRepository($this->clock))->enqueue($jobType, $payload, $key, 10, 3);
     }
+    protected function nextRevision(int $vodId): int
+    {
+        Db::name('vod_ext')->where('vod_id', $vodId)->lock(true)->find();
+        return (int) Db::name('content_tmdb_review')->where('vod_id', $vodId)->max('revision') + 1;
+    }
+    protected function persistReview(array $row): int { return (int) Db::name('content_tmdb_review')->insertGetId($row); }
     private function assertCandidate(array $candidate): void
     {
         $type = strtolower(trim((string) ($candidate['media_type'] ?? '')));
