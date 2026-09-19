@@ -37,7 +37,7 @@ $service->candidate = [
 ];
 $service->videos = [
     7 => ['vod' => ['vod_id' => 7, 'vod_name' => 'Primary', 'vod_year' => '2024', 'vod_play_from' => 'main', 'vod_play_url' => '1$https://a/1'], 'ext' => ['public_id' => 'ABC234', 'title_tw' => '主片', 'type2' => 'movie'], 'content_lang' => [['lang_code' => 'en', 'title' => 'Primary']], 'external_maps' => [['provider_code' => 'tmdb', 'external_id' => '100']], 'field_states' => []],
-    42 => ['vod' => ['vod_id' => 42, 'vod_name' => '<img src=x onerror=1>', 'vod_year' => '2024', 'vod_play_from' => 'backup', 'vod_play_url' => '1$https://b/1'], 'ext' => ['public_id' => 'BCD345', 'title_tw' => '副片', 'type2' => 'movie'], 'content_lang' => [], 'external_maps' => [['provider_code' => 'tmdb', 'external_id' => '100']], 'field_states' => [['field_name' => 'title_tw', 'source' => 'manual', 'is_locked' => 1]],
+    42 => ['vod' => ['vod_id' => 42, 'vod_name' => '<img src=x onerror=1>', 'vod_year' => '2024', 'vod_play_from' => 'backup', 'vod_play_url' => '1$https://b/1'], 'ext' => ['public_id' => 'BCD345', 'title_tw' => '副片', 'type2' => 'movie'], 'content_lang' => [], 'external_maps' => [['provider_code' => 'tmdb', 'external_id' => '100']], 'field_states' => [['field_name' => 'title_tw', 'source' => 'manual', 'is_locked' => 1]]],
 ];
 $payload = ['version' => 1, 'primary' => $service->videos[7], 'secondary' => $service->videos[42]];
 $json = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
