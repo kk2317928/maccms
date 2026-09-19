@@ -33,7 +33,7 @@ class AiFieldReviewService
         if ($run === null || (string) ($run['validation_status'] ?? '') !== 'valid') {
             throw new RuntimeException('Valid AI run was not found.');
         }
-        if (!preg_match('/^[A-Z0-9]{6}$/', (string) ($run['public_id'] ?? ''))) {
+        if (!preg_match('/^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$/', (string) ($run['public_id'] ?? ''))) {
             throw new RuntimeException('AI run video identity is unavailable.');
         }
         $payload = json_decode((string) $run['raw_response_json'], true);
@@ -165,7 +165,8 @@ class AiFieldReviewService
         if (!is_string($value)) { throw new InvalidArgumentException('Edited title must be text.'); }
         $value = trim($value);
         if (strlen($value) > 255 || preg_match('/[<>]|[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', $value)) { throw new InvalidArgumentException('Edited title is invalid.'); }
-        return $value;
+        if ($field === 'vod_name' && $value === '') { throw new InvalidArgumentException('Edited video name is required.'); }
+        return function_exists('mac_filter_xss') ? mac_filter_xss($value) : trim(htmlspecialchars(strip_tags($value), ENT_QUOTES));
     }
     private function tablePrefix(): string
     {

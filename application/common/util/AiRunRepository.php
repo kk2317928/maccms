@@ -84,7 +84,16 @@ class AiRunRepository
         return $this->dailyUsage($timestamp)['cost_micros'] < $budgetMicros;
     }
 
-    public function stageReviews(int $runId, int $vodId, array $fields, int $now): void
+    public function recordWithReviews(array $run, int $vodId, array $fields, int $now): int
+    {
+        return (int) Db::transaction(function () use ($run, $vodId, $fields, $now) {
+            $runId = $this->record($run);
+            $this->stageReviews($runId, $vodId, $fields, $now);
+            return $runId;
+        });
+    }
+
+    protected function stageReviews(int $runId, int $vodId, array $fields, int $now): void
     {
         foreach ($fields as $field) {
             Db::name('content_ai_field_review')->insert([

@@ -51,6 +51,12 @@ class AiNormalizationPipeline
         if ($budget > 0 && !$this->runs->withinDailyBudget($budget, $now)) {
             throw new RuntimeException('AI daily budget is exhausted.');
         }
+        $baselines = [];
+        foreach (self::FIELD_MAP as $candidateKey => $field) {
+            $current = $this->fields->inspect($vodId, $field);
+            $baseline = $current['value'] ?? null;
+            $baselines[$field] = ['value' => $baseline, 'hash' => $this->valueHash($baseline)];
+        }
         try {
             $requestBody = json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
@@ -79,19 +85,16 @@ class AiNormalizationPipeline
             throw $exception;
         }
 
-        $runId = $this->runs->record($run);
         $staged = [];
         foreach (self::FIELD_MAP as $candidateKey => $field) {
-            $current = $this->fields->inspect($vodId, $field);
-            $baseline = $current['value'] ?? null;
             $staged[] = [
                 'field_name' => $field,
                 'candidate' => $normalized[$candidateKey],
-                'baseline' => $baseline,
-                'baseline_hash' => $this->valueHash($baseline),
+                'baseline' => $baselines[$field]['value'],
+                'baseline_hash' => $baselines[$field]['hash'],
             ];
         }
-        $this->runs->stageReviews($runId, $vodId, $staged, $now);
+        $runId = $this->runs->recordWithReviews($run, $vodId, $staged, $now);
         return ['ai_run_id' => $runId, 'fields_proposed' => 7, 'total_tokens' => $response['input_tokens'] + $response['output_tokens']];
     }
 
