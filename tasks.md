@@ -664,6 +664,10 @@ Use `application/admin/view_new`; do not add a parallel obsolete `view/` tree.
 - Independent security review found and verified fixes for deterministic device state, secret preflight/isolation, keyed fingerprints, issuer validation, no-store headers, v1 exception handling, legacy-session isolation and CAPTCHA forwarding.
 
 ### T-074 Favorites/history/progress DTO and anonymous merge — `IN_PROGRESS`
+
+- RED contract: `855936a557e6ccd393dd2f0c6925dff2cc08fb3d`; implementation and independent-review fixes currently through `e4b4ed7759b4d6e20a3153def655d1a433ed7944`.
+- Added authenticated public-ID favorites/history/progress routes and allowlisted DTOs, canonical alias resolution, published-only access, deterministic anonymous merge, advisory locking for native MyISAM `ulog`, duration persistence, episode/range validation, and strict separation from paid type-4 entitlement rows.
+- Verification is pending because GitHub Actions did not enqueue for GitHub App content commits; do not mark DONE until the PHP workflow runs on the current head.
 ### T-075 Playback source policy and optional signing — `TODO`
 ### T-076 CORS, per-endpoint limits, ETag and invalidation — `TODO`
 ### T-077 OpenAPI v1 and contract tests — `TODO`
@@ -702,9 +706,9 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 ```text
 Checkpoint: CP-07
 Next task: T-074
-Task status: READY
-Required starting state: feature/headless-ai-v1 after T-073 implementation commit `326515e67b85ac6e7f4509eb9dd4c3e2f99a5cea`
-First verification: define favorite/history/progress DTO and anonymous merge contracts
-Task commit: test: define API v1 member activity contract
+Task status: IN_PROGRESS
+Required starting state: feature/headless-ai-v1 at T-074 review-fix commit `e4b4ed7759b4d6e20a3153def655d1a433ed7944`
+First verification: run the PHP regression workflow and resolve any syntax/contract failures
+Task commit: feat(api): complete T-074 member activity
 Push required: yes, immediately after task verification
 ```
