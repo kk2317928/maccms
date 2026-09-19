@@ -52,7 +52,8 @@ $workspace = new FinalPublicationWorkspace(
     static fn (): int => count($rows),
     static fn (int $vodId): ?array => $rows[$vodId] ?? null,
     static fn (int $vodId): array => $locales[$vodId] ?? [],
-    static fn (int $vodId): array => $terms[$vodId] ?? []
+    static fn (int $vodId): array => $terms[$vodId] ?? [],
+    ['video.test']
 );
 
 $queue = $workspace->queue(1, 20);
@@ -63,13 +64,14 @@ publicationAssert($preview['locales']['zh-TW']['title'] === '主要片名' && $p
 publicationAssert(count($preview['taxonomy']['region']) === 1 && count($preview['taxonomy']['genre']) === 1, 'preview must expose active region and genre mappings.');
 publicationAssert($preview['media']['poster'] !== '' && $preview['media']['backdrop'] !== '' && $preview['media']['trailer'] !== '', 'preview must expose image and trailer media.');
 publicationAssert($preview['playback'][0]['episodes'][0]['url'] === 'https://video.test/1.m3u8', 'preview must decode native playback into sources and episodes.');
+publicationAssert(preg_match('/^[a-f0-9]{64}$/', $preview['revision']) === 1, 'preview must bind confirmation to a deterministic content revision.');
 
 $warningRows = [43 => publicationFixture(['vod_id' => 43, 'vod_pic_slide' => '', 'trailer_url' => '', 'poster_s3' => ''])];
 $warningWorkspace = new FinalPublicationWorkspace(
     static fn (): array => array_values($warningRows), static fn (): int => 1,
     static fn (int $vodId): ?array => $warningRows[$vodId] ?? null,
     static fn (): array => ['zh-TW' => ['vod_name' => '主要片名']],
-    static fn (): array => $terms[42]
+    static fn (): array => $terms[42], ['video.test']
 );
 $warningPreview = $warningWorkspace->preview(43);
 publicationAssert($warningPreview['publishable'] === true && count($warningPreview['warnings']) >= 4, 'missing optional locales, backdrop, trailer and S3 poster must be warnings, not blockers.');
@@ -87,16 +89,27 @@ foreach ($blockedCases as $label => $row) {
     $caseWorkspace = new FinalPublicationWorkspace(
         static fn (): array => [], static fn (): int => 0, static fn (): array => $row,
         static fn (): array => $locales[42],
-        static function () use ($label, $terms): array { return $label === 'missing taxonomy' ? [] : $terms[42]; }
+        static function () use ($label, $terms): array { return $label === 'missing taxonomy' ? [] : $terms[42]; },
+        ['video.test']
     );
     $casePreview = $caseWorkspace->preview(42);
     publicationAssert($casePreview['publishable'] === false && $casePreview['blockers'] !== [], "{$label} must block publication.");
+}
+
+foreach (['第1集$vbscript:alert(1)', '第1集$http://127.0.0.1/video', '第1集$https://evil.test/video'] as $unsafeUrl) {
+    $unsafeRow = publicationFixture(['vod_play_url' => $unsafeUrl]);
+    $unsafeWorkspace = new FinalPublicationWorkspace(
+        static fn (): array => [], static fn (): int => 0, static fn (): array => $unsafeRow,
+        static fn (): array => $locales[42], static fn (): array => $terms[42], ['video.test']
+    );
+    publicationAssert($unsafeWorkspace->preview(42)['publishable'] === false, 'private, custom-scheme and non-allowlisted playback URLs must block publication.');
 }
 
 $events = [];
 $audit = new ContentAdminAudit(static function (array $row) use (&$events): int { $events[] = $row; return count($events); }, static fn (): int => 1726800000);
 $locked = publicationFixture();
 $state = $locked;
+$cacheInvalidations = [];
 $transaction = static function (callable $callback) use (&$state) {
     $before = $state;
     try { return $callback(); } catch (Throwable $exception) { $state = $before; throw $exception; }
@@ -106,21 +119,28 @@ $service = new FinalPublicationService(
     static function (int $vodId) use (&$locked): array { return $locked; },
     static function (int $vodId, array $update) use (&$state): bool { $state = array_merge($state, $update); return true; },
     static function (int $vodId, array $update) use (&$state): bool { $state = array_merge($state, $update); return true; },
-    static fn (): int => 1726800000
+    static fn (): int => 1726800000,
+    static function (int $vodId, string $publicId) use (&$cacheInvalidations): void { $cacheInvalidations[] = [$vodId, $publicId]; }
 );
-$published = $service->publish(42, 9, 'editor', ['content_workspace/publish'], true);
+$published = $service->publish(42, 9, 'editor', ['content_workspace/publish'], true, $preview['revision']);
 publicationAssert($published['workflow_status'] === 'published' && $state['workflow_status'] === 'published', 'publication must transition the separate workflow state.');
 publicationAssert($state['vod_status'] === 1 && $state['vod_publish_time'] === 0 && $state['published_at'] === 1726800000, 'publication must activate native visibility and store publication time.');
+publicationAssert($state['vod_area'] === '日本' && $state['vod_class'] === '劇情' && $state['vod_tag'] === '成長', 'publication must synchronize reviewed taxonomy into native MACCMS fields.');
 publicationAssert(count($events) === 1 && $events[0]['event_code'] === 'content.publish' && $events[0]['subject_public_id'] === 'ABC234', 'publication must append one immutable public-ID audit event.');
+publicationAssert($cacheInvalidations === [[42, 'ABC234']], 'successful publication must precisely invalidate public content caches.');
 
 foreach ([[[], true], [['content_workspace/publish'], false]] as $denied) {
-    try { $service->publish(42, 9, 'editor', $denied[0], $denied[1]); publicationAssert(false, 'publication bypassed exact permission or confirmation.'); }
+    try { $service->publish(42, 9, 'editor', $denied[0], $denied[1], $preview['revision']); publicationAssert(false, 'publication bypassed exact permission or confirmation.'); }
     catch (RuntimeException $exception) {}
 }
 $locked = publicationFixture(['workflow_status' => 'merged']);
-try { $service->publish(42, 9, 'editor', ['content_workspace/publish'], true); publicationAssert(false, 'stale workflow state was published after locking.'); }
+try { $service->publish(42, 9, 'editor', ['content_workspace/publish'], true, $preview['revision']); publicationAssert(false, 'stale workflow state was published after locking.'); }
 catch (Throwable $exception) {}
 $locked = publicationFixture();
+
+$changedPreview = $workspace->previewRow(publicationFixture(['vod_name' => '另一個仍有效片名']));
+try { $service->publish(42, 9, 'editor', ['content_workspace/publish'], true, $changedPreview['revision']); publicationAssert(false, 'publication accepted a confirmation for a different preview revision.'); }
+catch (RuntimeException $exception) {}
 
 $rollbackState = publicationFixture();
 $failingAudit = new ContentAdminAudit(static fn (): int => 0);
@@ -132,19 +152,24 @@ $rollbackService = new FinalPublicationService(
     static function (int $vodId, array $update) use (&$rollbackState): bool { $rollbackState = array_merge($rollbackState, $update); return true; },
     static fn (): int => 1726800000
 );
-try { $rollbackService->publish(42, 9, 'editor', ['content_workspace/publish'], true); publicationAssert(false, 'audit failure did not abort publication.'); }
+try { $rollbackService->publish(42, 9, 'editor', ['content_workspace/publish'], true, $preview['revision']); publicationAssert(false, 'audit failure did not abort publication.'); }
 catch (RuntimeException $exception) {}
 publicationAssert($rollbackState['vod_status'] === 0 && $rollbackState['workflow_status'] === 'manual_review' && $rollbackState['published_at'] === 0, 'audit failure must roll back native and workflow publication state.');
 
 $controller = @file_get_contents($root . '/application/admin/controller/ContentWorkspace.php') ?: '';
 $template = @file_get_contents($root . '/application/admin/view_new/content_workspace/publish.html') ?: '';
 $dashboard = @file_get_contents($root . '/application/admin/view_new/content_workspace/index.html') ?: '';
-foreach (['function publish', "assertAllowed('publish'", 'mac_admin_csrf_token', 'confirmed'] as $needle) {
+foreach (['function publish', "assertAllowed('publish'", 'mac_admin_csrf_token', 'confirmed', 'revision'] as $needle) {
     publicationAssert(strpos($controller, $needle) !== false, 'publication controller contract missing ' . $needle . '.');
 }
-foreach (['|htmlentities', '發布阻擋', '發布提醒', '多語標題', '分類與地區', '播放來源', 'name="confirmed"', 'data-confirm'] as $needle) {
+foreach (['|htmlentities', '發布阻擋', '發布提醒', '多語標題', '分類與地區', '播放來源', 'name="confirmed"', 'data-confirm', 'preview.ext.revision'] as $needle) {
     publicationAssert(strpos($template, $needle) !== false, 'publication view contract missing ' . $needle . '.');
 }
 publicationAssert(strpos($dashboard, 'content_workspace/publish') !== false, 'workspace dashboard must link to final publication.');
+$base = @file_get_contents($root . '/application/admin/controller/Base.php') ?: '';
+publicationAssert(strpos($base, "(string)\$this->_admin['admin_id'] === '1'") !== false, 'super admin must retain publication route access before exact delegated-admin checks.');
+foreach (['content_lang', 'vod_meta_term', 'lock(true)'] as $needle) {
+    publicationAssert(strpos(@file_get_contents($root . '/application/common/util/FinalPublicationService.php') ?: '', $needle) !== false, 'publication transaction must lock the complete reviewed snapshot: ' . $needle . '.');
+}
 
 fwrite(STDOUT, "OK: final validation and atomic publication UI contract passed.\n");
