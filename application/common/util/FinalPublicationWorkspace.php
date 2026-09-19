@@ -128,9 +128,11 @@ class FinalPublicationWorkspace
         foreach (['zh-CN', 'en'] as $locale) {
             if ($locales[$locale]['title'] === '' || $locales[$locale]['summary'] === '') { $warnings[] = $locale . ' 語系資料不完整。'; }
         }
+        $posterS3 = trim((string) ($row['poster_s3'] ?? ''));
+        $nativePoster = trim((string) ($row['vod_pic'] ?? ''));
         $media = [
-            'poster' => trim((string) ($row['poster_s3'] ?? $row['vod_pic'] ?? '')),
-            'native_poster' => trim((string) ($row['vod_pic'] ?? '')),
+            'poster' => $posterS3 !== '' ? $posterS3 : $nativePoster,
+            'native_poster' => $nativePoster,
             'backdrop' => trim((string) ($row['vod_pic_slide'] ?? '')),
             'trailer' => trim((string) ($row['trailer_url'] ?? '')),
         ];
@@ -162,8 +164,13 @@ class FinalPublicationWorkspace
         if (!$this->allowedPlaybackHosts || !in_array($host, $this->allowedPlaybackHosts, true)) {
             throw new InvalidArgumentException('Playback URL host is not allowlisted.');
         }
-        if ($host === 'localhost' || (filter_var($host, FILTER_VALIDATE_IP) !== false
-            && filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false)) {
+        $literalHost = trim($host, '[]');
+        $address = $literalHost;
+        if (preg_match('/^[0-9.]+$/', $literalHost)) {
+            $address = gethostbyname($literalHost);
+        }
+        if ($literalHost === 'localhost' || inet_pton($address) !== false
+            && filter_var($address, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
             throw new InvalidArgumentException('Playback URL host is not public.');
         }
     }
