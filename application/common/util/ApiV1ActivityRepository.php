@@ -23,7 +23,7 @@ final class ApiV1ActivityRepository
 
     public function history($userId, ApiV1Pagination $pagination, ApiV1Locale $locale)
     {
-        $query=$this->publishedUlogs($userId,4)->field(ApiV1CatalogRepository::SUMMARY_FIELDS.',u.ulog_sid,u.ulog_nid,u.ulog_point,u.ulog_duration,u.ulog_time');
+        $query=$this->publishedUlogs($userId,4)->where('u.ulog_sid','>',0)->where('u.ulog_nid','>',0)->field(ApiV1CatalogRepository::SUMMARY_FIELDS.',u.ulog_sid,u.ulog_nid,u.ulog_point,u.ulog_duration,u.ulog_time');
         $total=(int)(clone $query)->count();
         $rows=$query->order('u.ulog_time desc,u.ulog_id desc')->limit($pagination->offset(),$pagination->meta(0)['per_page'])->select();
         $items=array();
@@ -64,7 +64,7 @@ final class ApiV1ActivityRepository
         $video=$this->video($publicId);
         if ($video===null) return null;
         $row=Db::name('ulog')->where($this->ulogWhere($userId,4,$video['vod_id']))->order('ulog_time desc,ulog_id desc')->find();
-        return $row ? $this->progressDto($video,$row) : array();
+        return $row && (int)$row['ulog_sid']>0 && (int)$row['ulog_nid']>0 ? $this->progressDto($video,$row) : array();
     }
 
     public function saveProgress($userId,$publicId,array $input,$clientUpdatedAt=null)
@@ -197,7 +197,8 @@ final class ApiV1ActivityRepository
 
     private function progressDto(array $video,array $row)
     {
-        $sid=max(1,(int)$row['ulog_sid']); $nid=max(1,(int)$row['ulog_nid']);
+        $sid=(int)$row['ulog_sid']; $nid=(int)$row['ulog_nid'];
+        if ($sid<1 || $nid<1) return array();
         return ApiV1ActivityDto::progress(array(
             'public_id'=>$video['public_id'],'source_id'=>'s'.$sid,'episode_id'=>'s'.$sid.'e'.$nid,
             'position_seconds'=>(int)$row['ulog_point'],'duration_seconds'=>(int)$row['ulog_duration'],'updated_at'=>(int)$row['ulog_time'],
