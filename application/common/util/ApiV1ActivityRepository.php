@@ -55,7 +55,8 @@ final class ApiV1ActivityRepository
     {
         $video=$this->video($publicId);
         if ($video===null) return null;
-        Db::name('ulog')->where($this->ulogWhere($userId,2,$video['vod_id']))->delete();
+        $where=$this->ulogWhere($userId,2,$video['vod_id']);
+        $this->withUserLock($userId,function() use($where) { Db::name('ulog')->where($where)->delete(); });
         return (string)$video['public_id'];
     }
 
@@ -91,40 +92,54 @@ final class ApiV1ActivityRepository
     {
         $video=$this->video($publicId);
         if ($video===null) return null;
-        Db::name('ulog')->where($this->ulogWhere($userId,4,$video['vod_id']))->delete();
+        $where=$this->ulogWhere($userId,4,$video['vod_id']);
+        $this->withUserLock($userId,function() use($where) {
+            Db::name('ulog')->where($where)->where('ulog_points','>',0)->update(array('ulog_point'=>0,'ulog_duration'=>0));
+            Db::name('ulog')->where($where)->where('ulog_points','<=',0)->delete();
+        });
         return (string)$video['public_id'];
     }
 
     public function merge($userId,array $payload)
     {
-        return $this->withUserLock($userId,function() use($userId,$payload) {
-            return Db::transaction(function() use($userId,$payload) {
-            $merged=array('favorites'=>0,'progress'=>0);
-            foreach($payload['favorites'] as $item) {
-                $video=$this->video($item['public_id']);
-                if ($video===null) continue;
-                $where=$this->ulogWhere($userId,2,$video['vod_id']);
-                if (!Db::name('ulog')->where($where)->find()) {
-                    Db::name('ulog')->insert($where+array('ulog_rid'=>(int)$video['vod_id'],'ulog_sid'=>0,'ulog_nid'=>0,'ulog_time'=>$this->safeTime($item['updated_at'])));
-                    $merged['favorites']++;
+        $favorites=array();
+        foreach($payload['favorites'] as $item) {
+            $video=$this->video($item['public_id']);
+            if ($video!==null) $favorites[]=array('video'=>$video,'item'=>$item);
+        }
+        $progress=array();
+        foreach($payload['progress'] as $item) {
+            $video=$this->video($item['public_id']);
+            if ($video===null) continue;
+            list($sid,$nid)=$this->episodeKey($item);
+            $this->assertEpisodeExists($video,$sid,$nid);
+            $progress[]=array('video'=>$video,'item'=>$item,'sid'=>$sid,'nid'=>$nid);
+        }
+
+        return $this->withUserLock($userId,function() use($userId,$favorites,$progress) {
+            return Db::transaction(function() use($userId,$favorites,$progress) {
+                $merged=array('favorites'=>0,'progress'=>0);
+                foreach($favorites as $prepared) {
+                    $video=$prepared['video']; $item=$prepared['item'];
+                    $where=$this->ulogWhere($userId,2,$video['vod_id']);
+                    if (!Db::name('ulog')->where($where)->find()) {
+                        Db::name('ulog')->insert($where+array('ulog_sid'=>0,'ulog_nid'=>0,'ulog_time'=>$this->safeTime($item['updated_at'])));
+                        $merged['favorites']++;
+                    }
                 }
-            }
-            foreach($payload['progress'] as $item) {
-                $video=$this->video($item['public_id']);
-                if ($video===null) continue;
-                list($sid,$nid)=$this->episodeKey($item);
-                $this->assertEpisodeExists($video,$sid,$nid);
-                $where=$this->ulogWhere($userId,4,$video['vod_id'])+array('ulog_sid'=>$sid,'ulog_nid'=>$nid);
-                $existing=Db::name('ulog')->where($where)->lock(true)->find();
-                $client_updated_at=$this->safeTime($item['updated_at']);
-                if (!$existing || $client_updated_at>(int)$existing['ulog_time']) {
-                    $data=array('ulog_point'=>(int)$item['position_seconds'],'ulog_duration'=>(int)$item['duration_seconds'],'ulog_time'=>$client_updated_at);
-                    if ($existing) Db::name('ulog')->where('ulog_id',(int)$existing['ulog_id'])->update($data);
-                    else Db::name('ulog')->insert($where+$data);
-                    $merged['progress']++;
+                foreach($progress as $prepared) {
+                    $video=$prepared['video']; $item=$prepared['item'];
+                    $where=$this->ulogWhere($userId,4,$video['vod_id'])+array('ulog_sid'=>$prepared['sid'],'ulog_nid'=>$prepared['nid']);
+                    $existing=Db::name('ulog')->where($where)->find();
+                    $client_updated_at=$this->safeTime($item['updated_at']);
+                    if (!$existing || $client_updated_at>(int)$existing['ulog_time']) {
+                        $data=array('ulog_point'=>(int)$item['position_seconds'],'ulog_duration'=>(int)$item['duration_seconds'],'ulog_time'=>$client_updated_at);
+                        if ($existing) Db::name('ulog')->where('ulog_id',(int)$existing['ulog_id'])->update($data);
+                        else Db::name('ulog')->insert($where+$data);
+                        $merged['progress']++;
+                    }
                 }
-            }
-            return $merged;
+                return $merged;
             });
         });
     }
