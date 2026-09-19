@@ -3,6 +3,7 @@ namespace app\admin\controller;
 use think\Controller;
 use app\common\controller\All;
 use app\common\util\BulkTableIo;
+use app\common\util\ContentAdminRoutePolicy;
 use think\Cache;
 use app\common\util\Dir;
 use think\Db;
@@ -72,28 +73,12 @@ class Base extends All
             return true;
         }
 
-        if ($c === 'content_workspace' && $a === 'tmdb_review') {
-            $authStr = ',' . strtolower((string) $this->_admin['admin_auth']) . ',';
-            return strpos($authStr, ',content_workspace/review,') !== false
-                || strpos($authStr, ',content_workspace/run_tmdb,') !== false;
-        }
-
-        if ($c === 'content_workspace' && $a === 'jobs') {
-            if ((string)$this->_admin['admin_id'] === '1') {
-                return true;
+        if ($c === 'content_workspace') {
+            $routePolicy = new ContentAdminRoutePolicy();
+            if ($routePolicy->supports($a)) {
+                $grants = array_filter(array_map('trim', explode(',', (string) $this->_admin['admin_auth'])));
+                return $routePolicy->allows($a, $grants, (int) $this->_admin['admin_id']);
             }
-            $authStr = ',' . strtolower((string) $this->_admin['admin_auth']) . ',';
-            return strpos($authStr, ',content_workspace/view,') !== false
-                || strpos($authStr, ',content_workspace/run_ai,') !== false
-                || strpos($authStr, ',content_workspace/run_tmdb,') !== false;
-        }
-
-        if ($c === 'content_workspace' && $a === 'publish') {
-            if ((string)$this->_admin['admin_id'] === '1') {
-                return true;
-            }
-            $authStr = ',' . strtolower((string) $this->_admin['admin_auth']) . ',';
-            return strpos($authStr, ',content_workspace/publish,') !== false;
         }
 
         // 安全体检一键修复：已授权 checkup 的子管理员可 POST fix（fix 为 auth.php 中 show=0 隐藏项）
