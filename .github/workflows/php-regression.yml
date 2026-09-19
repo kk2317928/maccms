@@ -65,6 +65,7 @@ jobs:
           php -l tests/regression/api_v1_foundation.php
           php -l tests/regression/api_v1_public_catalog.php
           php -l tests/regression/api_v1_locale_canonical.php
+          php -l tests/regression/api_v1_sessions.php
           php -l tests/regression/run_api_v1.php
           php -l tests/integration/mysql_foundation.php
           php -l tests/integration/native_vod_paths.php
@@ -77,6 +78,9 @@ jobs:
           php -l application/common/util/ApiV1CatalogQuery.php
           php -l application/common/util/ApiV1Locale.php
           php -l application/common/util/ApiV1CanonicalResource.php
+          php -l application/common/util/ApiV1AccessToken.php
+          php -l application/common/util/ApiV1RefreshToken.php
+          php -l application/common/util/ApiV1SessionService.php
           php -l application/common/util/ApiV1VideoDto.php
           php -l application/common/util/ApiV1EpisodeDto.php
           php -l application/common/util/ApiV1CatalogRepository.php
@@ -87,6 +91,7 @@ jobs:
           php -l application/api/controller/v1/Base.php
           php -l application/api/controller/v1/Index.php
           php -l application/api/controller/v1/Catalog.php
+          php -l application/api/controller/v1/Auth.php
           php -l application/common/util/SchemaMigrationService.php
           php -l application/common/util/AiProvider.php
           php -l application/common/util/PublicIdGenerator.php
