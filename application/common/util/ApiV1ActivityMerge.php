@@ -31,6 +31,11 @@ final class ApiV1ActivityMerge
             $publicId = self::publicId(isset($item['public_id']) ? $item['public_id'] : '');
             $sourceId = self::identifier(isset($item['source_id']) ? $item['source_id'] : '', 'source_id');
             $episodeId = self::identifier(isset($item['episode_id']) ? $item['episode_id'] : '', 'episode_id');
+            if (preg_match('/\As([1-9][0-9]{0,2})\z/D',$sourceId,$sourceMatch)!==1
+                || preg_match('/\As([1-9][0-9]{0,2})e([1-9][0-9]{0,4})\z/D',$episodeId,$episodeMatch)!==1
+                || $sourceMatch[1]!==$episodeMatch[1] || (int)$sourceMatch[1]>255 || (int)$episodeMatch[2]>65535) {
+                throw new InvalidArgumentException('episode_id');
+            }
             $position = self::nonNegativeInt(isset($item['position_seconds']) ? $item['position_seconds'] : null, 'position_seconds', 4294967295);
             $duration = self::nonNegativeInt(isset($item['duration_seconds']) ? $item['duration_seconds'] : null, 'duration_seconds', 4294967295);
             if ($duration > 0 && $position > $duration) { throw new InvalidArgumentException('position_seconds'); }
