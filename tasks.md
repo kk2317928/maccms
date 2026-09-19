@@ -629,8 +629,15 @@ Use `application/admin/view_new`; do not add a parallel obsolete `view/` tree.
 
 ## CP-07 — Headless API v1 and sessions
 
-### T-070 Versioned route/error/pagination/DTO foundation — `IN_PROGRESS`
-### T-071 Public home/list/detail/episodes/search/taxonomy endpoints — `TODO`
+### T-070 Versioned route/error/pagination/DTO foundation — `DONE`
+
+- Added a clean `/api/v1` entrypoint boundary that safely selects the existing API module without changing non-v1 public or legacy API requests.
+- Added stable success, collection and error envelopes; strict `page`/`per_page` validation; bounded request IDs; reserved response metadata; explicit DTO allowlists; generic v1 JSON exception handling; and deterministic 404/405 responses.
+- RED commit: `2a15f2e9b91666a1a9fbf2ce695f636b415fb70e`; valid review-finding RED commit: `6c97c1e115f860a8c7c6c7dc7e5d707216c096c2`; implementation and fixes through `56e7154fd0649a356386d3809d8c4f86d3a06c92`.
+- RED PHP run `35461612663` passed all existing suites and failed only at the missing API v1 foundation. GREEN: PHP `35462362148`, MySQL 5.7 `35462362150`, MySQL 8.0 `35462362152`, and native video `35462362293` passed.
+- Independent review found module-binding, route option/pattern, exception leakage and request-ID override risks; the entrypoint dispatcher, scoped exception handler and reserved metadata fix resolved them.
+
+### T-071 Public home/list/detail/episodes/search/taxonomy endpoints — `READY`
 ### T-072 Locale fallback and canonical redirects — `TODO`
 ### T-073 Access plus rotating hashed refresh sessions — `TODO`
 ### T-074 Favorites/history/progress DTO and anonymous merge — `TODO`
