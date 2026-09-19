@@ -665,7 +665,7 @@ Use `application/admin/view_new`; do not add a parallel obsolete `view/` tree.
 
 ### T-074 Favorites/history/progress DTO and anonymous merge — `IN_PROGRESS`
 
-- RED contract: `855936a557e6ccd393dd2f0c6925dff2cc08fb3d`; implementation and independent-review fixes currently through `e4b4ed7759b4d6e20a3153def655d1a433ed7944`.
+- RED contract: `855936a557e6ccd393dd2f0c6925dff2cc08fb3d`; implementation and independent-review fixes currently through `66548ebd634d981ee7f509efdbfb729c78b197f8`.
 - Added authenticated public-ID favorites/history/progress routes and allowlisted DTOs, canonical alias resolution, published-only access, deterministic anonymous merge, advisory locking for native MyISAM `ulog`, duration persistence, episode/range validation, and strict separation from paid type-4 entitlement rows.
 - Verification is pending because GitHub Actions did not enqueue for GitHub App content commits; do not mark DONE until the PHP workflow runs on the current head.
 ### T-075 Playback source policy and optional signing — `TODO`
@@ -707,7 +707,7 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 Checkpoint: CP-07
 Next task: T-074
 Task status: IN_PROGRESS
-Required starting state: feature/headless-ai-v1 at T-074 review-fix commit `e4b4ed7759b4d6e20a3153def655d1a433ed7944`
+Required starting state: feature/headless-ai-v1 at T-074 review-fix commit `66548ebd634d981ee7f509efdbfb729c78b197f8`
 First verification: run the PHP regression workflow and resolve any syntax/contract failures
 Task commit: feat(api): complete T-074 member activity
 Push required: yes, immediately after task verification
