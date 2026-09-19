@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
-Last updated: 2026-09-18  
-State document version: 55
+Last updated: 2026-09-19
+State document version: 56
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.
 **Active checkpoint:** CP-06 — intelligent-content administration.
-**Active task:** T-062 — AI field review UI (`IN_PROGRESS`).
-**Starting commit:** T-061 bookkeeping commit `0778bae841697a6de1e022ee50bbb11b77ab213d`.
-**Last completed task:** T-061 — dashboard metrics, queue health and Cron heartbeat, commit `c00ea9dfe58e3c88cd707ef7a05b77c58b7f7ddd`.
-**Last verification:** PHP regression `35394733235` passed for T-061. MySQL 5.7 `35391110547`, MySQL 8.0 `35391110450`, and native video `35390914302` remain the latest database/native evidence; T-061 added no schema or native video-path changes.
-**Next action:** define field-level before/after review, accept/edit/reject/lock, provenance and conflict-warning contracts for T-062.
+**Active task:** T-063 — duplicate comparison, merge and restore UI (`TODO`).
+**Starting commit:** T-062 final implementation commit `5f9d85e55c1ed0148ab2137022cd96fa3fac623e`.
+**Last completed task:** T-062 — AI field review UI, final commit `5f9d85e55c1ed0148ab2137022cd96fa3fac623e`.
+**Last verification:** PHP regression `35431481425`, MySQL 5.7 `35431315407`, MySQL 8.0 `35431315406`, and native video `35431205533` passed for the final T-062 implementation chain.
+**Next action:** define duplicate comparison, explicit merge confirmation, conflict display and restore UI contracts for T-063.
 
 ## 1. Confirmed product direction
 
@@ -54,7 +54,7 @@ Upstream Composer metadata declares PHP `>=7.0`; the new programme's primary sup
 | Legacy/broad API | `application/api/controller/` | 39 controllers |
 | Public web | `application/index/controller/` | 24 controllers |
 | Shared models | `application/common/model/` | 68 models after T-052 added immutable merge snapshots |
-| Shared services/utilities | `application/common/util/` | 98 utility/service classes after T-061 added dashboard aggregation and typed observable job failures |
+| Shared services/utilities | `application/common/util/` | 99 utility/service classes after T-062 added field-level AI review orchestration |
 | Request behaviors | `application/common/behavior/` | Security, audit, monitoring, preview and initialization hooks |
 | Upgrade schema | `application/data/update/database.php` | Large monolithic legacy upgrade script |
 | Tests | `tests/regression/` | Only `user_register_validate.php` currently exists |
@@ -149,6 +149,7 @@ Absence was established by repository text search against the pinned snapshot. I
 | Reviewed TMDB field import | PASS | PHP 8.1 run `35388048661`; preview, provenance, missing-locale and manual-lock contracts passed |
 | CP-05 duplicate/TMDB lifecycle suite | PASS | PHP 8.1 run `35388283844`; deterministic fail-closed suite passed all eight lifecycle contracts |
 | Granular admin permissions and immutable audit | PASS | PHP `35391110548`, MySQL 5.7 `35391110547`, MySQL 8.0 `35391110450`, native video `35390914302` |
+| AI field review UI and conflict controls | PASS | PHP `35431481425`, MySQL 5.7 `35431315407`, MySQL 8.0 `35431315406`, native video `35431205533` |
 | Video workflow state machine | PASS | PHP 8.1 run `35344911819`; exhaustive transition matrix passed |
 | Lossless native playback codec | PASS | PHP 8.1 run `35345369100`; record-form, validation, round-trip and merge contracts passed |
 | Foundation migration MySQL 5.7 | PASS | Disposable `maccms_ci_57`, MySQL 5.7.44; Actions run `35348332012` |
