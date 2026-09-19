@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-19
-State document version: 58
+State document version: 59
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-05 — duplicate review, reversible merge and TMDB workflow.
 **Active checkpoint:** CP-06 — intelligent-content administration.
-**Active task:** T-065 — final validation/publication UI (`TODO`).
+**Active task:** T-065 — final validation/publication UI (`IN_PROGRESS`).
 **Starting commit:** T-064 final commit `5045e6bad1c821a8f6eada7f04bcb51d8ba4d4dd`.
 **Last completed task:** T-064 — TMDB candidate and manual-match UI, final commit `5045e6bad1c821a8f6eada7f04bcb51d8ba4d4dd`.
 **Last verification:** PHP `35443519455`, MySQL 5.7 `35443519424` and MySQL 8.0 `35443519411` passed TMDB review UI, job-handler, migration and existing regression contracts.
-**Next action:** define multilingual, taxonomy, image, trailer and playback validation/publication preview contracts for T-065.
+**Next action:** run the T-065 RED publication regression, then implement the approved fail-closed preview and atomic publication boundary.
 
 ## 1. Confirmed product direction
 

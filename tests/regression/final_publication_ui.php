@@ -1,0 +1,150 @@
+<?php
+
+declare(strict_types=1);
+
+$root = dirname(__DIR__, 2);
+$required = ['FinalPublicationWorkspace.php', 'FinalPublicationService.php'];
+foreach ($required as $file) {
+    $path = $root . '/application/common/util/' . $file;
+    if (!is_file($path)) { fwrite(STDERR, "FAIL: {$file} is missing.\n"); exit(1); }
+    require_once $path;
+}
+require_once $root . '/application/common/util/VodPlaybackCodec.php';
+require_once $root . '/application/common/util/VodWorkflow.php';
+require_once $root . '/application/common/util/ContentAdminPolicy.php';
+require_once $root . '/application/common/util/ContentAdminAudit.php';
+
+use app\common\util\ContentAdminAudit;
+use app\common\util\FinalPublicationService;
+use app\common\util\FinalPublicationWorkspace;
+
+function publicationAssert($condition, string $message): void
+{
+    if (!$condition) { fwrite(STDERR, 'FAIL: ' . $message . PHP_EOL); exit(1); }
+}
+
+function publicationFixture(array $changes = []): array
+{
+    return array_merge([
+        'vod_id' => 42, 'vod_name' => '主要片名', 'vod_sub' => 'Original Title', 'vod_en' => 'Main Title',
+        'vod_blurb' => '摘要', 'vod_content' => '完整簡介', 'vod_area' => '日本', 'vod_class' => '劇情',
+        'vod_tag' => '成長', 'vod_pic' => 'https://img.test/poster.jpg', 'vod_pic_slide' => 'https://img.test/backdrop.jpg',
+        'vod_play_from' => 'hls', 'vod_play_url' => '第1集$https://video.test/1.m3u8', 'vod_play_server' => '',
+        'vod_play_note' => '', 'vod_status' => 0, 'vod_publish_time' => 123,
+        'public_id' => 'ABC234', 'workflow_status' => 'manual_review', 'merged_into_vod_id' => 0,
+        'trailer_url' => 'https://video.test/trailer.mp4', 'poster_s3' => 'https://cdn.test/poster.webp',
+        'published_at' => 0,
+    ], $changes);
+}
+
+$rows = [42 => publicationFixture()];
+$locales = [42 => [
+    'zh-TW' => ['vod_name' => '主要片名', 'vod_blurb' => '繁中摘要'],
+    'zh-CN' => ['vod_name' => '主要片名（简）', 'vod_blurb' => '简中摘要'],
+    'en' => ['vod_name' => 'Main Title', 'vod_blurb' => 'English summary'],
+]];
+$terms = [42 => [
+    ['kind' => 'region', 'term_id' => 1, 'name_tw' => '日本', 'name_cn' => '日本', 'name_en' => 'Japan'],
+    ['kind' => 'genre', 'term_id' => 2, 'name_tw' => '劇情', 'name_cn' => '剧情', 'name_en' => 'Drama'],
+]];
+$workspace = new FinalPublicationWorkspace(
+    static fn (int $offset, int $limit): array => array_slice(array_values($rows), $offset, $limit),
+    static fn (): int => count($rows),
+    static fn (int $vodId): ?array => $rows[$vodId] ?? null,
+    static fn (int $vodId): array => $locales[$vodId] ?? [],
+    static fn (int $vodId): array => $terms[$vodId] ?? []
+);
+
+$queue = $workspace->queue(1, 20);
+publicationAssert($queue['total'] === 1 && $queue['rows'][0]['workflow_status'] === 'manual_review', 'queue must expose only manual-review publication candidates with paging.');
+$preview = $workspace->preview(42);
+publicationAssert($preview['publishable'] === true && $preview['blockers'] === [], 'complete canonical content must be publishable.');
+publicationAssert($preview['locales']['zh-TW']['title'] === '主要片名' && $preview['locales']['en']['summary'] === 'English summary', 'preview must expose multilingual titles and summaries.');
+publicationAssert(count($preview['taxonomy']['region']) === 1 && count($preview['taxonomy']['genre']) === 1, 'preview must expose active region and genre mappings.');
+publicationAssert($preview['media']['poster'] !== '' && $preview['media']['backdrop'] !== '' && $preview['media']['trailer'] !== '', 'preview must expose image and trailer media.');
+publicationAssert($preview['playback'][0]['episodes'][0]['url'] === 'https://video.test/1.m3u8', 'preview must decode native playback into sources and episodes.');
+
+$warningRows = [43 => publicationFixture(['vod_id' => 43, 'vod_pic_slide' => '', 'trailer_url' => '', 'poster_s3' => ''])];
+$warningWorkspace = new FinalPublicationWorkspace(
+    static fn (): array => array_values($warningRows), static fn (): int => 1,
+    static fn (int $vodId): ?array => $warningRows[$vodId] ?? null,
+    static fn (): array => ['zh-TW' => ['vod_name' => '主要片名']],
+    static fn (): array => $terms[42]
+);
+$warningPreview = $warningWorkspace->preview(43);
+publicationAssert($warningPreview['publishable'] === true && count($warningPreview['warnings']) >= 4, 'missing optional locales, backdrop, trailer and S3 poster must be warnings, not blockers.');
+
+$blockedCases = [
+    'invalid public identity' => publicationFixture(['public_id' => 'bad']),
+    'merged content' => publicationFixture(['merged_into_vod_id' => 99]),
+    'wrong workflow' => publicationFixture(['workflow_status' => 'published']),
+    'missing title' => publicationFixture(['vod_name' => '']),
+    'missing taxonomy' => publicationFixture(['vod_area' => '', 'vod_class' => '']),
+    'missing playback' => publicationFixture(['vod_play_url' => '']),
+    'unsafe playback' => publicationFixture(['vod_play_url' => '第1集$javascript:alert(1)']),
+];
+foreach ($blockedCases as $label => $row) {
+    $caseWorkspace = new FinalPublicationWorkspace(
+        static fn (): array => [], static fn (): int => 0, static fn (): array => $row,
+        static fn (): array => $locales[42],
+        static fn () use ($label, $terms): array { return $label === 'missing taxonomy' ? [] : $terms[42]; }
+    );
+    $casePreview = $caseWorkspace->preview(42);
+    publicationAssert($casePreview['publishable'] === false && $casePreview['blockers'] !== [], "{$label} must block publication.");
+}
+
+$events = [];
+$audit = new ContentAdminAudit(static function (array $row) use (&$events): int { $events[] = $row; return count($events); }, static fn (): int => 1726800000);
+$locked = publicationFixture();
+$state = $locked;
+$transaction = static function (callable $callback) use (&$state) {
+    $before = $state;
+    try { return $callback(); } catch (Throwable $exception) { $state = $before; throw $exception; }
+};
+$service = new FinalPublicationService(
+    $workspace, $audit, $transaction,
+    static function (int $vodId) use (&$locked): array { return $locked; },
+    static function (int $vodId, array $update) use (&$state): bool { $state = array_merge($state, $update); return true; },
+    static function (int $vodId, array $update) use (&$state): bool { $state = array_merge($state, $update); return true; },
+    static fn (): int => 1726800000
+);
+$published = $service->publish(42, 9, 'editor', ['content_workspace/publish'], true);
+publicationAssert($published['workflow_status'] === 'published' && $state['workflow_status'] === 'published', 'publication must transition the separate workflow state.');
+publicationAssert($state['vod_status'] === 1 && $state['vod_publish_time'] === 0 && $state['published_at'] === 1726800000, 'publication must activate native visibility and store publication time.');
+publicationAssert(count($events) === 1 && $events[0]['event_code'] === 'content.publish' && $events[0]['subject_public_id'] === 'ABC234', 'publication must append one immutable public-ID audit event.');
+
+foreach ([[[], true], [['content_workspace/publish'], false]] as $denied) {
+    try { $service->publish(42, 9, 'editor', $denied[0], $denied[1]); publicationAssert(false, 'publication bypassed exact permission or confirmation.'); }
+    catch (RuntimeException $exception) {}
+}
+$locked = publicationFixture(['workflow_status' => 'merged']);
+try { $service->publish(42, 9, 'editor', ['content_workspace/publish'], true); publicationAssert(false, 'stale workflow state was published after locking.'); }
+catch (Throwable $exception) {}
+$locked = publicationFixture();
+
+$rollbackState = publicationFixture();
+$failingAudit = new ContentAdminAudit(static fn (): int => 0);
+$rollbackService = new FinalPublicationService(
+    $workspace, $failingAudit,
+    static function (callable $callback) use (&$rollbackState) { $before = $rollbackState; try { return $callback(); } catch (Throwable $e) { $rollbackState = $before; throw $e; } },
+    static fn (): array => publicationFixture(),
+    static function (int $vodId, array $update) use (&$rollbackState): bool { $rollbackState = array_merge($rollbackState, $update); return true; },
+    static function (int $vodId, array $update) use (&$rollbackState): bool { $rollbackState = array_merge($rollbackState, $update); return true; },
+    static fn (): int => 1726800000
+);
+try { $rollbackService->publish(42, 9, 'editor', ['content_workspace/publish'], true); publicationAssert(false, 'audit failure did not abort publication.'); }
+catch (RuntimeException $exception) {}
+publicationAssert($rollbackState['vod_status'] === 0 && $rollbackState['workflow_status'] === 'manual_review' && $rollbackState['published_at'] === 0, 'audit failure must roll back native and workflow publication state.');
+
+$controller = @file_get_contents($root . '/application/admin/controller/ContentWorkspace.php') ?: '';
+$template = @file_get_contents($root . '/application/admin/view_new/content_workspace/publish.html') ?: '';
+$dashboard = @file_get_contents($root . '/application/admin/view_new/content_workspace/index.html') ?: '';
+foreach (['function publish', "assertAllowed('publish'", 'mac_admin_csrf_token', 'confirmed'] as $needle) {
+    publicationAssert(strpos($controller, $needle) !== false, 'publication controller contract missing ' . $needle . '.');
+}
+foreach (['|htmlentities', '發布阻擋', '發布提醒', '多語標題', '分類與地區', '播放來源', 'name="confirmed"', 'data-confirm'] as $needle) {
+    publicationAssert(strpos($template, $needle) !== false, 'publication view contract missing ' . $needle . '.');
+}
+publicationAssert(strpos($dashboard, 'content_workspace/publish') !== false, 'workspace dashboard must link to final publication.');
+
+fwrite(STDOUT, "OK: final validation and atomic publication UI contract passed.\n");

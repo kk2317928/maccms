@@ -597,7 +597,9 @@ No task may introduce automatic merge.
 
 - Added a discoverable `view_new` TMDB review workspace with integrity-checked candidate revisions, pending-first paging, candidate-specific field differences, lock/provenance display, reviewed field allowlists, explicit no-match, manual ID and rematch actions. Exact review/run permissions, stable CSRF, row locking and transaction-internal immutable audit keep mutations fail-closed; manual and rematch requests execute through registered bounded Cron handlers rather than external HTTP inside the admin request.
 - Added prefix-aware MySQL 5.7/8.0 candidate storage and wired deterministic search/manual results into it. RED commits: `582ee4ad48ec993cd959cebd6903695f9dab5eff`, `d6a14d632edda667bb8fab5db0c6e361e2db98f5`; final commit: `5045e6bad1c821a8f6eada7f04bcb51d8ba4d4dd`. PHP `35443519455`, MySQL 5.7 `35443519424`, MySQL 8.0 `35443519411` passed.
-### T-065 Final validation/publication UI — `TODO`
+### T-065 Final validation/publication UI — `IN_PROGRESS`
+
+- Implementing the approved fail-closed manual-review preview and atomic publication contract in `docs/superpowers/plans/2026-09-19-t065-final-publication-ui.md`.
 ### T-066 Batch enqueue and failure/retry UI — `TODO`
 ### T-067 Admin permission and compatibility regression — `TODO`
 
