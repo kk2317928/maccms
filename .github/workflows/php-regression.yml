@@ -66,6 +66,13 @@ jobs:
           php -l tests/regression/run_api_v1.php
           php -l tests/integration/mysql_foundation.php
           php -l tests/integration/native_vod_paths.php
+          php -l application/common/util/ApiV1Dto.php
+          php -l application/common/util/ApiV1AllowlistDto.php
+          php -l application/common/util/ApiV1RequestId.php
+          php -l application/common/util/ApiV1Pagination.php
+          php -l application/common/util/ApiV1Response.php
+          php -l application/api/controller/v1/Base.php
+          php -l application/api/controller/v1/Index.php
           php -l application/common/util/SchemaMigrationService.php
           php -l application/common/util/AiProvider.php
           php -l application/common/util/PublicIdGenerator.php
