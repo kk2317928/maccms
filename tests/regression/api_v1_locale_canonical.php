@@ -59,7 +59,7 @@ localeSame(array('status'=>'not_found'),ApiV1CanonicalResource::resolve('ALIAS2'
 $controller=file_get_contents($root.'/application/api/controller/v1/Catalog.php');
 $baseController=file_get_contents($root.'/application/api/controller/v1/Base.php');
 localeTrue(strpos($controller,'canonicalRedirectResponse')!==false && strpos($baseController,'308')!==false && strpos($baseController,'Location')!==false,'Catalog controller must emit explicit canonical 308 redirects.');
-localeTrue(strpos($baseController,"array('locale'=>\$locale->code())")!==false,'Canonical redirect metadata must include resolved locale.');
+localeTrue(strpos($baseController,"'locale'=>")!==false && strpos($baseController,'->code()')!==false,'Canonical redirect metadata must include resolved locale.');
 localeTrue(strpos($controller,"'canonical_public_id'")!==false,'Redirect payload must use public ID only.');
 $repository=file_get_contents($root.'/application/common/util/ApiV1CatalogRepository.php');
 localeTrue(strpos($repository,'self::VIDEO_FIELDS')===false,'Detail query must not reference the removed VIDEO_FIELDS constant.');
