@@ -178,7 +178,7 @@ foreach (['|htmlentities', '發布阻擋', '發布提醒', '多語標題', '分�
 publicationAssert(strpos($dashboard, 'content_workspace/publish') !== false, 'workspace dashboard must link to final publication.');
 $base = @file_get_contents($root . '/application/admin/controller/Base.php') ?: '';
 publicationAssert(strpos($base, "(string)\$this->_admin['admin_id'] === '1'") !== false, 'super admin must retain publication route access before exact delegated-admin checks.');
-foreach (['content_lang', 'vod_meta_term', 'lock(true)', 'information_schema.TABLES', "cache_flag'] . '_vod_detail_'"] as $needle) {
+foreach (['content_lang', 'vod_meta_term', 'lock(true)', 'information_schema.TABLES', "_vod_detail_' . \\$vodId"] as $needle) {
     publicationAssert(strpos(@file_get_contents($root . '/application/common/util/FinalPublicationService.php') ?: '', $needle) !== false, 'publication transaction must lock the complete reviewed snapshot: ' . $needle . '.');
 }
 
