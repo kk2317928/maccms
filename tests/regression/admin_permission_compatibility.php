@@ -102,6 +102,27 @@ adminCompatibilityAssert(strpos($collect, 'function vod_data(') !== false && sub
 foreach (['vod_play_from', 'vod_play_url', 'vod_play_server', 'vod_play_note'] as $field) {
     adminCompatibilityAssert(strpos($codec, $field) !== false || strpos($codec, str_replace('vod_play_', '', $field)) !== false, "native playback compatibility field {$field} is not represented.");
 }
+
+$compatibilityWorkflows = [
+    '.github/workflows/mysql57-foundation.yml',
+    '.github/workflows/mysql80-foundation.yml',
+    '.github/workflows/native-vod-foundation.yml',
+];
+$authorizationDependencies = [
+    'application/admin/controller/Base.php',
+    'application/admin/controller/ContentWorkspace.php',
+    'application/common/util/ContentAdminPolicy.php',
+    'application/common/util/ContentAdminRoutePolicy.php',
+    'application/common/util/ContentJobAdminService.php',
+    'tests/regression/admin_permission_compatibility.php',
+];
+foreach ($compatibilityWorkflows as $workflowPath) {
+    $workflow = @file_get_contents($root . '/' . $workflowPath) ?: '';
+    foreach ($authorizationDependencies as $dependency) {
+        adminCompatibilityAssert(strpos($workflow, "'{$dependency}'") !== false, "{$workflowPath} does not trigger for authorization dependency {$dependency}.");
+    }
+}
+
 $nativeWorkflow = @file_get_contents($root . '/.github/workflows/native-vod-foundation.yml') ?: '';
 adminCompatibilityAssert(strpos($nativeWorkflow, 'tests/integration/native_vod_paths.php') !== false && strpos($nativeWorkflow, 'Verify native video paths') !== false, 'native admin/collection/playback compatibility must remain executable in CI.');
 
