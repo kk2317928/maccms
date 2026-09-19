@@ -17,16 +17,22 @@ final class ApiV1Locale
             return new self($code);
         }
         if (is_string($acceptLanguage)) {
-            foreach (explode(',',$acceptLanguage) as $range) {
+            $candidates=array();
+            foreach (explode(',',$acceptLanguage) as $index=>$range) {
                 $parts=explode(';',trim($range));
                 $q=1.0;
                 foreach(array_slice($parts,1) as $parameter) {
-                    if (preg_match('/\A\s*q=([0-9.]+)\s*\z/i',$parameter,$matches)) { $q=(float)$matches[1]; }
+                    if (preg_match('/\\A\\s*q=(0(?:\\.[0-9]{0,3})?|1(?:\\.0{0,3})?)\\s*\\z/i',$parameter,$matches)) $q=(float)$matches[1];
+                    elseif (stripos(trim($parameter),'q=')===0) $q=0.0;
                 }
-                if ($q<=0) continue;
                 $code=self::normalize(trim($parts[0]),true);
-                if ($code!==null) return new self($code);
+                if ($code!==null && $q>0) $candidates[]=array('code'=>$code,'q'=>$q,'index'=>$index);
             }
+            usort($candidates,function($left,$right) {
+                if ($left['q']===$right['q']) return $left['index']<=>$right['index'];
+                return $left['q']>$right['q']?-1:1;
+            });
+            if (!empty($candidates)) return new self($candidates[0]['code']);
         }
         return new self('zh-TW');
     }
