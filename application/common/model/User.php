@@ -729,8 +729,11 @@ class User extends Base
             $update['group_id'] = 2;
         }
 
-        $random = md5(rand(10000000, 99999999));
-        $update['user_random'] = $random;
+        $rotateLegacySession = !isset($options['rotate_legacy_session']) || $options['rotate_legacy_session'];
+        $random = $rotateLegacySession ? md5(rand(10000000, 99999999)) : (string)$row['user_random'];
+        if ($rotateLegacySession) {
+            $update['user_random'] = $random;
+        }
         $update['user_login_ip'] = mac_get_ip_long();
         $update['user_login_time'] = time();
         $update['user_login_num'] = $row['user_login_num'] + 1;
