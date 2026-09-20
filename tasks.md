@@ -23,8 +23,8 @@ Do not mark a task `DONE` with a future or local-only SHA. A checkpoint complete
 | CP-04 | Add content job queue, AI normalization, provenance and locks | DONE | CP-03 |
 | CP-05 | Add duplicate review, reversible merge and TMDB workflow | DONE | CP-04 |
 | CP-06 | Add intelligent-content admin workspace and permissions | DONE | CP-05 |
-| CP-07 | Add versioned Headless API, sessions, favorites and progress | READY | CP-06 |
-| CP-08 | Add event deduplication, rankings and recommendations | TODO | CP-07 |
+| CP-07 | Add versioned Headless API, sessions, favorites and progress | DONE | CP-06 |
+| CP-08 | Add event deduplication, rankings and recommendations | IN_PROGRESS | CP-07 |
 | CP-09 | Remove prohibited communication and complete release hardening | TODO | CP-08 |
 
 ---
@@ -682,7 +682,12 @@ Use `application/admin/view_new`; do not add a parallel obsolete `view/` tree.
 - Added exact HTTPS-origin CORS with route-specific preflight methods, atomic fail-closed endpoint buckets keyed by direct peer IP, public catalog weak ETag revalidation, 304 responses, locale/origin variation and deployment guidance. Authentication and playback responses remain no-store.
 - GREEN evidence: PHP regression `35500353097`. Independent review found no Critical and identified three Important issues; normalized prefixed paths, `If-None-Match` preflight support and semantically correct weak validators received RED→GREEN fixes.
 
-### T-077 OpenAPI v1 and contract tests — `IN_PROGRESS`
+### T-077 OpenAPI v1 and contract tests — `DONE`
+
+- RED contract: `383fe26482529924745b4d024a45b3362a748eaf`; independent-review findings contract: `4616957950f78030e9f122ef144c207459098c4c`.
+- Implementation and review fixes through `876c969a5c8070d503c3f8e8480c0dd589eaa888`.
+- Added a directly consumable OpenAPI 3.0.3 document at `GET /api/v1/openapi.json`, exact route/method and bearer/public security coverage, closed DTO schemas, typed collection/pagination envelopes, stable examples, 304/308 response contracts and original-byte conditional serving.
+- GREEN evidence: PHP regression `35500967514`. Independent review found no Critical and five Important issues; raw JSON object identity, anonymous progress merge, flattened video detail, operation-specific response schemas and conditional/canonical responses received RED→GREEN fixes.
 
 Legacy API compatibility is a separate concern; do not expose raw DB records in `/api/v1`.
 
@@ -690,7 +695,7 @@ Legacy API compatibility is a separate concern; do not expose raw DB records in 
 
 ## CP-08 — Events, rankings and recommendations
 
-### T-080 Playback/favorite event contract and deduplication — `TODO`
+### T-080 Playback/favorite event contract and deduplication — `IN_PROGRESS`
 ### T-081 Today/7-day/30-day/all-time aggregates — `TODO`
 ### T-082 Deterministic explainable recommendation service — `TODO`
 ### T-083 Retention, purge and abuse limits — `TODO`
@@ -716,11 +721,11 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 ## Current execution pointer
 
 ```text
-Checkpoint: CP-07
-Next task: T-077
+Checkpoint: CP-08
+Next task: T-080
 Task status: IN_PROGRESS
-Required starting state: feature/headless-ai-v1 after T-076 final commit `2111a6d285911eef517334e7b63e354cdde4fda9`
-First verification: define OpenAPI v1 coverage and stable example payload contracts
-Task commit: test: define API v1 OpenAPI contract
+Required starting state: feature/headless-ai-v1 after T-077 final commit `876c969a5c8070d503c3f8e8480c0dd589eaa888`
+First verification: define playback/favorite event and deduplication contracts
+Task commit: test: define analytics event contract
 Push required: yes, immediately after task verification
 ```
