@@ -31,4 +31,8 @@ foreach ($required as $needle) {
         exit(1);
     }
 }
+if (preg_match('/if:\s*matrix\.mysql\.family[^\n]*\n\s*run:\s*php tests\/integration\/native_vod_paths\.php/', $source)) {
+    fwrite(STDERR, "FAIL: native video paths must run for every supported MySQL family.\n");
+    exit(1);
+}
 fwrite(STDOUT, "OK: release regression matrix contract passed.\n");
