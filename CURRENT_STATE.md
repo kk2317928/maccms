@@ -213,7 +213,8 @@ Verified release gap at `231e1900cf41f26c2b33bd6cb362e41af4ede7ac`:
 - Last completed task: T-101, centralized workflow coordination (`c25a29843fab9dd85152119ccf5ad7d310506c77`).
 - Last completed task: T-102, native admin/collection workflow hooks (`0586c2f003700f2d862734a5f95c323ef8a8e04d`).
 - Last completed task: T-103, reviewed taxonomy suggestions and adoption (`e4a0c2de4d983c447cd0255d72729f73c66f2beb`).
-- Next task: T-104, AI/duplicate/TMDB workflow handoff.
+- Last completed task: T-104, AI/duplicate/TMDB workflow handoff (`21856ab6e26d302a4d632f8ec30dad3ff43fd535`).
+- Next task: T-105, version-2 relational duplicate merge and restoration.
 - Starting commit: `d818cb3088593a84309ca256bfac68c3501b7960`.
 - Environment ruling: this execution image has no PHP binary and no authenticated Git checkout; RED was established as a missing coordinator class, while GREEN verification must run in GitHub Actions after an atomic connector commit.
 - Shared interfaces checked: T-101 produces AI start/completion, duplicate completion and TMDB completion boundaries consumed by T-102 through T-104.
@@ -222,3 +223,4 @@ Verified release gap at `231e1900cf41f26c2b33bd6cb362e41af4ede7ac`:
 - Native admin creation and collection insertion now enqueue one deterministic AI job after successful persistence; equivalent and playback-only collection updates do not enqueue another job.
 - T-103 added reviewed taxonomy suggestions without automatic term creation. AI/TMDB stage candidates; only unique active matches may be accepted, manual taxonomy locks fail closed, and accepted terms update `vod_meta_term` before native projection synchronization.
 - T-103 verification: PHP `35530726030`, MySQL 5.7 `35530726006`, MySQL 8.0 `35530726051`, release matrix `35530629907`, rollback rehearsal `35530629915`.
+- T-104 connects AI completion to duplicate review/TMDB, advances all-different candidates after commit, advances only the merge primary, and moves TMDB select/no-match to manual review after the admin transaction commits.
