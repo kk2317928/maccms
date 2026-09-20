@@ -72,7 +72,7 @@ class ResourceHub extends Base
 
     // ─── 云端资源站目录配置 ─────────────────────────────
     /** 云端接口地址（返回加密 JSON） */
-    const CLOUD_API_URL = 'https://api.maccms.ai/sites.json';
+    const CLOUD_API_URL = '';
     /** 加密密钥（AES-256-CBC），与云端脚本对齐 */
     const CLOUD_ENCRYPT_KEY = 'maccms_rh_2024_s3cr3t_k3y!@#$%^&';
     /** 本地缓存时间（秒），预设 3 小时 */
@@ -96,6 +96,11 @@ class ResourceHub extends Base
         // 缓存有效时直接返回
         if (!empty($cached) && is_array($cached)) {
             return $cached;
+        }
+
+        // 未配置目录端点时保持本地模式，不产生任何请求。
+        if (self::CLOUD_API_URL === '') {
+            return $this->fallbackCloudCache($cacheKey);
         }
 
         // 缓存过期，尝试从远端拉取
