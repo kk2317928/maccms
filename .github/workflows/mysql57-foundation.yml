@@ -72,6 +72,8 @@ jobs:
           php -l tests/integration/content_job_lifecycle.php
           php -l application/command/MaccmsAnalytics.php
           php -l tests/integration/api_v1_analytics.php
+      - name: Install native schema
+        run: mysql --protocol=tcp --host=127.0.0.1 --port=3306 --user=root --password=root --database=maccms_ci_57 < application/install/sql/install.sql
       - name: First migration run
         run: |
           set +e
