@@ -8,6 +8,6 @@ final class Docs extends Base
 {
     public function openapi(Request $request)
     {
-        return $this->cacheableDocumentResponse(ApiV1OpenApi::document(),$request);
+        return $this->cacheableRawDocumentResponse(ApiV1OpenApi::raw(),$request);
     }
 }
