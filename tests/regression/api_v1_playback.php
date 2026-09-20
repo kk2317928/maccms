@@ -15,6 +15,7 @@ foreach(array(
 ) as $file) playbackAssert(is_file($root.'/'.$file),'Missing '.$file);
 
 require_once $root.'/application/common/util/ApiV1Dto.php';
+require_once $root.'/application/common/util/ExternalHttpPolicy.php';
 require_once $root.'/application/common/util/ApiV1PlaybackPolicy.php';
 require_once $root.'/application/common/util/ApiV1PlaybackSigner.php';
 require_once $root.'/application/common/util/ApiV1PlaybackDto.php';
@@ -25,7 +26,7 @@ use app\common\util\ApiV1PlaybackSigner;
 use app\common\util\ApiV1PlaybackDto;
 use app\common\util\ApiV1Bootstrap;
 
-$resolver=function($host){return array('cdn.example.com'=>'203.0.113.10','evil.example'=>'127.0.0.1')[$host]??'198.51.100.8';};
+$resolver=function($host){return array('cdn.example.com'=>'8.8.8.8','evil.example'=>'127.0.0.1')[$host]??'1.1.1.1';};
 $policy=new ApiV1PlaybackPolicy(array(
  'source-a'=>array('enabled'=>true,'allowed_hosts'=>array('cdn.example.com')),
  'source-off'=>array('enabled'=>false,'allowed_hosts'=>array('cdn.example.com')),
