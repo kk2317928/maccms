@@ -106,5 +106,4 @@ jobs:
           php tests/regression/admin_permission_compatibility.php
 
       - name: Native video write paths
-        if: matrix.mysql.family == '5.7'
         run: php tests/integration/native_vod_paths.php
