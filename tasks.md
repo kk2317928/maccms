@@ -728,8 +728,8 @@ Legacy API compatibility is a separate concern; do not expose raw DB records in 
 ## CP-09 — Official communication removal and release hardening
 
 ### T-090 Remove official update check and admin update routes — `DONE`
-### T-091 Remove/disable announcements, affiliate defaults and telemetry — `IN_PROGRESS`
-### T-092 Centralize outbound policy and SSRF controls — `TODO`
+### T-091 Remove/disable announcements, affiliate defaults and telemetry — `DONE`
+### T-092 Centralize outbound policy and SSRF controls — `IN_PROGRESS`
 ### T-093 Security regression suite — `TODO`
 ### T-094 Full native and programme regression matrix — `TODO`
 ### T-095 Deployment, migration, Cron, backup and disaster-recovery docs — `TODO`
