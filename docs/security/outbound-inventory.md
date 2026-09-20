@@ -28,9 +28,9 @@ This source-level inventory covers PHP, JavaScript, templates, add-ons and defau
 | Web Push vendor endpoints (`googleapis.com`, Mozilla push, Apple push) | **optional disabled-by-default** | stored browser subscriptions and `PushDispatcher` | Existing suffix allowlist and no-redirect behavior remain mandatory. |
 | Live-channel seed URLs under `pili-live-hls.cntv.myqcloud.com` | **required/configured** | seeded live records; browser/player requests when a user plays a channel | Content traffic, not control-plane telemetry; administrators must be able to remove/disable seeds. |
 | External login-background image `img.infinitynewtab.com` | **optional disabled-by-default** | `addons/adminloginbg` when installed/enabled | Avoid mixed HTTP and remote admin-page tracking; migrate to local/configured media or retire during hardening. |
-| Template/add-on/resource clouds: `api.maccms.ai`, `cdn.maccms.ai`, legacy `api.maccms.com`, `maccmsbox.com` | **prohibited** | cloud catalog/resource controllers and admin pages | Nonessential official/cloud communication; remove/disable routes and remote assets by CP-09. |
+| Template/add-on/resource clouds: former `api.maccms.ai`, `cdn.maccms.ai`, legacy `api.maccms.com`, `maccmsbox.com` defaults | **prohibited** | Removed from runtime defaults, bootstrap configuration, admin copy and example catalogs in T-091 | Keep absent; locally configured non-official catalogs remain subject to the common outbound policy. |
 | Official version/update code: former `update.maccms.la` probe, updater assets and archive mirrors | **prohibited** | Removed in T-090; no admin route, page-load probe, update UI, archive downloader or extractor remains | Keep absent. `outbound_inventory.php --enforce` fails if the official endpoint reappears. |
-| Installer telemetry/official embeds: `www.maccms.la/tongji.html` and official FAQ/footer navigation | **prohibited** | installer step iframe and official links | Remove iframe/telemetry. Preserve Apache 2.0 notices locally; attribution does not require a request. |
+| Installer telemetry/official embeds: former `www.maccms.la/tongji.html` iframe and official FAQ/footer navigation | **prohibited** | Removed from installer templates in T-091 | Keep absent. Apache 2.0 attribution is local and requires no request. |
 | Telegram/GitHub promotional links embedded by the updater | **prohibited** | update UI rendered links | Remove with the updater; source attribution may remain as local text and repository metadata. |
 | GitHub issue/source links, Apache/OOXML namespace URIs, example domains and API documentation comments | **test/documentation-only** | comments, docs, language examples and XML namespace identifiers | Exclude from runtime enforcement unless code actually dereferences them. |
 
@@ -38,7 +38,7 @@ This source-level inventory covers PHP, JavaScript, templates, add-ons and defau
 
 T-090 removed the packed `update.maccms.la` script injection, online updater controller, update UI, archive downloader/extractor, and updater integrity bypass. Both `php tests/regression/outbound_inventory.php --report` and `--enforce` now require the official update endpoint to be absent.
 
-The installer telemetry iframe and official cloud/catalog endpoints remain prohibited evidence for T-091. Source attribution remains local and does not require an outbound request.
+T-091 removed installer telemetry/navigation, affiliate player defaults, official cloud/catalog endpoints, application-center assets, and remote login-background defaults. `prohibited_defaults_removed.php` recursively guards PHP, JavaScript, HTML, INI and JSON runtime sources. Source attribution remains local and does not require an outbound request.
 
 ## SSRF-sensitive callers
 
