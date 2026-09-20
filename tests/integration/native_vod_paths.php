@@ -50,7 +50,9 @@ function native_playback_round_trip(array $row): void
 
 $versionRow = \think\Db::query('SELECT VERSION() AS version');
 $mysqlVersion = (string) ($versionRow[0]['version'] ?? '');
-native_assert(strpos($mysqlVersion, '5.7.') === 0, 'native path workflow requires MySQL 5.7, got ' . $mysqlVersion . '.');
+$expectedFamily = (string) getenv('MACCMS_TEST_MYSQL_FAMILY');
+native_assert(in_array($expectedFamily, ['5.7', '8.0'], true), 'MACCMS_TEST_MYSQL_FAMILY must be 5.7 or 8.0.');
+native_assert(strpos($mysqlVersion, $expectedFamily . '.') === 0, 'native path workflow expected MySQL ' . $expectedFamily . ', got ' . $mysqlVersion . '.');
 
 $maccms = config('maccms');
 $maccms['app']['vod_search_optimise'] = '';
