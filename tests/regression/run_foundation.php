@@ -1,8 +1,6 @@
 <?php
 
-declare(strict_types=1
-    __DIR__ . '/content_repair_command.php',
-);
+declare(strict_types=1);
 
 $tests = [
     'migration_cli_contract.php',
@@ -16,6 +14,7 @@ $tests = [
     'vod_extension_contract.php',
     'vod_extension_hook.php',
     'content_workflow_hooks.php',
+    'content_repair_command.php',
 ];
 
 foreach ($tests as $test) {
