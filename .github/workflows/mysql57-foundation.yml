@@ -71,6 +71,7 @@ jobs:
           php -l tests/integration/mysql_foundation.php
           php -l tests/integration/content_job_lifecycle.php
           php -l application/command/MaccmsAnalytics.php
+          php -l tests/integration/api_v1_analytics.php
       - name: First migration run
         run: |
           set +e
@@ -93,3 +94,5 @@ jobs:
         run: php tests/integration/mysql_foundation.php
       - name: Verify MySQL 5.7 content job lifecycle
         run: php tests/integration/content_job_lifecycle.php
+      - name: Verify API v1 analytics database boundaries
+        run: php tests/integration/api_v1_analytics.php
