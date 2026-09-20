@@ -9,10 +9,8 @@ return array (
     'content' => 
     array (
       'fixed' => '固定',
-      'random' => '每次随机',
-      'daily' => '每日切换',
     ),
-    'value' => 'random',
+    'value' => 'fixed',
     'rule' => 'required',
     'msg' => '',
     'tip' => '根据自身爱好选择',
