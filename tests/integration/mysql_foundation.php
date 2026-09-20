@@ -31,7 +31,7 @@ if (strpos($version, $expectedFamily . '.') !== 0) {
 }
 
 $ledger = $pdo->query('SELECT version, checksum FROM mac_schema_migration ORDER BY version')->fetchAll(PDO::FETCH_ASSOC);
-if (count($ledger) !== 20
+if (count($ledger) !== 21
     || $ledger[0]['version'] !== '20260918000100'
     || $ledger[1]['version'] !== '20260918000200'
     || $ledger[2]['version'] !== '20260918000300'
@@ -59,11 +59,13 @@ if (count($ledger) !== 20
     || $ledger[17]['version'] !== '20260920000500'
     || $ledger[18]['version'] !== '20260920000600'
     || $ledger[19]['version'] !== '20260920000700'
+    || $ledger[20]['version'] !== '20260920000800'
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[11]['checksum'])
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[12]['checksum'])
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[17]['checksum'])
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[18]['checksum'])
-    || !preg_match('/^[a-f0-9]{64}$/', $ledger[19]['checksum'])) {
+    || !preg_match('/^[a-f0-9]{64}$/', $ledger[19]['checksum'])
+    || !preg_match('/^[a-f0-9]{64}$/', $ledger[20]['checksum'])) {
     fwrite(STDERR, "FAIL: migration ledger does not contain all expected checksummed versions.\n");
     exit(1);
 }
@@ -83,6 +85,8 @@ $requiredIndexes = [
     'mac_content_ai_field_review' => ['PRIMARY', 'uk_run_field', 'idx_vod_decision', 'idx_decision_updated'],
     'mac_content_tmdb_review' => ['PRIMARY', 'uk_vod_revision', 'idx_status_updated', 'idx_selected'],
     'mac_content_taxonomy_suggestion' => ['PRIMARY', 'uk_source_value', 'idx_vod_decision', 'idx_matched_term'],
+    'mac_video_import_nonce' => ['PRIMARY', 'idx_import_nonce_created'],
+    'mac_video_import_request' => ['PRIMARY', 'uniq_import_idempotency', 'idx_import_status_created'],
 ];
 $tableStatement = $pdo->prepare(
     'SELECT ENGINE, TABLE_COLLATION FROM information_schema.TABLES WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?'

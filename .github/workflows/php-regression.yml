@@ -157,6 +157,10 @@ jobs:
           php -l application/common/util/VodPlaybackCodec.php
           php -l application/common/util/VodExtensionService.php
           php -l application/common/util/ContentJobRepository.php
+          php -l application/common/util/ContentImportAuthenticator.php
+          php -l application/common/util/ContentImportService.php
+          php -l application/api/controller/v1/Import.php
+          php -l tests/regression/api_v1_import.php
           php -l application/common/util/ContentJobWorker.php
           php -l application/common/util/TmdbReviewWorkspace.php
           php -l application/common/util/TmdbReviewJobHandler.php

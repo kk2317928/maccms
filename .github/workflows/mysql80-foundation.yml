@@ -21,6 +21,8 @@ on:
       - 'tests/integration/mysql_foundation.php'
       - 'tests/integration/content_job_lifecycle.php'
       - 'application/common/util/ContentJobRepository.php'
+      - 'application/common/util/ContentImport*.php'
+      - 'tests/integration/api_v1_import_mysql.php'
       - 'application/common/util/ContentAdminRoutePolicy.php'
       - 'application/admin/controller/Base.php'
       - 'application/admin/controller/ContentWorkspace.php'
@@ -72,6 +74,7 @@ jobs:
           php -l tests/integration/content_job_lifecycle.php
           php -l application/command/MaccmsAnalytics.php
           php -l tests/integration/api_v1_analytics.php
+          php -l tests/integration/api_v1_import_mysql.php
       - name: Install native schema
         run: mysql --protocol=tcp --host=127.0.0.1 --port=3306 --user=root --password=root --database=maccms_ci_80 < application/install/sql/install.sql
       - name: First migration run
@@ -82,7 +85,7 @@ jobs:
           set -e
           echo "$output"
           test "$status" -eq 0
-          grep -q 'done, applied=20, skipped=0' <<< "$output"
+          grep -q 'done, applied=21, skipped=0' <<< "$output"
       - name: Second migration run is a no-op
         run: |
           set +e
@@ -91,10 +94,12 @@ jobs:
           set -e
           echo "$output"
           test "$status" -eq 0
-          grep -q 'done, applied=0, skipped=20' <<< "$output"
+          grep -q 'done, applied=0, skipped=21' <<< "$output"
       - name: Verify MySQL 8.0 schema invariants
         run: php tests/integration/mysql_foundation.php
       - name: Verify MySQL 8.0 content job lifecycle
         run: php tests/integration/content_job_lifecycle.php
       - name: Verify API v1 analytics database boundaries
         run: php tests/integration/api_v1_analytics.php
+      - name: Verify protected import ledger
+        run: php tests/integration/api_v1_import_mysql.php

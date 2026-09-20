@@ -1384,6 +1384,87 @@
           }
         }
       }
+    },
+    "/import/videos": {
+      "post": {
+        "summary": "Import one video through native persistence",
+        "operationId": "importVideo",
+        "security": [
+          {
+            "importTimestamp": [],
+            "importNonce": [],
+            "importSignature": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 12,
+              "maxLength": 191
+            }
+          },
+          {
+            "name": "X-Import-Timestamp",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Import-Nonce",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Import-Signature",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Fa-f0-9]{64}$"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VideoImportRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Imported or idempotently replayed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Import is processing or native persistence failed"
+          },
+          "422": {
+            "description": "Authentication, idempotency or payload rejected"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1392,6 +1473,24 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT"
+      },
+      "importTimestamp": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Import-Timestamp",
+        "description": "Unix timestamp within 300 seconds."
+      },
+      "importNonce": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Import-Nonce",
+        "description": "Unique 12-128 character replay nonce."
+      },
+      "importSignature": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Import-Signature",
+        "description": "HMAC-SHA256 over timestamp, nonce, method, path and body digest."
       }
     },
     "schemas": {
@@ -2730,6 +2829,112 @@
           }
         },
         "additionalProperties": false
+      },
+      "VideoImportRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "vod_name",
+          "type_id"
+        ],
+        "properties": {
+          "vod_name": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "vod_en": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "type_id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "vod_sub": {
+            "type": "string"
+          },
+          "vod_year": {
+            "type": "string"
+          },
+          "vod_area": {
+            "type": "string"
+          },
+          "vod_lang": {
+            "type": "string"
+          },
+          "vod_class": {
+            "type": "string"
+          },
+          "vod_actor": {
+            "type": "string"
+          },
+          "vod_director": {
+            "type": "string"
+          },
+          "vod_writer": {
+            "type": "string"
+          },
+          "vod_remarks": {
+            "type": "string"
+          },
+          "vod_blurb": {
+            "type": "string"
+          },
+          "vod_content": {
+            "type": "string"
+          },
+          "vod_pic": {
+            "type": "string",
+            "format": "uri-reference"
+          },
+          "vod_play_from": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "vod_play_server": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "vod_play_note": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "vod_play_url": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "VideoImportResult": {
+        "type": "object",
+        "required": [
+          "vod_id",
+          "public_id",
+          "workflow_status"
+        ],
+        "properties": {
+          "vod_id": {
+            "type": "integer"
+          },
+          "public_id": {
+            "type": "string"
+          },
+          "workflow_status": {
+            "type": "string",
+            "enum": [
+              "imported",
+              "ai_processing"
+            ]
+          }
+        }
       }
     },
     "responses": {
