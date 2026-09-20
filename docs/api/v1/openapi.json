@@ -42,7 +42,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Envelope"
+                  "$ref": "#/components/schemas/VersionResponse"
                 }
               }
             }
@@ -67,7 +67,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Envelope"
+                  "$ref": "#/components/schemas/HomeResponse"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string"
                 }
               }
             }
@@ -107,7 +122,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Envelope"
+                  "$ref": "#/components/schemas/VideoSummaryCollectionResponse"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string"
                 }
               }
             }
@@ -203,7 +233,40 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Envelope"
+                  "$ref": "#/components/schemas/VideoDetailResponse"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "308": {
+            "description": "Canonical public identifier",
+            "headers": {
+              "Location": {
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CanonicalRedirectResponse"
                 }
               }
             }
@@ -252,7 +315,40 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Envelope"
+                  "$ref": "#/components/schemas/EpisodeCollectionResponse"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "308": {
+            "description": "Canonical public identifier",
+            "headers": {
+              "Location": {
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CanonicalRedirectResponse"
                 }
               }
             }
@@ -301,7 +397,25 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Envelope"
+                  "$ref": "#/components/schemas/PlaybackResponse"
+                }
+              }
+            }
+          },
+          "308": {
+            "description": "Canonical public identifier",
+            "headers": {
+              "Location": {
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CanonicalRedirectResponse"
                 }
               }
             }
@@ -371,7 +485,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Envelope"
+                  "$ref": "#/components/schemas/VideoSummaryCollectionResponse"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string"
                 }
               }
             }
@@ -435,7 +564,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Envelope"
+                  "$ref": "#/components/schemas/TaxonomyCollectionResponse"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string"
                 }
               }
             }
@@ -475,7 +619,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Envelope"
+                  "$ref": "#/components/schemas/TokenEnvelope"
                 }
               }
             }
@@ -530,7 +674,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Envelope"
+                  "$ref": "#/components/schemas/TokenEnvelope"
                 }
               }
             }
@@ -578,7 +722,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Envelope"
+                  "$ref": "#/components/schemas/RevocationResponse"
                 }
               }
             }
@@ -607,7 +751,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Envelope"
+                  "$ref": "#/components/schemas/SessionCollectionResponse"
                 }
               }
             }
@@ -636,7 +780,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Envelope"
+                  "$ref": "#/components/schemas/RevocationResponse"
                 }
               }
             }
@@ -676,7 +820,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Envelope"
+                  "$ref": "#/components/schemas/FavoriteCollectionResponse"
                 }
               }
             }
@@ -705,7 +849,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Envelope"
+                  "$ref": "#/components/schemas/FavoriteMutationResponse"
                 }
               }
             }
@@ -743,7 +887,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Envelope"
+                  "$ref": "#/components/schemas/FavoriteMutationResponse"
                 }
               }
             }
@@ -783,7 +927,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Envelope"
+                  "$ref": "#/components/schemas/HistoryCollectionResponse"
                 }
               }
             }
@@ -812,7 +956,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Envelope"
+                  "$ref": "#/components/schemas/ProgressResponse"
                 }
               }
             }
@@ -850,7 +994,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Envelope"
+                  "$ref": "#/components/schemas/ProgressResponse"
                 }
               }
             }
@@ -926,7 +1070,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Envelope"
+                  "$ref": "#/components/schemas/DeleteProgressResponse"
                 }
               }
             }
@@ -966,7 +1110,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Envelope"
+                  "$ref": "#/components/schemas/MergeResponse"
                 }
               }
             }
@@ -985,17 +1129,75 @@
                 "properties": {
                   "favorites": {
                     "type": "array",
+                    "maxItems": 50,
                     "items": {
-                      "type": "object"
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "public_id",
+                        "updated_at"
+                      ],
+                      "properties": {
+                        "public_id": {
+                          "type": "string",
+                          "pattern": "^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$"
+                        },
+                        "updated_at": {
+                          "type": "integer",
+                          "format": "int64",
+                          "minimum": 1
+                        }
+                      }
                     }
                   },
-                  "history": {
+                  "progress": {
                     "type": "array",
+                    "maxItems": 50,
                     "items": {
-                      "type": "object"
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "public_id",
+                        "source_id",
+                        "episode_id",
+                        "position_seconds",
+                        "duration_seconds",
+                        "updated_at"
+                      ],
+                      "properties": {
+                        "public_id": {
+                          "type": "string",
+                          "pattern": "^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$"
+                        },
+                        "source_id": {
+                          "type": "string",
+                          "pattern": "^s[1-9][0-9]{0,2}$"
+                        },
+                        "episode_id": {
+                          "type": "string",
+                          "pattern": "^s[1-9][0-9]{0,2}e[1-9][0-9]{0,4}$"
+                        },
+                        "position_seconds": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "duration_seconds": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "updated_at": {
+                          "type": "integer",
+                          "format": "int64",
+                          "minimum": 1
+                        }
+                      }
                     }
                   }
-                }
+                },
+                "required": [
+                  "favorites",
+                  "progress"
+                ]
               }
             }
           }
@@ -1017,6 +1219,21 @@
               "application/json": {
                 "schema": {
                   "type": "object"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string"
                 }
               }
             }
@@ -1165,81 +1382,130 @@
         }
       },
       "VideoDetail": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/VideoSummary"
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "public_id",
+          "title",
+          "titles",
+          "poster",
+          "year",
+          "remarks",
+          "score",
+          "published_at",
+          "synopsis",
+          "actors",
+          "directors",
+          "area",
+          "language",
+          "episode",
+          "trailer_url",
+          "preview_url",
+          "taxonomies"
+        ],
+        "properties": {
+          "public_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9]{6}$"
           },
-          {
+          "title": {
+            "type": "string"
+          },
+          "titles": {
             "type": "object",
             "additionalProperties": false,
             "required": [
-              "synopsis",
-              "actors",
-              "directors",
-              "area",
-              "language",
-              "episode",
-              "trailer_url",
-              "preview_url",
-              "taxonomies"
+              "tw",
+              "cn",
+              "en",
+              "original"
             ],
             "properties": {
-              "synopsis": {
+              "tw": {
                 "type": "string"
               },
-              "actors": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "directors": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "area": {
+              "cn": {
                 "type": "string"
               },
-              "language": {
+              "en": {
                 "type": "string"
               },
-              "episode": {
-                "type": "object",
-                "additionalProperties": false,
-                "required": [
-                  "current",
-                  "total",
-                  "complete"
-                ],
-                "properties": {
-                  "current": {
-                    "type": "integer"
-                  },
-                  "total": {
-                    "type": "integer"
-                  },
-                  "complete": {
-                    "type": "boolean"
-                  }
-                }
-              },
-              "trailer_url": {
+              "original": {
                 "type": "string"
-              },
-              "preview_url": {
-                "type": "string"
-              },
-              "taxonomies": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Taxonomy"
-                }
               }
             }
+          },
+          "poster": {
+            "type": "string"
+          },
+          "year": {
+            "type": "string"
+          },
+          "remarks": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number",
+            "format": "float"
+          },
+          "published_at": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "synopsis": {
+            "type": "string"
+          },
+          "actors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "directors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "area": {
+            "type": "string"
+          },
+          "language": {
+            "type": "string"
+          },
+          "episode": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "current",
+              "total",
+              "complete"
+            ],
+            "properties": {
+              "current": {
+                "type": "integer"
+              },
+              "total": {
+                "type": "integer"
+              },
+              "complete": {
+                "type": "boolean"
+              }
+            }
+          },
+          "trailer_url": {
+            "type": "string"
+          },
+          "preview_url": {
+            "type": "string"
+          },
+          "taxonomies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Taxonomy"
+            }
           }
-        ]
+        }
       },
       "Taxonomy": {
         "type": "object",
@@ -1509,6 +1775,772 @@
           "session_id": {
             "type": "string",
             "pattern": "^[a-f0-9]{32}$"
+          }
+        }
+      },
+      "VersionResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "version"
+            ],
+            "properties": {
+              "version": {
+                "type": "string"
+              }
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "request_id"
+            ],
+            "properties": {
+              "request_id": {
+                "type": "string",
+                "maxLength": 64
+              },
+              "locale": {
+                "type": "string",
+                "enum": [
+                  "zh-TW",
+                  "zh-CN",
+                  "en"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "HomeResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "latest"
+            ],
+            "properties": {
+              "latest": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/VideoSummary"
+                }
+              }
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "request_id"
+            ],
+            "properties": {
+              "request_id": {
+                "type": "string",
+                "maxLength": 64
+              },
+              "locale": {
+                "type": "string",
+                "enum": [
+                  "zh-TW",
+                  "zh-CN",
+                  "en"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "VideoSummaryCollectionResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VideoSummary"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "request_id",
+              "pagination"
+            ],
+            "properties": {
+              "request_id": {
+                "type": "string"
+              },
+              "locale": {
+                "type": "string",
+                "enum": [
+                  "zh-TW",
+                  "zh-CN",
+                  "en"
+                ]
+              },
+              "pagination": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "page",
+                  "per_page",
+                  "total_items",
+                  "total_pages"
+                ],
+                "properties": {
+                  "page": {
+                    "type": "integer"
+                  },
+                  "per_page": {
+                    "type": "integer"
+                  },
+                  "total_items": {
+                    "type": "integer"
+                  },
+                  "total_pages": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "VideoDetailResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/VideoDetail"
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "request_id"
+            ],
+            "properties": {
+              "request_id": {
+                "type": "string",
+                "maxLength": 64
+              },
+              "locale": {
+                "type": "string",
+                "enum": [
+                  "zh-TW",
+                  "zh-CN",
+                  "en"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "EpisodeCollectionResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/EpisodeCollection"
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "request_id"
+            ],
+            "properties": {
+              "request_id": {
+                "type": "string",
+                "maxLength": 64
+              },
+              "locale": {
+                "type": "string",
+                "enum": [
+                  "zh-TW",
+                  "zh-CN",
+                  "en"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "PlaybackResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Playback"
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "request_id"
+            ],
+            "properties": {
+              "request_id": {
+                "type": "string",
+                "maxLength": 64
+              },
+              "locale": {
+                "type": "string",
+                "enum": [
+                  "zh-TW",
+                  "zh-CN",
+                  "en"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "TaxonomyCollectionResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Taxonomy"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "request_id"
+            ],
+            "properties": {
+              "request_id": {
+                "type": "string",
+                "maxLength": 64
+              },
+              "locale": {
+                "type": "string",
+                "enum": [
+                  "zh-TW",
+                  "zh-CN",
+                  "en"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "TokenEnvelope": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/TokenResponse"
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "request_id"
+            ],
+            "properties": {
+              "request_id": {
+                "type": "string",
+                "maxLength": 64
+              },
+              "locale": {
+                "type": "string",
+                "enum": [
+                  "zh-TW",
+                  "zh-CN",
+                  "en"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "Session": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "session_id",
+          "device_name",
+          "created_at",
+          "last_used_at",
+          "expires_at",
+          "revoked"
+        ],
+        "properties": {
+          "session_id": {
+            "type": "string"
+          },
+          "device_name": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "last_used_at": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expires_at": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "revoked": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SessionCollectionResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Session"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "request_id"
+            ],
+            "properties": {
+              "request_id": {
+                "type": "string",
+                "maxLength": 64
+              },
+              "locale": {
+                "type": "string",
+                "enum": [
+                  "zh-TW",
+                  "zh-CN",
+                  "en"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "FavoriteCollectionResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Favorite"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "request_id",
+              "pagination"
+            ],
+            "properties": {
+              "request_id": {
+                "type": "string"
+              },
+              "locale": {
+                "type": "string",
+                "enum": [
+                  "zh-TW",
+                  "zh-CN",
+                  "en"
+                ]
+              },
+              "pagination": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "page",
+                  "per_page",
+                  "total_items",
+                  "total_pages"
+                ],
+                "properties": {
+                  "page": {
+                    "type": "integer"
+                  },
+                  "per_page": {
+                    "type": "integer"
+                  },
+                  "total_items": {
+                    "type": "integer"
+                  },
+                  "total_pages": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "HistoryCollectionResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/History"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "request_id",
+              "pagination"
+            ],
+            "properties": {
+              "request_id": {
+                "type": "string"
+              },
+              "locale": {
+                "type": "string",
+                "enum": [
+                  "zh-TW",
+                  "zh-CN",
+                  "en"
+                ]
+              },
+              "pagination": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "page",
+                  "per_page",
+                  "total_items",
+                  "total_pages"
+                ],
+                "properties": {
+                  "page": {
+                    "type": "integer"
+                  },
+                  "per_page": {
+                    "type": "integer"
+                  },
+                  "total_items": {
+                    "type": "integer"
+                  },
+                  "total_pages": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ProgressResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Progress"
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "request_id"
+            ],
+            "properties": {
+              "request_id": {
+                "type": "string",
+                "maxLength": 64
+              },
+              "locale": {
+                "type": "string",
+                "enum": [
+                  "zh-TW",
+                  "zh-CN",
+                  "en"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "FavoriteMutationResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "public_id",
+              "favorited"
+            ],
+            "properties": {
+              "public_id": {
+                "type": "string"
+              },
+              "favorited": {
+                "type": "boolean"
+              }
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "request_id"
+            ],
+            "properties": {
+              "request_id": {
+                "type": "string",
+                "maxLength": 64
+              },
+              "locale": {
+                "type": "string",
+                "enum": [
+                  "zh-TW",
+                  "zh-CN",
+                  "en"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "DeleteProgressResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "public_id",
+              "deleted"
+            ],
+            "properties": {
+              "public_id": {
+                "type": "string"
+              },
+              "deleted": {
+                "type": "boolean"
+              }
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "request_id"
+            ],
+            "properties": {
+              "request_id": {
+                "type": "string",
+                "maxLength": 64
+              },
+              "locale": {
+                "type": "string",
+                "enum": [
+                  "zh-TW",
+                  "zh-CN",
+                  "en"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "RevocationResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "revoked"
+            ],
+            "properties": {
+              "revoked": {
+                "type": "boolean"
+              },
+              "session_id": {
+                "type": "string"
+              }
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "request_id"
+            ],
+            "properties": {
+              "request_id": {
+                "type": "string",
+                "maxLength": 64
+              },
+              "locale": {
+                "type": "string",
+                "enum": [
+                  "zh-TW",
+                  "zh-CN",
+                  "en"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "MergeResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "favorites",
+              "progress"
+            ],
+            "properties": {
+              "favorites": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "progress": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "request_id"
+            ],
+            "properties": {
+              "request_id": {
+                "type": "string",
+                "maxLength": 64
+              },
+              "locale": {
+                "type": "string",
+                "enum": [
+                  "zh-TW",
+                  "zh-CN",
+                  "en"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "CanonicalRedirectResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "canonical_public_id"
+            ],
+            "properties": {
+              "canonical_public_id": {
+                "type": "string"
+              }
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "request_id"
+            ],
+            "properties": {
+              "request_id": {
+                "type": "string",
+                "maxLength": 64
+              },
+              "locale": {
+                "type": "string",
+                "enum": [
+                  "zh-TW",
+                  "zh-CN",
+                  "en"
+                ]
+              }
+            }
           }
         }
       }
