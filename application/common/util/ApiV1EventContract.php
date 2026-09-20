@@ -30,8 +30,8 @@ final class ApiV1EventContract
         if (!preg_match('/^[A-Z2-9]{6}$/',$publicId)) throw new InvalidArgumentException('Invalid public_id.');
         $occurred=filter_var($input['occurred_at']??null,FILTER_VALIDATE_INT);
         if ($occurred===false || $occurred<=0) throw new InvalidArgumentException('Invalid occurred_at.');
-        $position=isset($input['position_seconds'])?(int)$input['position_seconds']:0;
-        $duration=isset($input['duration_seconds'])?(int)$input['duration_seconds']:0;
+        $position=self::unsigned($input,'position_seconds',0,4294967295);
+        $duration=self::unsigned($input,'duration_seconds',0,4294967295);
         if ($position<0 || $duration<0 || ($duration>0 && $position>$duration)) throw new InvalidArgumentException('Invalid playback position.');
         $episode=trim(isset($input['episode'])?(string)$input['episode']:'');
         if (strlen($episode)>191) throw new InvalidArgumentException('Invalid episode.');
@@ -47,10 +47,18 @@ final class ApiV1EventContract
     public static function actorKey($memberId,$sessionId,$deviceId): string
     {
         if ((int)$memberId>0) return 'member:'.(int)$memberId;
-        $sessionId=trim((string)$sessionId);
-        if ($sessionId!=='') return 'session:'.hash('sha256',$sessionId);
         $deviceId=trim((string)$deviceId);
         if ($deviceId!=='') return 'device:'.hash('sha256',$deviceId);
+        $sessionId=trim((string)$sessionId);
+        if ($sessionId!=='') return 'session:'.hash('sha256',$sessionId);
         throw new InvalidArgumentException('An event actor is required.');
+    }
+    private static function unsigned(array $input,$key,$default,$max): int
+    {
+        if(!array_key_exists($key,$input))return (int)$default;
+        $value=$input[$key];
+        if(is_int($value) && $value>=0 && $value<=$max)return $value;
+        if(is_string($value) && preg_match('/\\A(?:0|[1-9][0-9]{0,9})\\z/D',$value)===1 && (float)$value<=$max)return (int)$value;
+        throw new InvalidArgumentException('Invalid '.$key.'.');
     }
 }
