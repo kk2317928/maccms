@@ -26,6 +26,7 @@ jobs:
           php -l tests/regression/outbound_inventory_contract.php
           php -l tests/regression/outbound_inventory.php
           php -l tests/regression/official_update_removed.php
+          php -l tests/regression/prohibited_defaults_removed.php
           php -l tests/regression/run_baseline.php
           php -l tests/regression/migration_discovery.php
           php -l tests/regression/migration_cli_contract.php
