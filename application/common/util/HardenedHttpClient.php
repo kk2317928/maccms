@@ -36,9 +36,13 @@ class HardenedHttpClient
         $allowedHosts = $options['allowed_hosts'] ?? [];
         $timeout = max(1, min(120, (int) ($options['timeout'] ?? 15)));
         $maxBytes = max(1, min(10485760, (int) ($options['max_bytes'] ?? 1048576)));
+        $maxRequestBytes = max(1, min(10485760, (int) ($options['max_request_bytes'] ?? 2097152)));
         $maxRedirects = max(0, min(5, (int) ($options['max_redirects'] ?? 0)));
         $headers = is_array($options['headers'] ?? null) ? $options['headers'] : [];
         $body = (string) ($options['body'] ?? '');
+        if ($method === 'POST' && strlen($body) > $maxRequestBytes) {
+            throw new InvalidArgumentException('External HTTP request exceeded the size limit.');
+        }
 
         for ($hop = 0; ; $hop++) {
             $target = $this->policy->validate($url, $allowedHosts);
@@ -124,7 +128,10 @@ class HardenedHttpClient
                 $name = trim($pair[0]);
                 $value = trim($pair[1]);
             }
-            if (!preg_match('/^[A-Za-z0-9-]+$/', (string) $name) || preg_match('/[\r\n]/', (string) $value)) {
+            $normalizedName = strtolower((string) $name);
+            if (in_array($normalizedName, ['host', 'connection', 'content-length', 'transfer-encoding'], true)
+                || !preg_match('/^[A-Za-z0-9-]+$/', (string) $name)
+                || preg_match('/[\r\n]/', (string) $value)) {
                 throw new InvalidArgumentException('Invalid external HTTP header.');
             }
             $lines[] = $name . ': ' . $value;
