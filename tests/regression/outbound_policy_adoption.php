@@ -9,7 +9,7 @@ $errors = [];
 if (strpos($client, 'public function post(') === false) {
     $errors[] = 'HardenedHttpClient must provide a bounded POST boundary.';
 }
-if (strpos($client, "'method' => 'POST'") === false) {
+if (strpos($client, "request('POST'") === false || strpos($client, "'method' => $method") === false) {
     $errors[] = 'HardenedHttpClient POST must pass an explicit method to the transport.';
 }
 
