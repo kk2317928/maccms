@@ -11,6 +11,7 @@ $tests = array(
     __DIR__ . '/api_v1_delivery_policy.php',
     __DIR__ . '/api_v1_openapi.php',
     __DIR__ . '/api_v1_events.php',
+    __DIR__ . '/api_v1_rankings.php',
 );
 
 foreach ($tests as $test) {
