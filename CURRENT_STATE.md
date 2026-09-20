@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-20
-State document version: 79
+State document version: 80
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -16,7 +16,7 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 **Starting commit:** T-073 final implementation commit `326515e67b85ac6e7f4509eb9dd4c3e2f99a5cea`.
 **Last completed task:** T-097 — annotated tag `headless-ai-v1.0.0` targets accepted candidate `fbd5521d7c688c2e430a7a746e07c771e30eb84e`.
 **Last verification:** PHP regression `35511088543`, release matrix `35511088544`, and rollback rehearsal `35510999172` passed.
-**Next action:** create annotated tag `headless-ai-v1.0.1` at hotfix candidate `bab28456825e1cf170f3a4b3fb07c61f1a49b581`; do not deploy `v1.0.0` for fresh installation.
+**Next action:** create annotated tag `headless-ai-v1.0.1` at hotfix candidate `0b70890bba914dd161672eca681dc4b44eed7a2c`; do not deploy `v1.0.0` for fresh installation.
 
 ## 1. Confirmed product direction
 
@@ -182,10 +182,10 @@ Absence was established by repository text search against the pinned snapshot. I
 
 ```text
 Task: T-098 Publish headless-ai-v1.0.1
-Release candidate: bab28456825e1cf170f3a4b3fb07c61f1a49b581
-Fix: preserve upload/.gitkeep while ignoring user-uploaded content
-Last verification: PHP 35516297472; release matrix 35516296593; rollback rehearsal 35516297465
-Result: installer-required ./upload is present in release checkouts
+Release candidate: 0b70890bba914dd161672eca681dc4b44eed7a2c
+Fix: preserve upload/.gitkeep and provide the missing self-contained captcha runtime
+Last verification: PHP 35517149734; release matrix 35517149693; rollback rehearsal 35517149692
+Result: installer-required ./upload and think\\captcha\\Captcha runtime are present in release checkouts
 Next action: create and push annotated tag headless-ai-v1.0.1 at the release candidate
 Blocker: current GitHub connector cannot create tag refs
 ```
