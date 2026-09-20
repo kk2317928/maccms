@@ -21,9 +21,10 @@ $required = [
     "php tests/integration/mysql_foundation.php",
     "php tests/integration/content_job_lifecycle.php",
     "php tests/integration/api_v1_analytics.php",
+    "php tests/integration/taxonomy_review_mysql.php",
     "php tests/integration/native_vod_paths.php",
     "php tests/regression/outbound_inventory.php --enforce",
-    "done, applied=0, skipped=18",
+    "done, applied=0, skipped=19",
 ];
 foreach ($required as $needle) {
     if (strpos($source, $needle) === false) {
