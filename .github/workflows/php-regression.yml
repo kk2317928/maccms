@@ -21,6 +21,11 @@ jobs:
       - name: PHP syntax
         run: |
           php -l think
+          php -l application/install/controller/Index.php
+          php -l application/admin/controller/Vod.php
+          php -l application/common/util/VodExtensionAdminService.php
+          php -l tests/regression/installed_feature_contract.php
+          php -l tests/regression/vod_extension_admin_service_contract.php
           php -l tests/regression/source_inventory.php
           php -l tests/regression/baseline_runner_contract.php
           php -l tests/regression/outbound_inventory_contract.php
