@@ -4,17 +4,8 @@ declare(strict_types=1);
 
 $root = dirname(__DIR__, 2);
 $errors = [];
-$files = [
-    'application/install/view/index/foot.html',
-    'application/install/view/index/step2.html',
-    'application/install/view/index/step3.html',
-    'application/extra/maccms.php',
-    'application/admin/controller/Addon.php',
-    'application/common/util/AddonCloudService.php',
-    'application/common/util/TemplateCloudService.php',
-    'addons/adminloginbg/Adminloginbg.php',
-    'addons/adminloginbg/config.php',
-];
+$scanRoots = ['application', 'addons', 'static_new'];
+$extensions = ['php' => true, 'js' => true, 'html' => true, 'ini' => true, 'json' => true];
 $prohibited = [
     'www.maccms.la',
     'union.maccms.la',
@@ -22,19 +13,29 @@ $prohibited = [
     'api.maccms.ai',
     'cdn.maccms.ai',
     'img.infinitynewtab.com',
+    'maccmsbox.com',
     'tongji.html',
 ];
 
-foreach ($files as $relative) {
-    $path = $root . '/' . $relative;
-    if (!is_file($path)) {
-        $errors[] = 'Missing inspected file: ' . $relative;
-        continue;
-    }
-    $source = (string) file_get_contents($path);
-    foreach ($prohibited as $needle) {
-        if (stripos($source, $needle) !== false) {
-            $errors[] = $relative . ' retains prohibited default communication: ' . $needle;
+foreach ($scanRoots as $scanRoot) {
+    $directory = $root . '/' . $scanRoot;
+    $iterator = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS)
+    );
+    foreach ($iterator as $file) {
+        if (!$file->isFile()) {
+            continue;
+        }
+        $extension = strtolower(pathinfo($file->getPathname(), PATHINFO_EXTENSION));
+        if (!isset($extensions[$extension])) {
+            continue;
+        }
+        $relative = str_replace('\\\\', '/', substr($file->getPathname(), strlen($root) + 1));
+        $source = (string) file_get_contents($file->getPathname());
+        foreach ($prohibited as $needle) {
+            if (stripos($source, $needle) !== false) {
+                $errors[] = $relative . ' retains prohibited default communication: ' . $needle;
+            }
         }
     }
 }
