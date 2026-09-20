@@ -1741,7 +1741,7 @@ https://www.baidu.com/123.jpg
   'admin/addon/cloud_tab' => 'クラウドマーケット',
   'admin/addon/cloud_disabled' => 'プラグインのクラウドマーケットは無効です',
   'admin/addon/cloud_disabled_hint' => 'クラウドマーケットはオフです。addon_cloud.status=1 を設定してください。UI 骨格確認には mock=1（catalog.mock.json、インストール禁止）。本番インストールには RS256 署名カタログと公開鍵が必要です。',
-  'admin/addon/legacy_catalog_hint' => 'ローカル一覧は旧 api.maccms.com の読み取り専用メタデータを結合できます。インストールはクラウドマーケットまたはローカル zip を使用してください（legacy_catalog=0 で無効化）。',
+  'admin/addon/legacy_catalog_hint' => 'ローカル一覧は旧 legacy official catalog の読み取り専用メタデータを結合できます。インストールはクラウドマーケットまたはローカル zip を使用してください（legacy_catalog=0 で無効化）。',
   'admin/addon/cloud_mock_no_install' => 'モックカタログモードのため、クラウドインストールは禁止されています',
   'admin/addon/cloud_mock_hint' => 'モックカタログモード（addon_cloud.mock=1）：一覧表示のみでクラウドインストール不可です。',
   'admin/addon/cloud_use_catalog' => '未署名のリモートインストールは終了しました。署名付きクラウドマーケットまたはローカル zip を使用してください',
