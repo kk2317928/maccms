@@ -19,4 +19,6 @@ rank_ok(VideoRankingWindows::rank($rows,'days_30')===[['vod_id'=>1,'score'=>7],[
 $m=file_get_contents($root.'/application/data/migrations/20260920000200_api_video_rankings.sql');
 rank_ok($m!==false,'ranking migration exists');
 foreach(['api_video_rank','stat_date','today_score','days_7_score','days_30_score','all_time_score','UNIQUE KEY'] as $n)rank_ok(stripos($m,$n)!==false,"migration contains {$n}");
+$command=file_get_contents($root.'/application/command/MaccmsAnalytics.php');
+rank_ok($command!==false && strpos($command,'VideoRankingRepository')!==false && strpos($command,'purge')!==false,'scheduled analytics command wires aggregation and purge');
 fwrite(STDOUT,"Video ranking windows passed.\n");
