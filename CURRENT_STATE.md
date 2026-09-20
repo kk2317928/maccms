@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-20
-State document version: 82
+State document version: 83
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-09 — official communication removal and release hardening.
 **Active checkpoint:** completion repair.
-**Active task:** T-110 — safe repair command for existing installations (`READY`).
-**Starting commit:** T-109 implementation head `801207df9ae719cbcf615d62b02700a4b94da79e`.
-**Last completed task:** T-109 — people and public site-config APIs.
-**Last verification:** PHP `35536300731`, MySQL 5.7 `35536300681`, MySQL 8.0 `35536300682`, native `35536300680`, release matrix `35536300688`, and rollback `35536300677` passed.
-**Next action:** implement T-110 safe repair command for existing installations.
+**Active task:** T-111 — end-to-end lifecycle, documentation and release candidate (`READY`).
+**Starting commit:** T-110 verified head `56c62db42d62a8d65b0ae2e5fabb4fab899c069b`.
+**Last completed task:** T-110 — safe repair command for existing installations.
+**Last verification:** PHP `35537228886`, MySQL 5.7 `35537228865`, MySQL 8.0 `35537228822`, release matrix `35537228874`, and rollback `35537228823` passed.
+**Next action:** execute T-111 end-to-end lifecycle verification, documentation and release-candidate gates.
 
 ## 1. Confirmed product direction
 
@@ -224,3 +224,14 @@ Verified release gap at `231e1900cf41f26c2b33bd6cb362e41af4ede7ac`:
 - T-103 added reviewed taxonomy suggestions without automatic term creation. AI/TMDB stage candidates; only unique active matches may be accepted, manual taxonomy locks fail closed, and accepted terms update `vod_meta_term` before native projection synchronization.
 - T-103 verification: PHP `35530726030`, MySQL 5.7 `35530726006`, MySQL 8.0 `35530726051`, release matrix `35530629907`, rollback rehearsal `35530629915`.
 - T-104 connects AI completion to duplicate review/TMDB, advances all-different candidates after commit, advances only the merge primary, and moves TMDB select/no-match to manual review after the admin transaction commits.
+
+
+## 13. T-110 safe repair command
+
+- Added a dry-run-first `maccms:repair-content` command with explicit `--apply --confirm=REPAIR` authorization and bounded batches.
+- Default selection excludes completed and protected rows so repeated commands progress beyond low-ID records.
+- Apply mode re-reads and locks current workflow, merge, manual-lock, taxonomy-suggestion and AI-job state inside each transaction.
+- Repair creates missing extension/workflow state, stages taxonomy suggestions without accepting or creating terms, and enqueues missing AI work idempotently.
+- Independent review found and resolved batch starvation and transaction-time safety races; no Critical or remaining Important findings were reported.
+- Verified at `56c62db42d62a8d65b0ae2e5fabb4fab899c069b`: PHP `35537228886`, MySQL 5.7 `35537228865`, MySQL 8.0 `35537228822`, release matrix `35537228874`, rollback `35537228823`.
+- Next task: T-111 end-to-end lifecycle, documentation and release candidate.
