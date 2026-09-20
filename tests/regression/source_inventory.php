@@ -81,6 +81,7 @@ foreach ($lineCounts as $relativePath => $expected) {
 $commandConfig = @file_get_contents($root . '/application/command.php');
 inventory_assert(is_string($commandConfig) && strpos($commandConfig, "app\\\\command\\\\SeoAiGenerate") !== false, 'SeoAiGenerate is not registered.');
 inventory_assert(is_string($commandConfig) && strpos($commandConfig, "app\\\\command\\\\MaccmsJobs") !== false, 'MaccmsJobs is not registered.');
+inventory_assert(is_file($root . '/application/common/util/VodExtensionAdminService.php'), 'VodExtensionAdminService is missing.');
 
 $inventoryDocument = $root . '/docs/development/source-inventory.md';
 inventory_assert(is_file($inventoryDocument), 'Source inventory document is missing.');
