@@ -858,4 +858,14 @@ Next task: T-107 intelligent-content admin operations
 - Review fixes: native runtime config RED `976d3c8dcd731a37b8951dccaf6080ab9e14cb2c`; collision-free/bounded person lookup `801207df9ae719cbcf615d62b02700a4b94da79e`.
 - GREEN evidence: PHP `35536300731`, MySQL 5.7 `35536300681`, MySQL 8.0 `35536300682`, native `35536300680`, release matrix `35536300688`, rollback `35536300677`.
 
-Next task: T-110 safe repair command for existing installations
+### T-110 Safe repair command for existing installations — `DONE`
+
+- Added `maccms:repair-content` with mutation-free dry-run, explicit `--apply --confirm=REPAIR`, and a bounded 1–500 row batch.
+- Eligible-row filtering prevents completed or protected low-ID records from starving later batches.
+- Apply mode locks and re-reads native, extension, manual-lock, job and taxonomy state inside the transaction before changing anything.
+- Existing published, merged, manual-review or manually locked videos fail closed; repair taxonomy is staged for review and missing AI work uses the existing idempotent coordinator.
+- RED/implementation range: `fc07e3aa08b084be874af818f202a5566785b829` through `72d3c3aa53234353dea1972d27dd98c40fd876c6`.
+- Independent-review fixes: `616b0fa093b43cbe7ef65e5cf1aef73d25ec0600` through `56c62db42d62a8d65b0ae2e5fabb4fab899c069b`.
+- GREEN evidence: PHP `35537228886`, MySQL 5.7 `35537228865`, MySQL 8.0 `35537228822`, release matrix `35537228874`, rollback `35537228823`.
+
+Next task: T-111 end-to-end lifecycle, documentation and release candidate
