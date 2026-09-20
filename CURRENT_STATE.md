@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-19
-State document version: 71
+State document version: 72
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-06 — intelligent-content administration workspace.
 **Active checkpoint:** CP-07 — Headless API v1 and member sessions.
-**Active task:** T-074 — favorites/history/progress DTO and anonymous merge (`IN_PROGRESS`).
+**Active task:** T-075 — playback source policy and optional signing (`IN_PROGRESS`).
 **Starting commit:** T-073 final implementation commit `326515e67b85ac6e7f4509eb9dd4c3e2f99a5cea`.
-**Last completed task:** T-073 — access plus rotating hashed refresh sessions, implementation commit `326515e67b85ac6e7f4509eb9dd4c3e2f99a5cea`.
-**Last verification:** PHP `35468598811`, MySQL 5.7 `35468598872`, MySQL 8.0 `35468598851` and native video `35468598836` passed the T-073 session-security, database and native compatibility matrix.
-**Next action:** execute PHP regression for the reviewed T-074 head, resolve any failures, then record green evidence and mark T-074 complete.
+**Last completed task:** T-074 — favorites/history/progress DTO and anonymous merge, final commit `60a6e4bcbfa2f23560804e81b3ad7b917d4bafab`.
+**Last verification:** PHP regression `35498624705` passed the complete syntax and regression matrix for T-074.nd native video `35468598836` passed the T-073 session-security, database and native compatibility matrix.
+**Next action:** define the failing T-075 playback source policy and optional signing contract, then implement it against the shared native playback codec.n for the reviewed T-074 head, resolve any failures, then record green evidence and mark T-074 complete.
 
 ## 1. Confirmed product direction
 
@@ -157,6 +157,7 @@ Absence was established by repository text search against the pinned snapshot. I
 | API v1 route/error/pagination/DTO foundation | PASS | PHP `35462362148`, MySQL 5.7 `35462362150`, MySQL 8.0 `35462362152`, native video `35462362293`; clean dispatch, stable envelopes, strict page pagination, request-ID and DTO allowlist contracts passed |
 | API v1 public catalog | PASS | PHP `35465825379`, MySQL 5.7 `35465825407`, MySQL 8.0 `35465825384`, native video `35465825364`; published-only queries, exact routes, DTO allowlists, search/filter validation and playback-URL non-disclosure passed |
 | API v1 locale and canonical redirects | PASS | PHP `35466523627`, MySQL 5.7 `35466454603`, MySQL 8.0 `35466454584`, native video `35466454598`; strict locale selection, quality weights, deterministic fallback, published canonical target checks and safe 308 redirects passed |
+| API v1 member activity | PASS | PHP `35498624705`; public-ID favorites/history/progress, deterministic anonymous merge, MyISAM serialization and entitlement isolation passed |
 | API v1 access and refresh sessions | PASS | PHP `35468598811`, MySQL 5.7 `35468598872`, MySQL 8.0 `35468598851`, native video `35468598836`; short-lived access tokens, hashed rotating refresh sessions, replay-family revocation, device revocation, legacy-session isolation and no-store responses passed |
 | Video workflow state machine | PASS | PHP 8.1 run `35344911819`; exhaustive transition matrix passed |
 | Lossless native playback codec | PASS | PHP 8.1 run `35345369100`; record-form, validation, round-trip and merge contracts passed |
@@ -179,11 +180,11 @@ Absence was established by repository text search against the pinned snapshot. I
 When pausing mid-task, replace this block with current facts:
 
 ```text
-Task: T-074 Favorites/history/progress DTO and anonymous merge
-Starting commit: 326515e67b85ac6e7f4509eb9dd4c3e2f99a5cea
-Changed files: API activity utilities/controller/routes, Auth context reuse, regression/workflow/inventory docs
-Last command: GitHub workflow lookup for current head
-Result: implementation and independent review fixes pushed through 66548ebd634d981ee7f509efdbfb729c78b197f8; no workflow run was enqueued
-Next action: trigger PHP regression on current head and resolve any failures
-Blocker: GitHub App content commits did not enqueue the push workflow and the connector exposes no workflow-dispatch action
+Task: T-075 Playback source policy and optional signing
+Starting commit: 60a6e4bcbfa2f23560804e81b3ad7b917d4bafab
+Changed files: none yet
+Last command: PHP regression run 35498624705
+Result: T-074 complete; full PHP regression passed
+Next action: add failing T-075 playback delivery contract
+Blocker: none
 ```
