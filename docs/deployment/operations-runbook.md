@@ -59,6 +59,7 @@ sha256sum maccms-before-SHA.sql
 
 Back up these deployment-owned paths while preserving permissions:
 
+- `application/database.php` for the protected database connection configuration;
 - `application/extra` for configuration;
 - `application/data` for migrations and application-managed data;
 - `upload/` for locally stored media;
@@ -96,7 +97,7 @@ The migration ledger is checksum protected. Do not edit an applied migration. Ad
 Use absolute paths, a locked-down service account, and one scheduler owner. Example entries:
 
 ```cron
-* * * * * cd /srv/maccms/current && /usr/bin/php think maccms:jobs --limit=20 >> /var/log/maccms/jobs.log 2>&1
+* * * * * cd /srv/maccms/current && /usr/bin/php think maccms:jobs --max-jobs=20 >> /var/log/maccms/jobs.log 2>&1
 */5 * * * * cd /srv/maccms/current && /usr/bin/php think maccms:analytics >> /var/log/maccms/analytics.log 2>&1
 ```
 
@@ -159,7 +160,10 @@ Example database restore:
 
 ```bash
 mysql --default-character-set=utf8mb4 RESTORE_DATABASE < maccms-before-SHA.sql
-php think maccms:migrate
+# Restore application/database.php through the protected configuration channel,
+# bind its database name to RESTORE_DATABASE, and verify the effective target.
+MACCMS_TEST_DATABASE=RESTORE_DATABASE php tests/integration/mysql_foundation.php
+MACCMS_TEST_DATABASE=RESTORE_DATABASE php think maccms:migrate
 ```
 
 A restore is not complete until application, database, files, permissions, Cron, outbound policy, playback, and administrator access have been verified together.
