@@ -1743,7 +1743,7 @@ Nota: Si se especifican listas negras y blancas, ambas se aplicarán simultánea
   'admin/addon/cloud_tab' => 'Mercado en la nube',
   'admin/addon/cloud_disabled' => 'El mercado en la nube de complementos está desactivado',
   'admin/addon/cloud_disabled_hint' => 'Mercado en la nube desactivado. Establezca addon_cloud.status=1; para el esqueleto de UI use mock=1 (catalog.mock.json, instalación bloqueada). Las instalaciones reales requieren catálogo RS256 y clave pública.',
-  'admin/addon/legacy_catalog_hint' => 'La lista local puede fusionar metadatos de solo lectura de api.maccms.com; instale desde el mercado en la nube o con zip local (legacy_catalog=0 para desactivar).',
+  'admin/addon/legacy_catalog_hint' => 'La lista local puede fusionar metadatos de solo lectura de legacy official catalog; instale desde el mercado en la nube o con zip local (legacy_catalog=0 para desactivar).',
   'admin/addon/cloud_mock_no_install' => 'Modo catálogo mock: instalación en la nube desactivada',
   'admin/addon/cloud_mock_hint' => 'Modo catálogo mock (addon_cloud.mock=1): solo listado, instalación en la nube desactivada.',
   'admin/addon/cloud_use_catalog' => 'La instalación remota sin firma está cerrada; use el mercado en la nube firmado o un zip local',
