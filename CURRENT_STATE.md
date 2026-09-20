@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-20
-State document version: 81
+State document version: 82
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-09 — official communication removal and release hardening.
 **Active checkpoint:** completion repair.
-**Active task:** T-109 — people and public site-config APIs (`READY`).
-**Starting commit:** T-108 implementation head `f571b7df1aba146e9ba0e5d3cc598c5fd439cae2`.
-**Last completed task:** T-108 — protected idempotent video import API.
-**Last verification:** PHP `35535111718`, MySQL 5.7 `35535111683`, MySQL 8.0 `35535111687`, release matrix `35535111709`, and rollback `35535111684` passed.
-**Next action:** implement T-109 people and public site-config APIs.
+**Active task:** T-110 — safe repair command for existing installations (`READY`).
+**Starting commit:** T-109 implementation head `801207df9ae719cbcf615d62b02700a4b94da79e`.
+**Last completed task:** T-109 — people and public site-config APIs.
+**Last verification:** PHP `35536300731`, MySQL 5.7 `35536300681`, MySQL 8.0 `35536300682`, native `35536300680`, release matrix `35536300688`, and rollback `35536300677` passed.
+**Next action:** implement T-110 safe repair command for existing installations.
 
 ## 1. Confirmed product direction
 

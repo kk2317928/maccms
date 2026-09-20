@@ -848,4 +848,14 @@ Next task: T-107 intelligent-content admin operations
 - RED contract: `d2b7f60aa6f8d2501ca4a578b745f4e903af0eba`; implementation/fixes: `09c35165966373fbcebf359a6311f61d8ab88002` through `f571b7df1aba146e9ba0e5d3cc598c5fd439cae2`.
 - GREEN evidence: PHP `35535111718`, MySQL 5.7 `35535111683`, MySQL 8.0 `35535111687`, release matrix `35535111709`, rollback `35535111684`.
 
-Next task: T-109 people and public site-config APIs
+### T-109 People and public site-config APIs — `DONE`
+
+- Added `GET /api/v1/people/{slug}` with a stable six-character non-sequential mapping, direct bounded actor lookup and at most 100 SQL-prefiltered related videos.
+- Person DTO exposes no internal actor/video IDs and returns only native-active people plus published, unmerged videos; unknown slugs return 404.
+- Added `GET /api/v1/site-config` as a closed seven-key DTO sourced from the native runtime configuration; mail, storage, cache, tracking and other secrets are excluded.
+- Registered bootstrap routes, cache/rate policies and exact OpenAPI schemas; also repaired the missing T-108 `POST /api/v1/import/videos` bootstrap route.
+- RED contract: `83ef36ff3eebff23a8015ed170cd6a121eaba986`; implementation/fixes: `d4645d88e5c7c8a5e33d78e44d29f42ed6b1e2f2` through `801207df9ae719cbcf615d62b02700a4b94da79e`.
+- Review fixes: native runtime config RED `976d3c8dcd731a37b8951dccaf6080ab9e14cb2c`; collision-free/bounded person lookup `801207df9ae719cbcf615d62b02700a4b94da79e`.
+- GREEN evidence: PHP `35536300731`, MySQL 5.7 `35536300681`, MySQL 8.0 `35536300682`, native `35536300680`, release matrix `35536300688`, rollback `35536300677`.
+
+Next task: T-110 safe repair command for existing installations
