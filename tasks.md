@@ -756,13 +756,19 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 - Implemented through `398b00dc8ad4a7b4d773720690c28ab331b27433`: Web installation runs ordered/checksummed migrations before `install.lock`; the normal admin menu opens `ContentWorkspace/view`; native video editing exposes validated `vod_ext` multilingual, TMDB, preview and poster fields; omitted extension payloads preserve existing metadata; manual changes use `FieldGovernance` locks.
 - GREEN evidence: PHP regression `35520773620`, MySQL 5.7/8.0 release matrix `35520773720`, and RC rollback rehearsal `35520773582` passed.
 
+
+### T-100 Traditional Chinese operator usage guide — `DONE`
+
+- Added root `使用說明.md` covering fresh install, existing-site migration, multilingual fields, intelligent-content permissions, AI/TMDB, Cron, API v1, RC acceptance, backup/recovery and troubleshooting.
+- Added `tests/regression/usage_guide_contract.php` to keep critical commands, fields, security settings and test-only release status discoverable.
+
 ## Current execution pointer
 
 ```text
 Checkpoint: CP-09 installation usability hotfix
-Next task: T-099
+Next task: T-100
 Task status: DONE
 Starting commit: 231e1900cf41f26c2b33bd6cb362e41af4ede7ac
 Release status: headless-ai-v1.0.2 is retained for traceability but is not accepted for deployment
-Next action: perform a manual fresh Web-install/browser smoke test before creating headless-ai-v1.0.3
+Next action: use 使用說明.md to perform the manual fresh Web-install/browser smoke test before creating headless-ai-v1.0.3
 ```

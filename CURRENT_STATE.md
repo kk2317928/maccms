@@ -200,3 +200,9 @@ Verified release gap at `231e1900cf41f26c2b33bd6cb362e41af4ede7ac`:
 - `headless-ai-v1.0.2` remains immutable for traceability and is not an accepted deployment candidate.
 - T-099 is DONE at `398b00dc8ad4a7b4d773720690c28ab331b27433`; PHP `35520773620`, MySQL 5.7/8.0 `35520773720`, and rollback rehearsal `35520773582` passed.
 - Manual fresh Web-install/browser smoke remains NOT_RUN and is required before a `headless-ai-v1.0.3` release tag.
+
+
+## 11. T-100 operator documentation
+
+- Added root `使用說明.md` for Traditional Chinese installation, administration, Cron, API, recovery and RC acceptance.
+- The guide explicitly keeps `v1.0.3-rc1` test-only until the manual fresh Web-install/browser smoke checklist passes.
