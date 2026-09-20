@@ -30,6 +30,7 @@ jobs:
           php -l tests/regression/outbound_policy_adoption.php
           php -l tests/regression/security_release_hardening.php
           php -l tests/regression/release_matrix_contract.php
+          php -l tests/regression/operations_runbook_contract.php
           php -l tests/regression/run_baseline.php
           php -l tests/regression/migration_discovery.php
           php -l tests/regression/migration_cli_contract.php
