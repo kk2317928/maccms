@@ -159,6 +159,11 @@ jobs:
           php -l application/common/util/ContentJobRepository.php
           php -l application/common/util/ContentImportAuthenticator.php
           php -l application/common/util/ContentImportService.php
+          php -l application/common/util/ApiV1PeopleService.php
+          php -l application/common/util/ApiV1SiteConfig.php
+          php -l application/api/controller/v1/People.php
+          php -l application/api/controller/v1/SiteConfig.php
+          php -l tests/regression/api_v1_people_site_config.php
           php -l application/api/controller/v1/Import.php
           php -l tests/regression/api_v1_import.php
           php -l application/common/util/ContentJobWorker.php

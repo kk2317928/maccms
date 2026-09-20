@@ -4,10 +4,12 @@ declare(strict_types=1);
 require_once __DIR__.'/../../application/common/util/ApiV1Dto.php';
 require_once __DIR__.'/../../application/common/util/ApiV1Locale.php';
 require_once __DIR__.'/../../application/common/util/ApiV1VideoDto.php';
+require_once __DIR__.'/../../application/common/util/ApiV1Bootstrap.php';
 require_once __DIR__.'/../../application/common/util/ApiV1PeopleService.php';
 require_once __DIR__.'/../../application/common/util/ApiV1SiteConfig.php';
 
 use app\common\util\ApiV1Locale;
+use app\common\util\ApiV1Bootstrap;
 use app\common\util\ApiV1PeopleService;
 use app\common\util\ApiV1SiteConfig;
 
@@ -44,5 +46,12 @@ peopleAssert(array_keys($public)===['name','base_url','description','logo','mobi
 peopleAssert($public['name']==='MACCMS' && $public['search_enabled']===true,'site config values mismatch');
 $encoded=json_encode($public);
 foreach(['secret','password','site_tj','cache','email','upload'] as $forbidden)peopleAssert(stripos($encoded,$forbidden)===false,'site config leaks '.$forbidden);
+
+$personRoute=ApiV1Bootstrap::resolve(['REQUEST_METHOD'=>'GET','REQUEST_URI'=>'/api/v1/people/'.$slug,'SCRIPT_NAME'=>'/api.php']);
+$configRoute=ApiV1Bootstrap::resolve(['REQUEST_METHOD'=>'GET','REQUEST_URI'=>'/api/v1/site-config','SCRIPT_NAME'=>'/api.php']);
+$importRoute=ApiV1Bootstrap::resolve(['REQUEST_METHOD'=>'POST','REQUEST_URI'=>'/api/v1/import/videos','SCRIPT_NAME'=>'/api.php']);
+peopleAssert($personRoute['path_info']==='/v1.people/detail/slug/'.$slug,'person route mismatch');
+peopleAssert($configRoute['path_info']==='/v1.site_config/index','site config route mismatch');
+peopleAssert($importRoute['path_info']==='/v1.import/videos','protected import route must remain reachable');
 
 fwrite(STDOUT,"API v1 people and site config regression passed.".PHP_EOL);

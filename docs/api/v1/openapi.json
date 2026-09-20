@@ -1465,6 +1465,68 @@
           }
         }
       }
+    },
+    "/people/{slug}": {
+      "get": {
+        "summary": "Get a person and published related videos",
+        "operationId": "getPerson",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Z0-9]{6}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Person",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "/site-config": {
+      "get": {
+        "summary": "Get public site configuration",
+        "operationId": "getSiteConfig",
+        "responses": {
+          "200": {
+            "description": "Public site configuration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2947,6 +3009,85 @@
               "imported",
               "ai_processing"
             ]
+          }
+        }
+      },
+      "Person": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "slug",
+          "name",
+          "aliases",
+          "photo",
+          "biography",
+          "area",
+          "videos"
+        ],
+        "properties": {
+          "slug": {
+            "type": "string",
+            "pattern": "^[A-Z0-9]{6}$"
+          },
+          "name": {
+            "type": "string"
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "photo": {
+            "type": "string"
+          },
+          "biography": {
+            "type": "string"
+          },
+          "area": {
+            "type": "string"
+          },
+          "videos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VideoSummary"
+            }
+          }
+        }
+      },
+      "SiteConfig": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "base_url",
+          "description",
+          "logo",
+          "mobile_logo",
+          "language",
+          "search_enabled"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "base_url": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "logo": {
+            "type": "string"
+          },
+          "mobile_logo": {
+            "type": "string"
+          },
+          "language": {
+            "type": "string"
+          },
+          "search_enabled": {
+            "type": "boolean"
           }
         }
       }

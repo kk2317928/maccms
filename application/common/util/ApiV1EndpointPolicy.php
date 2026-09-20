@@ -19,6 +19,9 @@ final class ApiV1EndpointPolicy
         if (preg_match('#\\A/api/v1/auth/sessions/[a-f0-9]{32}\\z#D',$path)===1) {
             return self::policy('auth',10,60,array('DELETE'),false);
         }
+        if ($path==='/api/v1/site-config' || preg_match('#\\A/api/v1/people/[A-Z0-9]{6}\\z#D',$path)===1) {
+            return self::policy('catalog',120,60,array('GET'),$method==='GET');
+        }
         if ($path==='/api/v1/import/videos') {
             return self::policy('import',10,60,array('POST'),false);
         }

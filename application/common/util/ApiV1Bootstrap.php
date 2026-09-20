@@ -17,6 +17,8 @@ class ApiV1Bootstrap
         elseif ($path === '/api/v1/videos') { $target = '/v1.catalog/videos'; }
         elseif ($path === '/api/v1/search') { $target = '/v1.catalog/search'; }
         elseif ($path === '/api/v1/taxonomies') { $target = '/v1.catalog/taxonomies'; }
+        elseif ($path === '/api/v1/site-config') { $target = '/v1.site_config/index'; }
+        elseif ($path === '/api/v1/import/videos') { $target = '/v1.import/videos'; $allowed = array('POST'); }
         elseif ($path === '/api/v1/openapi.json') { $target = '/v1.docs/openapi'; }
         elseif ($path === '/api/v1/events') { $target = '/v1.events/ingest'; $allowed = array('POST'); }
         elseif ($path === '/api/v1/rankings') { $target = '/v1.discovery/rankings'; }
