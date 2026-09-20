@@ -106,6 +106,7 @@ jobs:
           php tests/integration/content_job_lifecycle.php
           php tests/integration/api_v1_analytics.php
           php tests/integration/api_v1_import_mysql.php
+          php tests/integration/content_repair_mysql.php
           php tests/integration/taxonomy_review_mysql.php
           php tests/integration/duplicate_restore_mysql.php
           php tests/integration/duplicate_lookup_indexes_mysql.php

@@ -14,4 +14,5 @@ return [
     'app\\command\\MaccmsMigrate',
     'app\\command\\MaccmsJobs',
     'app\\command\\MaccmsAnalytics',
+    'app\\command\\MaccmsRepairContent',
 ];
