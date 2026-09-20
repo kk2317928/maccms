@@ -1,0 +1,107 @@
+name: Release regression matrix
+
+on:
+  push:
+    branches:
+      - feature/headless-ai-v1
+    paths:
+      - '.github/workflows/release-regression.yml'
+      - 'tests/**'
+      - 'application/**'
+      - 'addons/**'
+      - 'static_new/**'
+      - 'think'
+      - 'index.php'
+      - 'api.php'
+      - 'install.php'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release-matrix:
+    name: MySQL ${{ matrix.mysql.family }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        mysql:
+          - family: '5.7'
+            image: 'mysql:5.7'
+          - family: '8.0'
+            image: 'mysql:8.0'
+    services:
+      mysql:
+        image: ${{ matrix.mysql.image }}
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: maccms_release_ci
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=12
+    env:
+      MACCMS_TEST_DATABASE: maccms_release_ci
+      MACCMS_TEST_HOST: 127.0.0.1
+      MACCMS_TEST_PORT: 3306
+      MACCMS_TEST_USER: root
+      MACCMS_TEST_PASSWORD: root
+      MACCMS_TEST_MYSQL_FAMILY: ${{ matrix.mysql.family }}
+      MYSQL_PWD: root
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: pdo_mysql, mbstring
+          coverage: none
+
+      - name: Configure disposable database
+        run: sed -i "s/'database'        => 'maccms10'/'database'        => 'maccms_release_ci'/" application/database.php
+
+      - name: Enforce prohibited outbound policy
+        run: php tests/regression/outbound_inventory.php --enforce
+
+      - name: Programme regression suites
+        run: |
+          php tests/regression/run_baseline.php
+          php tests/regression/run_foundation.php
+          php tests/regression/run_ai_jobs.php
+          php tests/regression/run_duplicate_tmdb.php
+          php tests/regression/run_admin.php
+          php tests/regression/run_api_v1.php
+
+      - name: Install native schema
+        run: mysql --protocol=tcp --host=127.0.0.1 --port=3306 --user=root --database=maccms_release_ci < application/install/sql/install.sql
+
+      - name: First migration run
+        run: |
+          set +e
+          output=$(php think maccms:migrate 2>&1)
+          status=$?
+          set -e
+          echo "$output"
+          test "$status" -eq 0
+          grep -q 'done, applied=17, skipped=0' <<< "$output"
+
+      - name: Second migration run is idempotent
+        run: |
+          set +e
+          output=$(php think maccms:migrate 2>&1)
+          status=$?
+          set -e
+          echo "$output"
+          test "$status" -eq 0
+          grep -q 'done, applied=0, skipped=17' <<< "$output"
+
+      - name: Database and native-path integration
+        run: |
+          php tests/integration/mysql_foundation.php
+          php tests/integration/content_job_lifecycle.php
+          php tests/integration/api_v1_analytics.php
+          php tests/regression/admin_permission_compatibility.php
+          php tests/integration/native_vod_paths.php
