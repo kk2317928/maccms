@@ -39,14 +39,14 @@ class Init
         if (!isset($config['template_cloud']) || !is_array($config['template_cloud'])) {
             $config['template_cloud'] = [
                 'status' => '0',
-                'catalog_url' => 'https://api.maccms.ai/templates/catalog.json',
+                'catalog_url' => '',
                 'cache_ttl' => '10800',
             ];
         }
         if (!isset($config['addon_cloud']) || !is_array($config['addon_cloud'])) {
             $config['addon_cloud'] = [
                 'status' => '0',
-                'catalog_url' => 'https://api.maccms.ai/addons/catalog.json',
+                'catalog_url' => '',
                 'cache_ttl' => '10800',
                 'rate_limit' => '10',
                 'audit_max' => '200',
