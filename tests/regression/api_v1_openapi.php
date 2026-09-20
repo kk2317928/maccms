@@ -47,6 +47,7 @@ $expected=array(
  '/events'=>array('post'),
  '/rankings'=>array('get'),
  '/videos/{public_id}/recommendations'=>array('get'),
+ '/import/videos'=>array('post'),
 );
 foreach($expected as $path=>$methods){
  openapiAssert(isset($document['paths'][$path])&&is_array($document['paths'][$path]),'Undocumented v1 path '.$path);
@@ -66,6 +67,8 @@ openapiSame('http',$security['type']??null,'Bearer security type mismatch.');
 openapiSame('bearer',$security['scheme']??null,'Bearer scheme mismatch.');
 openapiAssert(empty($document['paths']['/auth/login']['post']['security']),'Login must be public.');
 openapiSame(array(array('bearerAuth'=>array())),$document['paths']['/me/history']['get']['security']??null,'Member endpoint security mismatch.');
+openapiSame(array(array('importTimestamp'=>array(),'importNonce'=>array(),'importSignature'=>array())),$document['paths']['/import/videos']['post']['security']??null,'Import HMAC security mismatch.');
+openapiAssert(isset($document['components']['schemas']['VideoImportRequest'],$document['components']['schemas']['VideoImportResult']),'Import schemas missing.');
 
 foreach(array('Envelope','ErrorEnvelope','VideoSummary','VideoDetail','EpisodeCollection','Playback','Favorite','History','Progress','TokenResponse') as $schema){
  openapiAssert(isset($document['components']['schemas'][$schema]),'Missing schema '.$schema);
