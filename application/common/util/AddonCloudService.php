@@ -43,7 +43,7 @@ class AddonCloudService
         }
         $this->config = array_merge([
             'status' => 0,
-            'catalog_url' => 'https://api.maccms.ai/addons/catalog.json',
+            'catalog_url' => '',
             'cache_ttl' => 10800,
             'rate_limit' => 10,
             'audit_max' => 200,
