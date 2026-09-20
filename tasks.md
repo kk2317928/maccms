@@ -814,3 +814,16 @@ Next action: add idempotent AI enqueue hooks to native admin and collection writ
 - GREEN evidence: PHP `35532349970`, release matrix MySQL 5.7/8.0 `35532349836`, rollback `35532349888`.
 
 Next task: T-106 indexed duplicate search and configurable AI usage/budget
+
+### T-106 Indexed duplicate search and configurable AI usage/budget — `DONE`
+
+- RED contract: `tests/regression/ai_usage_and_duplicate_config.php` (`64b23c89d9cea8c0f11fa035cd7b5168913fa8b1`).
+- Duplicate lookup now filters first by TMDB identity or title/year identity and uses only a bounded recent-row fallback.
+- Added MySQL lookup indexes for native and extension title/TMDB fields in migration `20260920000700`.
+- AI content settings now validate prompt version, retry count/delay, duplicate threshold/limits, token prices and daily budget without rendering the API key.
+- OpenAI-compatible, Claude and Gemini token usage is parsed when supplied; missing usage falls back to conservative token estimation and configured micro-cost calculation.
+- Daily-budget exhaustion remains checked before the external provider call.
+- Implementation: `4a1cc5f300f089f339b5e7088165df2f657e7403`, `c0b8a32bcd3f123d82bb0fe0e3f441d2153cb6a0`, `3e30c4cb8100f2b832c4fbfcbdaba2b96ffd3591`, `7dfde4c373dbf4f93bc2315082324622bda7e88c`, `f4366b9d5a18690e18237d285a060b5b5a9ce232`.
+- GREEN evidence: PHP `35533319406`, MySQL 5.7 `35533319413`, MySQL 8.0 `35533319407`, release matrix `35533077996`, rollback `35533077987`.
+
+Next task: T-107 intelligent-content admin operations
