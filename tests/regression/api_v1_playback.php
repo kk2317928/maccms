@@ -66,6 +66,12 @@ $service=file_get_contents($root.'/application/common/util/ApiV1PlaybackService.
 playbackAssert(strpos($service,'VodPlaybackCodec::decode')!==false,'Playback must reuse native codec.');
 playbackAssert(strpos($service,'ApiV1CatalogRepository::PUBLICATION_SQL')!==false,'Playback must enforce published visibility.');
 playbackAssert(strpos($service,'vod_play_note')!==false,'Service must read native parallel columns.');
+$deployment=$root.'/docs/deployment/api-v1-playback.md';
+playbackAssert(is_file($deployment),'Missing playback signer deployment contract.');
+$deploymentText=file_get_contents($deployment);
+playbackAssert(strpos($deploymentText,'MACCMS_API_V1_PLAYBACK_SECRET')!==false,'Deployment contract must name the server-only secret.');
+playbackAssert(strpos($deploymentText,'trusted Next.js server')!==false,'Deployment contract must identify the trusted signer.');
+playbackAssert(strpos($deploymentText,'Never expose')!==false,'Deployment contract must forbid exposing the signing secret.');
 $controller=file_get_contents($root.'/application/api/controller/v1/Playback.php');
 playbackAssert(strpos($controller,'server')===false && strpos($controller,'vod_id')===false,'Controller must not expose internal playback metadata.');
 
