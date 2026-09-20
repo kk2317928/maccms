@@ -189,3 +189,14 @@ Result: installer-required ./upload and think\\captcha\\Captcha runtime are pres
 Next action: create and push annotated tag headless-ai-v1.0.1 at the release candidate
 Blocker: current GitHub connector cannot create tag refs
 ```
+
+
+## 10. T-099 installation usability hotfix
+
+Verified release gap at `231e1900cf41f26c2b33bd6cb362e41af4ede7ac`:
+
+- The Web installer does not invoke `SchemaMigrationService`, so a normal fresh install omits `vod_ext` and the other programme tables.
+- The intelligent-content workspace is not linked from `application/admin/common/auth.php`.
+- The native video form does not expose or persist the target `vod_ext` multilingual and advanced fields.
+- `headless-ai-v1.0.2` remains immutable for traceability and is not an accepted deployment candidate.
+- T-099 is IN_PROGRESS; its first gate is `tests/regression/installed_feature_contract.php`.

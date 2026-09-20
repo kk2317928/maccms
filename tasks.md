@@ -748,14 +748,20 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 
 ---
 
+
+### T-099 Make secondary-development features available after normal installation — `IN_PROGRESS`
+
+- Root cause confirmed: the Web installer imports only the native SQL and never executes `application/data/migrations`; the intelligent-content workspace is not present in the normal admin menu; and `vod_ext` multilingual/advanced fields are not exposed by the native video edit form.
+- RED contract: `tests/regression/installed_feature_contract.php`.
+- Required result: a fresh Web install creates the extension schema, the workspace is discoverable, and native video editing safely reads/writes the extension fields without changing native `vod` compatibility.
+
 ## Current execution pointer
 
-```text
-Checkpoint: CP-09 hotfix
-Next task: T-098
-Task status: AWAITING_TAG
-Release tag: headless-ai-v1.0.1
-Tag target: 0b70890bba914dd161672eca681dc4b44eed7a2c
-Programme status: code and all gates complete; tag publication pending
-Push required: create and push the annotated tag
-```
+\`\`\`text
+Checkpoint: CP-09 installation usability hotfix
+Next task: T-099
+Task status: IN_PROGRESS
+Starting commit: 231e1900cf41f26c2b33bd6cb362e41af4ede7ac
+Release status: headless-ai-v1.0.2 is retained for traceability but is not accepted for deployment
+Next action: run the RED installed-feature contract, then implement installer, menu and native video form integration
+\`\`\`
