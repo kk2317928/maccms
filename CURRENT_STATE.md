@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-20
-State document version: 75
+State document version: 76
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -10,13 +10,13 @@ Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
 
 Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to the approved upstream while the programme is implemented incrementally on the integration branch.
 
-**Last completed checkpoint:** CP-07 — Headless API v1 and member sessions.
-**Active checkpoint:** CP-08 — events, rankings and recommendations.
-**Active task:** T-080 — playback/favorite event contract and deduplication (`IN_PROGRESS`).
+**Last completed checkpoint:** CP-08 — events, rankings and recommendations.
+**Active checkpoint:** CP-09 — official communication removal and release hardening.
+**Active task:** T-090 — remove official update check and admin update routes (`IN_PROGRESS`).
 **Starting commit:** T-073 final implementation commit `326515e67b85ac6e7f4509eb9dd4c3e2f99a5cea`.
-**Last completed task:** T-077 — OpenAPI v1 and contract tests, final implementation commit `876c969a5c8070d503c3f8e8480c0dd589eaa888`.
-**Last verification:** PHP regression `35500967514` passed T-077 after independent-review fixes for raw JSON identity, anonymous progress merge, flattened DTO schemas, typed responses and 304/308 contracts.
-**Next action:** define failing T-080 playback/favorite event and deduplication contracts.
+**Last completed task:** T-084 — ranking/recommendation API and boundary tests, final implementation commit `b17289d92cb8dfc22aaf0486bc244d6da9723b44`.
+**Last verification:** PHP regression `35502082444`, MySQL 5.7 `35502081543`, and MySQL 8.0 `35502082452` passed CP-08 after independent-review fixes.
+**Next action:** define failing T-090 contracts that prohibit the official update client request and admin update routes.
 
 ## 1. Confirmed product direction
 
@@ -180,14 +180,12 @@ Absence was established by repository text search against the pinned snapshot. I
 
 ## 9. Resumption template
 
-When pausing mid-task, replace this block with current facts:
-
-\`\`\`text
-Task: T-076 CORS, per-endpoint limits, ETag and invalidation
-Starting commit: b8ce46f3121d2cfa47ce1446e1c7ca3079954faf
+```text
+Task: T-090 Remove official update check and admin update routes
+Starting commit: 714c0567642cf659e73ac439d868f9433792b2c9
 Changed files: none yet
-Last command: PHP regression run 35499394152
-Result: T-075 complete; full PHP regression and independent review passed
-Next action: add failing T-076 delivery-policy contracts
+Last command: CP-08 PHP/MySQL regression matrix
+Result: CP-08 complete; full PHP, MySQL 5.7 and MySQL 8.0 gates passed
+Next action: add failing prohibited official update communication contract
 Blocker: none
-\`\`\`
+```
