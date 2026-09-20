@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-08 — events, rankings and recommendations.
 **Active checkpoint:** CP-09 — official communication removal and release hardening.
-**Active task:** T-090 — remove official update check and admin update routes (`IN_PROGRESS`).
+**Active task:** T-091 — remove/disable announcements, affiliate defaults and telemetry (`IN_PROGRESS`).
 **Starting commit:** T-073 final implementation commit `326515e67b85ac6e7f4509eb9dd4c3e2f99a5cea`.
-**Last completed task:** T-084 — ranking/recommendation API and boundary tests, final implementation commit `b17289d92cb8dfc22aaf0486bc244d6da9723b44`.
-**Last verification:** PHP regression `35502082444`, MySQL 5.7 `35502081543`, and MySQL 8.0 `35502082452` passed CP-08 after independent-review fixes.
-**Next action:** define failing T-090 contracts that prohibit the official update client request and admin update routes.
+**Last completed task:** T-090 — official update probe, UI, controller, downloader/extractor and auth bypass removed; final implementation commit `077f6b50724f9532865a2791ea384d344dab323b`.
+**Last verification:** PHP regression `35503107924` passed T-090.
+**Next action:** inventory and remove/disable announcement, affiliate-default and telemetry traffic for T-091.
 
 ## 1. Confirmed product direction
 
@@ -181,11 +181,11 @@ Absence was established by repository text search against the pinned snapshot. I
 ## 9. Resumption template
 
 ```text
-Task: T-090 Remove official update check and admin update routes
-Starting commit: 714c0567642cf659e73ac439d868f9433792b2c9
-Changed files: none yet
-Last command: CP-08 PHP/MySQL regression matrix
-Result: CP-08 complete; full PHP, MySQL 5.7 and MySQL 8.0 gates passed
-Next action: add failing prohibited official update communication contract
+Task: T-091 Remove/disable announcements, affiliate defaults and telemetry
+Starting commit: 077f6b50724f9532865a2791ea384d344dab323b
+Changed files: pending inventory
+Last command: PHP regression run 35503107924
+Result: T-090 complete; official update route and client traffic are absent and enforced
+Next action: add failing T-091 prohibited communication contract, then remove or disable identified defaults
 Blocker: none
 ```
