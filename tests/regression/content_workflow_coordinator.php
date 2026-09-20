@@ -6,8 +6,6 @@ require_once dirname(__DIR__, 2) . '/application/common/util/VodWorkflow.php';
 require_once dirname(__DIR__, 2) . '/application/common/util/ContentWorkflowCoordinator.php';
 
 use app\common\util\ContentWorkflowCoordinator;
-use DomainException;
-
 $rows = [7 => [
     'vod_id' => 7,
     'workflow_status' => 'imported',
@@ -109,7 +107,7 @@ function expectDomainException(callable $callback, string $message): void
 {
     try {
         $callback();
-    } catch (DomainException $exception) {
+    } catch (\DomainException $exception) {
         return;
     }
     fwrite(STDERR, "FAIL: {$message}\n");
