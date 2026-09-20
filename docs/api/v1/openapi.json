@@ -1244,7 +1244,7 @@
         }
       }
     },
-    "/api/v1/events": {
+    "/events": {
       "post": {
         "summary": "Ingest deduplicated playback or favorite events",
         "operationId": "ingestVideoEvents",
@@ -1299,7 +1299,7 @@
         }
       }
     },
-    "/api/v1/rankings": {
+    "/rankings": {
       "get": {
         "summary": "List published video rankings",
         "operationId": "listVideoRankings",
@@ -1343,7 +1343,7 @@
         }
       }
     },
-    "/api/v1/videos/{public_id}/recommendations": {
+    "/videos/{public_id}/recommendations": {
       "get": {
         "summary": "List explainable recommendations",
         "operationId": "listVideoRecommendations",
