@@ -105,5 +105,6 @@ jobs:
           php tests/integration/api_v1_analytics.php
           php tests/regression/admin_permission_compatibility.php
 
+      # This step is intentionally unconditional: both supported MySQL families must pass.
       - name: Native video write paths
         run: php tests/integration/native_vod_paths.php
