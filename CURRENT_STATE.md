@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-08 — events, rankings and recommendations.
 **Active checkpoint:** CP-09 — official communication removal and release hardening.
-**Active task:** T-093 — security regression suite (`IN_PROGRESS`).
+**Active task:** T-094 — full native and programme regression matrix (`IN_PROGRESS`).
 **Starting commit:** T-073 final implementation commit `326515e67b85ac6e7f4509eb9dd4c3e2f99a5cea`.
-**Last completed task:** T-092 — AI/TMDB/IMDb/Douban migrated to centralized HTTPS, DNS/IP, redirect, size, timeout and redaction controls; final implementation commit `9bcbb7e1f34545f0412550c5f120173db72f54a1`.
-**Last verification:** PHP regression `35505594615` passed T-092.
-**Next action:** expand T-093 security regressions for SSRF/DNS rebinding, redirects, metadata IPs, response bounds, token leakage, playback URLs, privilege and audit logs.
+**Last completed task:** T-093 — release security edge cases cover metadata/private IPs, DNS rebinding, Host/header injection, request/response bounds and credential redaction; final implementation commit `e0da30889666e34f5b7c43060a62a2d1ff320933`.
+**Last verification:** PHP regression `35509953765` passed T-093 with zero annotations.
+**Next action:** define and execute T-094 release regression matrix on MySQL 5.7/8.0 plus native video paths.
 
 ## 1. Confirmed product direction
 
@@ -181,12 +181,11 @@ Absence was established by repository text search against the pinned snapshot. I
 ## 9. Resumption template
 
 ```text
-Task: T-093 Security regression suite
-Starting commit: 9bcbb7e1f34545f0412550c5f120173db72f54a1
-Changed files: pending security test inventory
-Last command: PHP regression run 35505594615
-Result: T-092 complete; four content-provider HTTP paths use the centralized hardened boundary
-Ruling: protocol-specific S3/SMTP/SMS remain on their SDK transports because they are explicitly configured and disabled by default; legacy collection/resource callers are carried into T-093 security inventory
-Next action: add failing security edge-case contracts, then close uncovered controls
+Task: T-094 Full native and programme regression matrix
+Starting commit: e0da30889666e34f5b7c43060a62a2d1ff320933
+Changed files: pending release matrix contract/workflow
+Last command: PHP regression run 35509953765
+Result: T-093 complete; security edge-case and full PHP suites passed with zero annotations
+Next action: add failing release-matrix contract, then run PHP/native/MySQL 5.7/MySQL 8.0 gates
 Blocker: none
 ```
