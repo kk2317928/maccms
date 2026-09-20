@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-08 — events, rankings and recommendations.
 **Active checkpoint:** CP-09 — official communication removal and release hardening.
-**Active task:** T-091 — remove/disable announcements, affiliate defaults and telemetry (`IN_PROGRESS`).
+**Active task:** T-092 — centralize outbound policy and SSRF controls (`IN_PROGRESS`).
 **Starting commit:** T-073 final implementation commit `326515e67b85ac6e7f4509eb9dd4c3e2f99a5cea`.
-**Last completed task:** T-090 — official update probe, UI, controller, downloader/extractor and auth bypass removed; final implementation commit `077f6b50724f9532865a2791ea384d344dab323b`.
-**Last verification:** PHP regression `35503107924` passed T-090.
-**Next action:** inventory and remove/disable announcement, affiliate-default and telemetry traffic for T-091.
+**Last completed task:** T-091 — installer telemetry, affiliate defaults, official clouds/catalogs and remote admin-background defaults removed; final implementation commit `8946148d5b580c7846f97c1ab6762bbef45f3b59`.
+**Last verification:** PHP regression `35504198813` passed T-091.
+**Next action:** define T-092 failing contracts for a centralized outbound policy and migrate retained SSRF-sensitive callers.
 
 ## 1. Confirmed product direction
 
@@ -181,11 +181,11 @@ Absence was established by repository text search against the pinned snapshot. I
 ## 9. Resumption template
 
 ```text
-Task: T-091 Remove/disable announcements, affiliate defaults and telemetry
-Starting commit: 077f6b50724f9532865a2791ea384d344dab323b
-Changed files: pending inventory
-Last command: PHP regression run 35503107924
-Result: T-090 complete; official update route and client traffic are absent and enforced
-Next action: add failing T-091 prohibited communication contract, then remove or disable identified defaults
+Task: T-092 Centralize outbound policy and SSRF controls
+Starting commit: 8946148d5b580c7846f97c1ab6762bbef45f3b59
+Changed files: pending caller inventory
+Last command: PHP regression run 35504198813
+Result: T-091 complete; recursive prohibited-default gate and full PHP suite passed
+Next action: add failing centralized-policy adoption contract and inventory retained SSRF-sensitive callers
 Blocker: none
 ```
