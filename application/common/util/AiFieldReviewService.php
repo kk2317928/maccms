@@ -101,7 +101,7 @@ class AiFieldReviewService
                 'decision' => $decision, 'actor_id' => $actorId, 'actor_name' => trim($actorName),
                 'created_at' => $now, 'updated_at' => $now,
             ]);
-            $this->updateRunDecision($runId, $this->countDecisions($runId) >= count(self::FIELD_MAP) ? 'reviewed' : 'reviewing');
+            $this->updateRunDecision($runId, $this->countDecisions($runId) >= $this->countFields($runId) ? 'reviewed' : 'reviewing');
             return ['decision' => $decision, 'field' => $field, 'value' => $reviewedValue];
         });
     }
@@ -125,6 +125,7 @@ class AiFieldReviewService
     }
     protected function loadDecision(int $runId, string $field): ?array { $row = Db::name('content_ai_field_review')->where(['ai_run_id' => $runId, 'field_name' => $field])->find(); return $row ?: null; }
     protected function countDecisions(int $runId): int { return (int) Db::name('content_ai_field_review')->where('ai_run_id', $runId)->where('decision', '<>', 'pending')->count(); }
+    protected function countFields(int $runId): int { return (int) Db::name('content_ai_field_review')->where('ai_run_id', $runId)->count(); }
     protected function lockVideoRows(int $vodId): void
     {
         if (!Db::name('vod')->where('vod_id', $vodId)->lock(true)->find() || !Db::name('vod_ext')->where('vod_id', $vodId)->lock(true)->find()) {
