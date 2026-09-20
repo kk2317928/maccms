@@ -63,7 +63,7 @@ jobs:
           php tests/regression/run_admin.php
           php tests/regression/run_api_v1.php
 
-      - name: Rehearse immutable application switch and rollback
+      - name: Create immutable candidate and previous-release trees
         run: |
           set -euo pipefail
           mkdir -p /tmp/maccms-rc/releases/current /tmp/maccms-rc/releases/previous
@@ -72,31 +72,39 @@ jobs:
           sha256sum /tmp/maccms-rc/releases/current/application/extra/version.php
           sha256sum /tmp/maccms-rc/releases/previous/application/extra/version.php
           ln -sfn /tmp/maccms-rc/releases/current /tmp/maccms-rc/active
-          test -f /tmp/maccms-rc/active/application/extra/version.php
-          ln -sfn /tmp/maccms-rc/releases/previous /tmp/maccms-rc/active
-          test -f /tmp/maccms-rc/active/application/extra/version.php
-          ln -sfn /tmp/maccms-rc/releases/current /tmp/maccms-rc/active
-          test -f /tmp/maccms-rc/active/application/extra/version.php
+          cd /tmp/maccms-rc/active
+          php think list > /tmp/maccms-current-commands.txt
+          test -s /tmp/maccms-current-commands.txt
 
-      - name: Install and migrate candidate database
+      - name: Install native schema and take pre-upgrade backup
         run: |
+          set -euo pipefail
           sed -i "s/'database'        => 'maccms10'/'database'        => 'maccms_ci_rc'/" application/database.php
           mysql --protocol=tcp --host=127.0.0.1 --port=3306 --user=root --database=maccms_ci_rc < application/install/sql/install.sql
+          mysql --host=127.0.0.1 --port=3306 --user=root maccms_ci_rc -e "INSERT INTO mac_type (type_id,type_name,type_en,type_sort,type_mid,type_pid,type_status,type_extend) VALUES (999,'Rollback Marker','rollback-marker',999,1,0,1,'{}')"
+          mysqldump --single-transaction --routines --triggers --events --default-character-set=utf8mb4 --host=127.0.0.1 --port=3306 --user=root maccms_ci_rc > /tmp/maccms-ci-pre-upgrade.sql
+          sha256sum /tmp/maccms-ci-pre-upgrade.sql
+
+      - name: Migrate and exercise candidate database
+        run: |
           php think maccms:migrate
           php tests/integration/mysql_foundation.php
           php tests/integration/native_vod_paths.php
 
-      - name: Back up and restore into a new database
+      - name: Restore pre-upgrade database and boot previous release
         run: |
           set -euo pipefail
-          mysqldump --single-transaction --routines --triggers --events --default-character-set=utf8mb4 --host=127.0.0.1 --port=3306 --user=root maccms_ci_rc > /tmp/maccms-ci-rc.sql
-          sha256sum /tmp/maccms-ci-rc.sql
           mysql --host=127.0.0.1 --port=3306 --user=root -e "CREATE DATABASE maccms_ci_restore CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
-          mysql --host=127.0.0.1 --port=3306 --user=root maccms_ci_restore < /tmp/maccms-ci-rc.sql
-          source_tables=$(mysql --host=127.0.0.1 --port=3306 --user=root -Nse "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='maccms_ci_rc'")
-          restored_tables=$(mysql --host=127.0.0.1 --port=3306 --user=root -Nse "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='maccms_ci_restore'")
-          test "$source_tables" -eq "$restored_tables"
-          source_engine=$(mysql --host=127.0.0.1 --port=3306 --user=root -Nse "SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA='maccms_ci_rc' AND TABLE_NAME='mac_vod'")
-          restored_engine=$(mysql --host=127.0.0.1 --port=3306 --user=root -Nse "SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA='maccms_ci_restore' AND TABLE_NAME='mac_vod'")
-          test "$source_engine" = "InnoDB"
-          test "$restored_engine" = "InnoDB"
+          mysql --host=127.0.0.1 --port=3306 --user=root maccms_ci_restore < /tmp/maccms-ci-pre-upgrade.sql
+          restored_marker=$(mysql --host=127.0.0.1 --port=3306 --user=root -Nse "SELECT COUNT(*) FROM maccms_ci_restore.mac_type WHERE type_id=999 AND type_en='rollback-marker'")
+          test "$restored_marker" -eq 1
+          restored_ledger=$(mysql --host=127.0.0.1 --port=3306 --user=root -Nse "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='maccms_ci_restore' AND TABLE_NAME='mac_schema_migration'")
+          test "$restored_ledger" -eq 0
+          sed -i "s/'database'        => 'maccms10'/'database'        => 'maccms_ci_restore'/" /tmp/maccms-rc/releases/previous/application/database.php
+          ln -sfn /tmp/maccms-rc/releases/previous /tmp/maccms-rc/active
+          cd /tmp/maccms-rc/active
+          MACCMS_TEST_DATABASE=maccms_ci_restore php think list > /tmp/maccms-previous-commands.txt
+          test -s /tmp/maccms-previous-commands.txt
+          php -r "define('APP_PATH', getcwd().'/application/'); define('ENTRANCE','command'); require getcwd().'/thinkphp/base.php'; \\think\\App::initCommon(); exit((int) \\think\\Db::name('type')->where('type_id',999)->count() === 1 ? 0 : 1);"
+          ln -sfn /tmp/maccms-rc/releases/current /tmp/maccms-rc/active
+          test -f /tmp/maccms-rc/active/application/extra/version.php
