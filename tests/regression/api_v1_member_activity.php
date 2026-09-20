@@ -77,8 +77,8 @@ activitySame('/v1.index/methodNotAllowed',$wrong['path_info'],'Favorite mutation
 
 $repository=file_get_contents($root.'/application/common/util/ApiV1ActivityRepository.php');
 activityAssert(strpos($repository,'ApiV1CatalogRepository::PUBLICATION_SQL')!==false,'Activity queries must enforce published visibility.');
-activityAssert(strpos($repository,"'ulog_type'=>2")!==false,'Favorites must reuse native ulog type 2.');
-activityAssert(strpos($repository,"'ulog_type'=>4")!==false,'History/progress must reuse native ulog type 4.');
+activityAssert(strpos($repository,'publishedUlogs($userId,2)')!==false && strpos($repository,'ulogWhere($userId,2')!==false,'Favorites must reuse native ulog type 2.');
+activityAssert(strpos($repository,'publishedUlogs($userId,4)')!==false && strpos($repository,'ulogWhere($userId,4')!==false,'History/progress must reuse native ulog type 4.');
 activityAssert(strpos($repository,'client_updated_at')!==false,'Merge must compare client and server timestamps.');
 activityAssert(strpos($repository,'Db::transaction')!==false,'Anonymous merge must retain the transaction boundary for transactional deployments.');
 activityAssert(strpos($repository,'GET_LOCK')!==false && strpos($repository,'RELEASE_LOCK')!==false,'MyISAM ulog writes must use an advisory lock.');
