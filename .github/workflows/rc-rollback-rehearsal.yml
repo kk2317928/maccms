@@ -1,0 +1,94 @@
+name: RC rollback rehearsal
+
+on:
+  push:
+    branches:
+      - feature/headless-ai-v1
+    paths:
+      - '.github/workflows/rc-rollback-rehearsal.yml'
+      - 'application/**'
+      - 'tests/**'
+      - 'think'
+      - 'index.php'
+      - 'api.php'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rehearse:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: maccms_ci_rc
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=12
+    env:
+      MYSQL_PWD: root
+      MACCMS_TEST_DATABASE: maccms_ci_rc
+      MACCMS_TEST_HOST: 127.0.0.1
+      MACCMS_TEST_PORT: 3306
+      MACCMS_TEST_USER: root
+      MACCMS_TEST_PASSWORD: root
+      MACCMS_TEST_MYSQL_FAMILY: '5.7'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: pdo_mysql, mbstring
+          coverage: none
+
+      - name: Verify release policy and baseline
+        run: |
+          php tests/regression/outbound_inventory.php --enforce
+          php tests/regression/run_baseline.php
+
+      - name: Rehearse immutable application switch and rollback
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/maccms-rc/releases/current /tmp/maccms-rc/releases/previous
+          git archive HEAD | tar -x -C /tmp/maccms-rc/releases/current
+          git archive HEAD^ | tar -x -C /tmp/maccms-rc/releases/previous
+          sha256sum /tmp/maccms-rc/releases/current/application/extra/version.php
+          sha256sum /tmp/maccms-rc/releases/previous/application/extra/version.php
+          ln -sfn /tmp/maccms-rc/releases/current /tmp/maccms-rc/active
+          test -f /tmp/maccms-rc/active/application/extra/version.php
+          ln -sfn /tmp/maccms-rc/releases/previous /tmp/maccms-rc/active
+          test -f /tmp/maccms-rc/active/application/extra/version.php
+          ln -sfn /tmp/maccms-rc/releases/current /tmp/maccms-rc/active
+          test -f /tmp/maccms-rc/active/application/extra/version.php
+
+      - name: Install and migrate candidate database
+        run: |
+          sed -i "s/'database'        => 'maccms10'/'database'        => 'maccms_ci_rc'/" application/database.php
+          mysql --protocol=tcp --host=127.0.0.1 --port=3306 --user=root --database=maccms_ci_rc < application/install/sql/install.sql
+          php think maccms:migrate
+          php tests/integration/mysql_foundation.php
+          php tests/integration/native_vod_paths.php
+
+      - name: Back up and restore into a new database
+        run: |
+          set -euo pipefail
+          mysqldump --single-transaction --routines --triggers --events --default-character-set=utf8mb4 --host=127.0.0.1 --port=3306 --user=root maccms_ci_rc > /tmp/maccms-ci-rc.sql
+          sha256sum /tmp/maccms-ci-rc.sql
+          mysql --host=127.0.0.1 --port=3306 --user=root -e "CREATE DATABASE maccms_ci_restore CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+          mysql --host=127.0.0.1 --port=3306 --user=root maccms_ci_restore < /tmp/maccms-ci-rc.sql
+          source_tables=$(mysql --host=127.0.0.1 --port=3306 --user=root -Nse "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='maccms_ci_rc'")
+          restored_tables=$(mysql --host=127.0.0.1 --port=3306 --user=root -Nse "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='maccms_ci_restore'")
+          test "$source_tables" -eq "$restored_tables"
+          source_engine=$(mysql --host=127.0.0.1 --port=3306 --user=root -Nse "SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA='maccms_ci_rc' AND TABLE_NAME='mac_vod'")
+          restored_engine=$(mysql --host=127.0.0.1 --port=3306 --user=root -Nse "SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA='maccms_ci_restore' AND TABLE_NAME='mac_vod'")
+          test "$source_engine" = "InnoDB"
+          test "$restored_engine" = "InnoDB"
