@@ -46,6 +46,9 @@ peopleAssert(array_keys($public)===['name','base_url','description','logo','mobi
 peopleAssert($public['name']==='MACCMS' && $public['search_enabled']===true,'site config values mismatch');
 $encoded=json_encode($public);
 foreach(['secret','password','site_tj','cache','email','upload'] as $forbidden)peopleAssert(stripos($encoded,$forbidden)===false,'site config leaks '.$forbidden);
+$GLOBALS['config']=['site'=>['site_name'=>'Runtime Name'],'app'=>['lang'=>'en','search'=>'0']];
+$runtime=(new ApiV1SiteConfig())->toArray();
+peopleAssert($runtime['name']==='Runtime Name' && $runtime['language']==='en','site config must read the native runtime configuration');
 
 $personRoute=ApiV1Bootstrap::resolve(['REQUEST_METHOD'=>'GET','REQUEST_URI'=>'/api/v1/people/'.$slug,'SCRIPT_NAME'=>'/api.php']);
 $configRoute=ApiV1Bootstrap::resolve(['REQUEST_METHOD'=>'GET','REQUEST_URI'=>'/api/v1/site-config','SCRIPT_NAME'=>'/api.php']);
