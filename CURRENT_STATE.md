@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-20
-State document version: 74
+State document version: 75
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -10,13 +10,13 @@ Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
 
 Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to the approved upstream while the programme is implemented incrementally on the integration branch.
 
-**Last completed checkpoint:** CP-06 — intelligent-content administration workspace.
-**Active checkpoint:** CP-07 — Headless API v1 and member sessions.
-**Active task:** T-077 — OpenAPI v1 and contract tests (`IN_PROGRESS`).
+**Last completed checkpoint:** CP-07 — Headless API v1 and member sessions.
+**Active checkpoint:** CP-08 — events, rankings and recommendations.
+**Active task:** T-080 — playback/favorite event contract and deduplication (`IN_PROGRESS`).
 **Starting commit:** T-073 final implementation commit `326515e67b85ac6e7f4509eb9dd4c3e2f99a5cea`.
-**Last completed task:** T-076 — CORS, per-endpoint limits, ETag and invalidation, final implementation commit `2111a6d285911eef517334e7b63e354cdde4fda9`.
-**Last verification:** PHP regression `35500353097` passed T-076 after independent-review fixes for normalized prefixed paths, conditional CORS headers and weak ETag semantics.
-**Next action:** define failing T-077 OpenAPI v1 coverage and stable example-payload contracts.
+**Last completed task:** T-077 — OpenAPI v1 and contract tests, final implementation commit `876c969a5c8070d503c3f8e8480c0dd589eaa888`.
+**Last verification:** PHP regression `35500967514` passed T-077 after independent-review fixes for raw JSON identity, anonymous progress merge, flattened DTO schemas, typed responses and 304/308 contracts.
+**Next action:** define failing T-080 playback/favorite event and deduplication contracts.
 
 ## 1. Confirmed product direction
 
@@ -160,6 +160,7 @@ Absence was established by repository text search against the pinned snapshot. I
 | API v1 member activity | PASS | PHP `35498624705`; public-ID favorites/history/progress, deterministic anonymous merge, MyISAM serialization and entitlement isolation passed |
 | API v1 playback delivery | PASS | PHP `35499394152`; published canonical lookup, enabled-source/HTTPS host policy, private-address rejection, configured-TTL HMAC signing, trusted signer contract and private no-store responses passed |
 | API v1 delivery policy | PASS | PHP `35500353097`; exact HTTPS CORS, route-specific atomic limits, normalized-path enforcement, conditional CORS, weak ETag/304 validation and no-store boundaries passed |
+| API v1 OpenAPI contract | PASS | PHP `35500967514`; exact route/method/security coverage, typed DTO envelopes, stable examples, raw OpenAPI JSON delivery and 304/308 contracts passed |
 | API v1 access and refresh sessions | PASS | PHP `35468598811`, MySQL 5.7 `35468598872`, MySQL 8.0 `35468598851`, native video `35468598836`; short-lived access tokens, hashed rotating refresh sessions, replay-family revocation, device revocation, legacy-session isolation and no-store responses passed |
 | Video workflow state machine | PASS | PHP 8.1 run `35344911819`; exhaustive transition matrix passed |
 | Lossless native playback codec | PASS | PHP 8.1 run `35345369100`; record-form, validation, round-trip and merge contracts passed |
