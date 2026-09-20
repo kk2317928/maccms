@@ -8,6 +8,8 @@ on:
       - '.github/workflows/rc-rollback-rehearsal.yml'
       - 'application/**'
       - 'tests/**'
+      - '.gitignore'
+      - 'upload/.gitkeep'
       - 'think'
       - 'index.php'
       - 'api.php'
