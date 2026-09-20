@@ -1,6 +1,7 @@
 <?php
 namespace app\common\behavior;
 
+use app\common\util\ApiV1Bootstrap;
 use app\common\util\ApiV1CorsPolicy;
 use app\common\util\ApiV1EndpointPolicy;
 use app\common\util\ApiV1RateLimiter;
@@ -15,7 +16,7 @@ final class ApiV1DeliveryPolicy
         if (!defined('MAC_API_V1_REQUEST') || !MAC_API_V1_REQUEST) return;
 
         $method=strtoupper(isset($_SERVER['REQUEST_METHOD'])?(string)$_SERVER['REQUEST_METHOD']:'GET');
-        $path=parse_url(isset($_SERVER['REQUEST_URI'])?(string)$_SERVER['REQUEST_URI']:'/api/v1',PHP_URL_PATH);
+        $path=ApiV1Bootstrap::requestPath($_SERVER);
         $path=is_string($path)?$path:'/api/v1';
         $requestedMethod=$method==='OPTIONS'
             ? strtoupper(isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'])?(string)$_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']:'')
