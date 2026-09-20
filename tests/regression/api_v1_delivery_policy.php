@@ -74,4 +74,27 @@ deliveryAssert(ApiV1Etag::make(array('data'=>array('public_id'=>'ABC234','title'
 
 foreach(glob($dir.'/*')?:array() as $file) @unlink($file);
 @rmdir($dir);
+$behaviorPath=$root.'/application/common/behavior/ApiV1DeliveryPolicy.php';
+deliveryAssert(is_file($behaviorPath),'Missing API v1 delivery behavior.');
+$behavior=file_get_contents($behaviorPath);
+deliveryAssert(strpos($behavior,'REMOTE_ADDR')!==false && strpos($behavior,'HTTP_X_FORWARDED_FOR')===false,'Rate limit identity must default to direct peer IP.');
+deliveryAssert(strpos($behavior,'ApiV1RateLimiter')!==false,'Delivery behavior must enforce rate limits.');
+deliveryAssert(strpos($behavior,'ApiV1CorsPolicy')!==false,'Delivery behavior must enforce CORS.');
+deliveryAssert(strpos($behavior,'Retry-After')!==false && strpos($behavior,'429')!==false,'Rate-limit response contract missing.');
+deliveryAssert(strpos($behavior,'204')!==false,'CORS preflight must terminate with 204.');
+$tags=file_get_contents($root.'/application/tags.php');
+deliveryAssert(strpos($tags,'ApiV1DeliveryPolicy')!==false,'Delivery policy behavior is not registered.');
+
+$base=file_get_contents($root.'/application/api/controller/v1/Base.php');
+deliveryAssert(strpos($base,'ApiV1Etag')!==false,'API base must generate ETags.');
+deliveryAssert(strpos($base,'If-None-Match')!==false && strpos($base,'304')!==false,'Conditional GET handling missing.');
+deliveryAssert(strpos($base,"'Cache-Control'=>'public, max-age=60, stale-while-revalidate=300'")!==false,'Public cache policy mismatch.');
+$catalogController=file_get_contents($root.'/application/api/controller/v1/Catalog.php');
+deliveryAssert(strpos($catalogController,'cacheableResponse')!==false,'Catalog detail responses must use validators.');
+deliveryAssert(strpos($catalogController,'cacheableCollectionResponse')!==false,'Catalog collections must use validators.');
+$authController=file_get_contents($root.'/application/api/controller/v1/Auth.php');
+$playbackController=file_get_contents($root.'/application/api/controller/v1/Playback.php');
+deliveryAssert(strpos($authController,"'Cache-Control'=>'no-store'")!==false,'Token responses must remain no-store.');
+deliveryAssert(strpos($playbackController,"'Cache-Control'=>'private, no-store'")!==false,'Playback responses must remain private no-store.');
+
 fwrite(STDOUT,"API v1 delivery policy contract passed.".PHP_EOL);
