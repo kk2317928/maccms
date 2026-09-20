@@ -4,7 +4,11 @@ namespace app\common\util;
 final class ApiV1SiteConfig
 {
     private $config;
-    public function __construct(array $config=null){$this->config=$config!==null?$config:(array)config('maccms');}
+    public function __construct(array $config=null)
+    {
+        if($config!==null){$this->config=$config;return;}
+        $this->config=isset($GLOBALS['config'])&&is_array($GLOBALS['config'])?$GLOBALS['config']:(array)config('maccms');
+    }
     public function toArray()
     {
         $site=(array)($this->config['site']??[]);$app=(array)($this->config['app']??[]);
