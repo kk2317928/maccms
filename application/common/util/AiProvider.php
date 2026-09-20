@@ -186,41 +186,6 @@ class AiProvider
         return $headers;
     }
 
-    /**
-     * 仅供 chat() 使用：按 $timeout 设置 CURLOPT_TIMEOUT，让 ai_content.timeout 真正生效。
-     * 默认校验 TLS 证书且不跟随跳转（请求携带 API 金钥，安全优先）；站长可用
-     * ai_content.verify_ssl=0 关闭校验以连接自签名内网端点。
-     */
-    private static function curlPost($url, $data, $heads, $timeout, $verifySsl = true)
-    {
-        $ch = @curl_init();
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36');
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        // 直连 AI 接口端点，无需跟随跳转；关闭以防跳转把带金钥的请求引到任意地址（SSRF/金钥外泄）
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        // 不设 CURLOPT_REFERER：Gemini 的 key 走 query string，含 key 的 $url 一旦进 Referer 头
-        // 会被出站代理/访问日志额外记录一份 key；AI 直连端点也无需 Referer。
-        // 默认校验对端证书，避免携带 API 金钥的请求被中间人截获
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $verifySsl ? 1 : 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $verifySsl ? 2 : 0);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, min($timeout, 15));
-        curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        if (count($heads) > 0) {
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $heads);
-        }
-        $response = @curl_exec($ch);
-        $status = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
-        curl_close($ch);
-        if ($status === 429) {
-            throw new ContentJobFailure('rate_limit', 'External provider rate limit reached.');
-        }
-        return $response;
-    }
-
     public static function chat($cfg, $systemPrompt, $userPrompt)
     {
         if (empty($cfg['enabled'])) {
@@ -231,13 +196,28 @@ class AiProvider
         }
 
         $body = json_encode(self::buildRequest($cfg, $systemPrompt, $userPrompt), JSON_UNESCAPED_UNICODE);
-        // 这里不用公共的 mac_curl_post：它没有 timeout 参数、内部硬编码超时，
-        // 会导致后台可配置的 ai_content.timeout 变成摆设。改为本地起一次 curl，
-        // 按 $cfg['timeout'] 设置 CURLOPT_TIMEOUT，并默认校验 TLS 证书、不跟随跳转
-        // （请求携带 API 金钥，安全优先；verify_ssl=0 时可关闭校验）。
-        $verifySsl = !isset($cfg['verify_ssl']) || (string)$cfg['verify_ssl'] !== '0';
-        $resp = self::curlPost(self::endpoint($cfg), $body, self::headers($cfg), intval($cfg['timeout']), $verifySsl);
-        if ($resp === false || (string)$resp === '') {
+        $url = self::endpoint($cfg);
+        $host = strtolower((string) parse_url($url, PHP_URL_HOST));
+        if ($host === '') {
+            return ['code' => 0, 'msg' => 'invalid ai endpoint', 'text' => ''];
+        }
+        try {
+            $client = new HardenedHttpClient(new ExternalHttpPolicy());
+            $response = $client->post($url, $body, [
+                'allowed_hosts' => [$host],
+                'headers' => self::headers($cfg),
+                'timeout' => intval($cfg['timeout']),
+                'max_bytes' => 4194304,
+                'max_redirects' => 0,
+            ]);
+        } catch (\Exception $exception) {
+            return ['code' => 0, 'msg' => 'ai request failed', 'text' => ''];
+        }
+        if ((int)$response['status'] === 429) {
+            throw new ContentJobFailure('rate_limit', 'External provider rate limit reached.');
+        }
+        $resp = (string)$response['body'];
+        if ($resp === '') {
             return ['code' => 0, 'msg' => 'empty ai response', 'text' => ''];
         }
         $text = self::extractText($cfg, $resp);
