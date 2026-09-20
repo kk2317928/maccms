@@ -37,6 +37,9 @@ final class ContentImportService
         $this->validate($payload);
         return call_user_func($this->transaction,function()use($payload,$key,$fingerprint){
             call_user_func($this->reserve,$key,$fingerprint);
+            if(isset($payload['playback_sources'])){
+                $payload=$this->mapPlaybackSources($payload);
+            }
             $nativePayload=array_merge([
                 'vod_id'=>0,'vod_en'=>'','vod_content'=>'','vod_blurb'=>'','vod_play_from'=>[],
                 'vod_play_server'=>[],'vod_play_note'=>[],'vod_play_url'=>[],'vod_down_from'=>[],
@@ -61,10 +64,18 @@ final class ContentImportService
 
     private function validate(array $payload)
     {
-        $allowed=['vod_name','vod_en','type_id','vod_sub','vod_year','vod_area','vod_lang','vod_class','vod_actor','vod_director','vod_writer','vod_remarks','vod_blurb','vod_content','vod_pic','vod_play_from','vod_play_server','vod_play_note','vod_play_url'];
+        $allowed=['vod_name','vod_en','type_id','vod_sub','vod_year','vod_area','vod_lang','vod_class','vod_actor','vod_director','vod_writer','vod_remarks','vod_blurb','vod_content','vod_pic','vod_play_from','vod_play_server','vod_play_note','vod_play_url','playback_sources'];
         foreach(array_keys($payload) as $field) if(!in_array($field,$allowed,true)) throw new InvalidArgumentException('Import field is not allowed: '.$field);
         if(trim((string)($payload['vod_name']??''))==='' || (int)($payload['type_id']??0)<=0) throw new InvalidArgumentException('vod_name and type_id are required.');
         foreach((array)($payload['vod_play_url']??[]) as $group){foreach(explode('#',(string)$group) as $episode){$parts=explode('$',$episode,2);$url=count($parts)===2?$parts[1]:$parts[0];$scheme=strtolower((string)parse_url(trim($url),PHP_URL_SCHEME));if(!in_array($scheme,['http','https'],true))throw new InvalidArgumentException('Unsafe playback URL.');}}
+        foreach((array)($payload['playback_sources']??[]) as $source){if(!is_array($source))throw new InvalidArgumentException('Invalid playback source.');foreach((array)($source['episodes']??[]) as $episode){$url=is_array($episode)?($episode['url']??''):'';$scheme=strtolower((string)parse_url(trim((string)$url),PHP_URL_SCHEME));if(!in_array($scheme,['http','https'],true))throw new InvalidArgumentException('Unsafe playback URL.');}}
+    }
+
+    private function mapPlaybackSources(array $payload)
+    {
+        $from=[];$server=[];$note=[];$urls=[];
+        foreach((array)$payload['playback_sources'] as $source){$from[]=(string)($source['source']??'');$server[]=(string)($source['server']??'');$note[]=(string)($source['note']??'');$episodes=[];foreach((array)($source['episodes']??[]) as $episode)$episodes[]=(string)($episode['title']??'').'$'.(string)($episode['url']??'');$urls[]=implode('#',$episodes);}
+        unset($payload['playback_sources']);$payload['vod_play_from']=$from;$payload['vod_play_server']=$server;$payload['vod_play_note']=$note;$payload['vod_play_url']=$urls;return $payload;
     }
 
     private function canonicalize($value)

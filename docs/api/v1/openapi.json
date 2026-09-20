@@ -2887,28 +2887,46 @@
             "type": "string",
             "format": "uri-reference"
           },
-          "vod_play_from": {
+          "playback_sources": {
             "type": "array",
             "items": {
-              "type": "string"
-            }
-          },
-          "vod_play_server": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "vod_play_note": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "vod_play_url": {
-            "type": "array",
-            "items": {
-              "type": "string"
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "source",
+                "episodes"
+              ],
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "server": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "episodes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "title",
+                      "url"
+                    ],
+                    "properties": {
+                      "title": {
+                        "type": "string"
+                      },
+                      "url": {
+                        "type": "string",
+                        "format": "uri"
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         }
