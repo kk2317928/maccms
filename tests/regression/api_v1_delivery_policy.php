@@ -13,11 +13,13 @@ foreach(array(
  'application/common/util/ApiV1Etag.php',
 ) as $file) deliveryAssert(is_file($root.'/'.$file),'Missing '.$file);
 
+require_once $root.'/application/common/util/ApiV1Bootstrap.php';
 require_once $root.'/application/common/util/ApiV1EndpointPolicy.php';
 require_once $root.'/application/common/util/ApiV1CorsPolicy.php';
 require_once $root.'/application/common/util/ApiV1RateLimiter.php';
 require_once $root.'/application/common/util/ApiV1Etag.php';
 
+use app\common\util\ApiV1Bootstrap;
 use app\common\util\ApiV1EndpointPolicy;
 use app\common\util\ApiV1CorsPolicy;
 use app\common\util\ApiV1RateLimiter;
@@ -33,6 +35,13 @@ $auth=ApiV1EndpointPolicy::resolve('POST','/api/v1/auth/login');
 deliverySame('auth',$auth['bucket'],'Auth bucket mismatch.');
 deliverySame(10,$auth['limit'],'Auth limit mismatch.');
 deliveryAssert($auth['cacheable']===false,'Auth must not be cacheable.');
+deliverySame(array('POST'),$auth['methods'],'Login CORS methods must be route-exact.');
+$prefixedPath=ApiV1Bootstrap::requestPath(array('REQUEST_URI'=>'/index.php/api/v1/auth/login','SCRIPT_NAME'=>'/index.php'));
+deliverySame('/api/v1/auth/login',$prefixedPath,'Script-prefixed API path normalization failed.');
+deliverySame('auth',ApiV1EndpointPolicy::resolve('POST',$prefixedPath)['bucket'],'Script-prefixed login bypassed auth bucket.');
+$subdirPath=ApiV1Bootstrap::requestPath(array('REQUEST_URI'=>'/maccms/api/v1/auth/login','SCRIPT_NAME'=>'/maccms/api.php'));
+deliverySame('/api/v1/auth/login',$subdirPath,'Subdirectory API path normalization failed.');
+
 $playback=ApiV1EndpointPolicy::resolve('GET','/api/v1/videos/ABC234/playback/s1/s1e1');
 deliverySame('playback',$playback['bucket'],'Playback bucket mismatch.');
 deliverySame(30,$playback['limit'],'Playback limit mismatch.');
@@ -50,6 +59,7 @@ foreach(array('https://evil.example','http://app.example.com','*','https://user:
 $preflight=$cors->preflight('https://app.example.com','GET',$catalog['methods']);
 deliverySame('GET, OPTIONS',$preflight['Access-Control-Allow-Methods'],'Preflight methods mismatch.');
 deliveryAssert(strpos($preflight['Access-Control-Allow-Headers'],'Authorization')!==false,'Authorization header must be allowed.');
+deliveryAssert(strpos($preflight['Access-Control-Allow-Headers'],'If-None-Match')!==false,'Conditional request header must be allowed.');
 
 $dir=sys_get_temp_dir().'/maccms-api-v1-rate-'.bin2hex(random_bytes(6));
 $limiter=new ApiV1RateLimiter($dir);
@@ -65,7 +75,7 @@ deliveryAssert($r5['allowed'],'Expired rate-limit window did not reset.');
 
 $payload=array('data'=>array('public_id'=>'ABC234','title'=>'Example'),'meta'=>array('locale'=>'zh-TW'));
 $etag=ApiV1Etag::make($payload,7);
-deliveryAssert(preg_match('/\\A"[a-f0-9]{64}"\\z/D',$etag)===1,'ETag format mismatch.');
+deliveryAssert(preg_match('/\\AW\\/"[a-f0-9]{64}"\\z/D',$etag)===1,'Weak ETag format mismatch.');
 deliveryAssert(ApiV1Etag::matches($etag,$etag),'Exact If-None-Match rejected.');
 deliveryAssert(ApiV1Etag::matches('W/'.$etag.', "other"',$etag),'Weak/list If-None-Match rejected.');
 deliveryAssert(!ApiV1Etag::matches('"other"',$etag),'Different ETag accepted.');
