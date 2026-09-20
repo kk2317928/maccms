@@ -106,6 +106,7 @@ jobs:
           php -l application/common/util/ApiV1EventDeduplicator.php
           php -l application/common/util/ApiV1EventRepository.php
           php -l application/common/util/VideoRankingWindows.php
+          php -l application/common/util/VideoRankingRepository.php
           php -l application/common/util/VideoRecommendationService.php
           php -l application/common/util/VideoEventPolicy.php
           php -l application/common/util/ApiV1DiscoveryRepository.php
