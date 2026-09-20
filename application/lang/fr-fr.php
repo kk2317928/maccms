@@ -1746,7 +1746,7 @@ Note: Si les listes noires et blanches sont remplies, les stratégies s\'appliqu
   'admin/addon/cloud_tab' => 'Marché cloud',
   'admin/addon/cloud_disabled' => 'Le marché cloud des extensions est désactivé',
   'admin/addon/cloud_disabled_hint' => 'Marché cloud désactivé. Définissez addon_cloud.status=1 ; pour l\'ossature UI, mock=1 (catalog.mock.json, installation interdite). Les installations réelles exigent un catalogue RS256 et une clé publique.',
-  'admin/addon/legacy_catalog_hint' => 'La liste locale peut fusionner en lecture seule les métadonnées de api.maccms.com ; installez via le marché cloud ou un zip local (legacy_catalog=0 pour désactiver).',
+  'admin/addon/legacy_catalog_hint' => 'La liste locale peut fusionner en lecture seule les métadonnées de legacy official catalog ; installez via le marché cloud ou un zip local (legacy_catalog=0 pour désactiver).',
   'admin/addon/cloud_mock_no_install' => 'Mode catalogue mock : installation cloud désactivée',
   'admin/addon/cloud_mock_hint' => 'Mode catalogue mock (addon_cloud.mock=1) : affichage seul, installation cloud désactivée.',
   'admin/addon/cloud_use_catalog' => 'L\'installation distante non signée est fermée ; utilisez le marché cloud signé ou un zip local',
