@@ -24,6 +24,7 @@ return [
     // 应用开始
     'app_begin'    => [
         'app\\common\\behavior\\Begin',
+        'app\\common\\behavior\\ApiV1DeliveryPolicy',
         'app\\common\\behavior\\CsrfGuard',
         // IpBlock 必须排在 AntiScrape 之前：已经封掉的 IP 不必再走一遍限流计算。
         // 没有这个行为，blacks.php 的 black_ip_list 只挡评论/弹幕/聊天，
