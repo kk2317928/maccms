@@ -87,6 +87,10 @@ jobs:
           php -l application/common/util/ApiV1ActivityMerge.php
           php -l application/common/util/ApiV1ActivityDto.php
           php -l application/common/util/ApiV1ActivityRepository.php
+          php -l application/common/util/ApiV1PlaybackPolicy.php
+          php -l application/common/util/ApiV1PlaybackSigner.php
+          php -l application/common/util/ApiV1PlaybackDto.php
+          php -l application/common/util/ApiV1PlaybackService.php
           php -l application/common/util/ApiV1VideoDto.php
           php -l application/common/util/ApiV1EpisodeDto.php
           php -l application/common/util/ApiV1CatalogRepository.php
@@ -99,6 +103,7 @@ jobs:
           php -l application/api/controller/v1/Catalog.php
           php -l application/api/controller/v1/Auth.php
           php -l application/api/controller/v1/Activity.php
+          php -l application/api/controller/v1/Playback.php
           php -l application/common/util/SchemaMigrationService.php
           php -l application/common/util/AiProvider.php
           php -l application/common/util/PublicIdGenerator.php
