@@ -77,16 +77,25 @@ class DoubanExternalSourceProvider implements ExternalSourceProviderInterface
 
     private function requestJson($url)
     {
-        $headers = [
-            'Accept: application/json',
-            'Referer: '.trim((string)$this->get('referer', 'https://movie.douban.com/')),
-            'User-Agent: '.trim((string)$this->get('user_agent', 'Mozilla/5.0')),
-        ];
-        $resp = HttpClient::curlPostWithTimeout($url, '', $headers, 12, false);
-        if ($resp === false || $resp === '') {
+        $host = strtolower((string) parse_url($url, PHP_URL_HOST));
+        if ($host === '') { return []; }
+        try {
+            $client = new HardenedHttpClient(new ExternalHttpPolicy());
+            $response = $client->get($url, [
+                'allowed_hosts' => [$host],
+                'headers' => [
+                    'Accept' => 'application/json',
+                    'Referer' => trim((string)$this->get('referer', 'https://movie.douban.com/')),
+                    'User-Agent' => trim((string)$this->get('user_agent', 'Mozilla/5.0')),
+                ],
+                'timeout' => 12,
+                'max_bytes' => 2097152,
+                'max_redirects' => 0,
+            ]);
+        } catch (\Exception $exception) {
             return [];
         }
-        $json = json_decode((string)$resp, true);
+        $json = json_decode((string)$response['body'], true);
         return is_array($json) ? $json : [];
     }
 
