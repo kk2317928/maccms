@@ -1887,7 +1887,7 @@ Note: If both black and white lists are filled, both policies will take effect.'
   'admin/addon/cloud_tab' => 'Cloud market',
   'admin/addon/cloud_disabled' => 'Addon cloud market is disabled',
   'admin/addon/cloud_disabled_hint' => 'Cloud market is off. Set addon_cloud.status=1; for UI skeleton set mock=1 (catalog.mock.json, install disabled). Real installs need RS256 catalog + pubkey.',
-  'admin/addon/legacy_catalog_hint' => 'Local list may merge read-only metadata from legacy api.maccms.com; install via Cloud market or local zip (set legacy_catalog=0 to disable).',
+  'admin/addon/legacy_catalog_hint' => 'Local list may merge read-only metadata from legacy legacy official catalog; install via Cloud market or local zip (set legacy_catalog=0 to disable).',
   'admin/addon/cloud_mock_no_install' => 'Mock catalog mode: cloud install is disabled',
   'admin/addon/cloud_mock_hint' => 'Mock catalog mode (addon_cloud.mock=1): list only, cloud install disabled.',
   'admin/addon/cloud_use_catalog' => 'Legacy unsigned remote install is closed; use Cloud market (signed) or local zip',
