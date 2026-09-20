@@ -9,6 +9,8 @@
 
 use think\View;
 
+require_once ROOT_PATH . 'extend/think/captcha/helper.php';
+
 error_reporting(E_ERROR | E_PARSE );
 
 
