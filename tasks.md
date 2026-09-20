@@ -749,19 +749,20 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 ---
 
 
-### T-099 Make secondary-development features available after normal installation — `IN_PROGRESS`
+### T-099 Make secondary-development features available after normal installation — `DONE`
 
 - Root cause confirmed: the Web installer imports only the native SQL and never executes `application/data/migrations`; the intelligent-content workspace is not present in the normal admin menu; and `vod_ext` multilingual/advanced fields are not exposed by the native video edit form.
 - RED contract: `tests/regression/installed_feature_contract.php`.
-- Required result: a fresh Web install creates the extension schema, the workspace is discoverable, and native video editing safely reads/writes the extension fields without changing native `vod` compatibility.
+- Implemented through `398b00dc8ad4a7b4d773720690c28ab331b27433`: Web installation runs ordered/checksummed migrations before `install.lock`; the normal admin menu opens `ContentWorkspace/view`; native video editing exposes validated `vod_ext` multilingual, TMDB, preview and poster fields; omitted extension payloads preserve existing metadata; manual changes use `FieldGovernance` locks.
+- GREEN evidence: PHP regression `35520773620`, MySQL 5.7/8.0 release matrix `35520773720`, and RC rollback rehearsal `35520773582` passed.
 
 ## Current execution pointer
 
 ```text
 Checkpoint: CP-09 installation usability hotfix
 Next task: T-099
-Task status: IN_PROGRESS
+Task status: DONE
 Starting commit: 231e1900cf41f26c2b33bd6cb362e41af4ede7ac
 Release status: headless-ai-v1.0.2 is retained for traceability but is not accepted for deployment
-Next action: verify installer, menu, native video extension persistence and the complete regression matrix
+Next action: perform a manual fresh Web-install/browser smoke test before creating headless-ai-v1.0.3
 ```

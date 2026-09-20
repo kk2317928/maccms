@@ -181,13 +181,12 @@ Absence was established by repository text search against the pinned snapshot. I
 ## 9. Resumption template
 
 ```text
-Task: T-098 Publish headless-ai-v1.0.1
-Release candidate: 0b70890bba914dd161672eca681dc4b44eed7a2c
-Fix: preserve upload/.gitkeep and provide the missing self-contained captcha runtime
-Last verification: PHP 35517149734; release matrix 35517149693; rollback rehearsal 35517149692
-Result: installer-required ./upload and think\\captcha\\Captcha runtime are present in release checkouts
-Next action: create and push annotated tag headless-ai-v1.0.1 at the release candidate
-Blocker: current GitHub connector cannot create tag refs
+Task: T-099 installation usability hotfix
+Implementation: 398b00dc8ad4a7b4d773720690c28ab331b27433
+Result: installer migrations, discoverable workspace and native vod_ext editing are covered by automated gates
+Last verification: PHP 35520773620; MySQL 5.7/8.0 35520773720; rollback rehearsal 35520773582
+Next action: run the manual fresh Web-install/browser smoke checklist
+Release status: do not create headless-ai-v1.0.3 until the manual smoke passes
 ```
 
 
@@ -199,4 +198,5 @@ Verified release gap at `231e1900cf41f26c2b33bd6cb362e41af4ede7ac`:
 - The intelligent-content workspace is not linked from `application/admin/common/auth.php`.
 - The native video form does not expose or persist the target `vod_ext` multilingual and advanced fields.
 - `headless-ai-v1.0.2` remains immutable for traceability and is not an accepted deployment candidate.
-- T-099 is IN_PROGRESS; its first gate is `tests/regression/installed_feature_contract.php`.
+- T-099 is DONE at `398b00dc8ad4a7b4d773720690c28ab331b27433`; PHP `35520773620`, MySQL 5.7/8.0 `35520773720`, and rollback rehearsal `35520773582` passed.
+- Manual fresh Web-install/browser smoke remains NOT_RUN and is required before a `headless-ai-v1.0.3` release tag.
