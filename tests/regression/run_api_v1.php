@@ -15,6 +15,7 @@ $tests = array(
     __DIR__ . '/api_v1_recommendations.php',
     __DIR__ . '/api_v1_event_policy.php',
     __DIR__ . '/api_v1_discovery.php',
+    __DIR__ . '/api_v1_import.php',
 );
 
 foreach ($tests as $test) {
