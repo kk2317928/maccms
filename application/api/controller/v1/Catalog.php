@@ -16,7 +16,7 @@ class Catalog extends Base
     {
         try {
             $locale=$this->locale($request);
-            return $this->successResponse($this->service()->home($locale),$request,array('locale'=>$locale->code()));
+            return $this->cacheableResponse($this->service()->home($locale),$request,array('locale'=>$locale->code()));
         } catch(InvalidArgumentException $exception) { return $this->validation($exception,$request); }
     }
 
@@ -26,7 +26,7 @@ class Catalog extends Base
             $locale=$this->locale($request);
             $pagination=ApiV1Pagination::fromQuery($request->get());
             $result=$this->service()->videos($pagination,ApiV1CatalogQuery::fromArray($request->get()),$locale);
-            return $this->collectionResponse($result['items'],$pagination,$result['total'],$request,array('locale'=>$locale->code()));
+            return $this->cacheableCollectionResponse($result['items'],$pagination,$result['total'],$request,array('locale'=>$locale->code()));
         } catch(InvalidArgumentException $exception) { return $this->validation($exception,$request); }
     }
 
@@ -37,7 +37,7 @@ class Catalog extends Base
             $pagination=ApiV1Pagination::fromQuery($request->get());
             $query=ApiV1CatalogQuery::fromArray($request->get());
             $result=$this->service()->search($pagination,$query,ApiV1CatalogQuery::searchTerm($request->get()),$locale);
-            return $this->collectionResponse($result['items'],$pagination,$result['total'],$request,array('locale'=>$locale->code()));
+            return $this->cacheableCollectionResponse($result['items'],$pagination,$result['total'],$request,array('locale'=>$locale->code()));
         } catch(InvalidArgumentException $exception) { return $this->validation($exception,$request); }
     }
 
@@ -51,7 +51,7 @@ class Catalog extends Base
                 return $this->canonicalRedirectResponse($state['canonical_public_id'],$this->canonicalLocation($state['canonical_public_id'],false,$locale),$locale,$request);
             }
             $data=$this->service()->detail($state['canonical_public_id'],$locale);
-            return $data===null?$this->notFound($request):$this->successResponse($data,$request,array('locale'=>$locale->code()));
+            return $data===null?$this->notFound($request):$this->cacheableResponse($data,$request,array('locale'=>$locale->code()));
         } catch(InvalidArgumentException $exception) { return $this->validation($exception,$request); }
     }
 
@@ -65,7 +65,7 @@ class Catalog extends Base
                 return $this->canonicalRedirectResponse($state['canonical_public_id'],$this->canonicalLocation($state['canonical_public_id'],true,$locale),$locale,$request);
             }
             $data=$this->service()->episodes($state['canonical_public_id']);
-            return $data===null?$this->notFound($request):$this->successResponse($data,$request,array('locale'=>$locale->code()));
+            return $data===null?$this->notFound($request):$this->cacheableResponse($data,$request,array('locale'=>$locale->code()));
         } catch(InvalidArgumentException $exception) { return $this->validation($exception,$request); }
     }
 
@@ -73,7 +73,7 @@ class Catalog extends Base
     {
         try {
             $locale=$this->locale($request);
-            return $this->successResponse($this->service()->taxonomies($locale),$request,array('locale'=>$locale->code()));
+            return $this->cacheableResponse($this->service()->taxonomies($locale),$request,array('locale'=>$locale->code()));
         } catch(InvalidArgumentException $exception) { return $this->validation($exception,$request); }
     }
 
