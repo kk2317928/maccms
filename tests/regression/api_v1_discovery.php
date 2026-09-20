@@ -17,7 +17,7 @@ api_ok(ApiV1Bootstrap::resolve(['REQUEST_METHOD'=>'GET','PATH_INFO'=>'/api/v1/ev
 foreach([
  'application/api/controller/v1/Events.php'=>['class Events','ApiV1EventContract','VideoEventPolicy'],
  'application/api/controller/v1/Discovery.php'=>['class Discovery','rankings','recommendations'],
- 'application/common/util/ApiV1EventRepository.php'=>['INSERT IGNORE','dedupe_hash','ApiV1CatalogRepository::PUBLICATION_SQL'],
+ 'application/common/util/ApiV1EventRepository.php'=>['ON DUPLICATE KEY UPDATE','dedupe_hash','ApiV1CatalogRepository::PUBLICATION_SQL'],
  'application/common/util/ApiV1DiscoveryRepository.php'=>['ApiV1CatalogRepository::PUBLICATION_SQL','api_video_rank','VideoRecommendationService'],
 ] as $file=>$needles){
  $s=file_get_contents($root.'/'.$file);api_ok($s!==false,"{$file} exists");
