@@ -101,7 +101,7 @@ class Addon extends Base
             $search = htmlspecialchars(strip_tags((string)$wd));
         }
 
-        // 旧 api.maccms.com：只读并存，仅用于丰富本地列表展示（价格/封面等），不提供未签名安装
+        // 旧 disabled.legacy.invalid：只读并存，仅用于丰富本地列表展示（价格/封面等），不提供未签名安装
         $onlineaddons = $this->fetchLegacyOnlineCatalog();
 
         $addons = get_addon_list();
@@ -179,7 +179,7 @@ class Addon extends Base
         $onlineaddons = [];
         // 固定白名单主机；安全 GET（禁跟随跳转）
         // 仅 HTTPS，避免 HTTP 回退被 MITM 污染只读元数据
-        $raw = $this->fetchLegacyCatalogBody('https://api.maccms.com/addon/index');
+        $raw = $this->fetchLegacyCatalogBody('');
         if (is_string($raw) && $raw !== '') {
             $json = json_decode($raw, true);
             if (!empty($json['rows']) && is_array($json['rows'])) {
@@ -230,7 +230,7 @@ class Addon extends Base
             return false;
         }
         // 仅允许官方旧目录主机（与产品决策「只读并存」对齐）
-        if ($host !== 'api.maccms.com') {
+        if ($host !== 'disabled.legacy.invalid') {
             return false;
         }
         if (!function_exists('curl_init')) {
