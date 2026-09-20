@@ -46,14 +46,15 @@ try { ApiV1EventContract::actorKey(0, '', ''); ok(false, 'actor required'); }
 catch (InvalidArgumentException $e) {}
 
 $d = new ApiV1EventDeduplicator();
-$a = $d->fingerprint($event, $member);
-$b = $d->fingerprint(array_merge($event, ['occurred_at'=>1700000029]), $member);
-$c = $d->fingerprint(array_merge($event, ['occurred_at'=>1700000030]), $member);
+$bucketStart = intdiv($event['occurred_at'], 30) * 30;
+$a = $d->fingerprint(array_merge($event, ['occurred_at'=>$bucketStart + 1]), $member);
+$b = $d->fingerprint(array_merge($event, ['occurred_at'=>$bucketStart + 29]), $member);
+$c = $d->fingerprint(array_merge($event, ['occurred_at'=>$bucketStart + 30]), $member);
 ok(hash_equals($a, $b), 'same actor/content/episode/type/window deduplicates replay');
 ok(!hash_equals($a, $c), 'next window is independent');
 ok(!hash_equals($a, $d->fingerprint($event, $device)), 'actor boundary is isolated');
-ok($d->fingerprint(array_merge($event,['occurred_at'=>1700000001]),$member) ===
-   $d->fingerprint(array_merge($event,['occurred_at'=>1700000029]),$member),
+ok($d->fingerprint(array_merge($event,['occurred_at'=>$bucketStart + 2]),$member) ===
+   $d->fingerprint(array_merge($event,['occurred_at'=>$bucketStart + 28]),$member),
    'reordered events in one window remain idempotent');
 
 $migration = file_get_contents($root . '/application/data/migrations/20260920000100_api_video_events.sql');
