@@ -10,8 +10,14 @@ final class ApiV1EndpointPolicy
         $path=is_string($path)?rtrim($path,'/'):'';
         if ($path==='') $path='/';
 
-        if (strpos($path,'/api/v1/auth/')===0) {
-            return self::policy('auth',10,60,array('POST','DELETE','GET'),false);
+        if ($path==='/api/v1/auth/login' || $path==='/api/v1/auth/refresh' || $path==='/api/v1/auth/logout') {
+            return self::policy('auth',10,60,array('POST'),false);
+        }
+        if ($path==='/api/v1/auth/sessions') {
+            return self::policy('auth',10,60,array('GET'),false);
+        }
+        if (preg_match('#\\A/api/v1/auth/sessions/[a-f0-9]{32}\\z#D',$path)===1) {
+            return self::policy('auth',10,60,array('DELETE'),false);
         }
         if ($path==='/api/v1/search') {
             return self::policy('search',30,60,array('GET'),$method==='GET');
