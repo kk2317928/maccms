@@ -2043,7 +2043,7 @@ https://www.baidu.com/123.jpg
     'admin/addon/cloud_disabled'=>'插件云市场未开启',
     'admin/addon/cloud_disabled_hint'=>'云市场未开启。请设置 addon_cloud.status=1；联调可设 mock=1 使用本地 catalog.mock.json（禁安装）。真安装需 RS256 签目录与公钥。',
     'admin/addon/cloud_use_catalog'=>'旧版未签名远程安装已关闭；请使用「云市场」签目录安装，或上传本地 zip',
-    'admin/addon/legacy_catalog_hint'=>'本机列表可只读合并旧版 api.maccms.com 展示信息；装包请用云市场签目录或本地 zip（addon_cloud.legacy_catalog=0 可关闭旧目录）。',
+    'admin/addon/legacy_catalog_hint'=>'本机列表可只读合并旧版 legacy official catalog 展示信息；装包请用云市场签目录或本地 zip（addon_cloud.legacy_catalog=0 可关闭旧目录）。',
     'admin/addon/cloud_mock_no_install'=>'当前为 mock 骨架模式，禁止云安装',
     'admin/addon/cloud_mock_hint'=>'当前为 mock 列表骨架（addon_cloud.mock=1），仅联调展示，不可云安装。',
     'admin/addon/cloud_not_found'=>'目录中未找到该插件（或未审核通过）',
