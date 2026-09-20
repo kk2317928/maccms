@@ -40,8 +40,9 @@ $member = ApiV1EventContract::actorKey(42, 'session-1', 'device-token');
 $session = ApiV1EventContract::actorKey(0, 'session-1', 'device-token');
 $device = ApiV1EventContract::actorKey(0, '', 'device-token');
 ok($member === 'member:42', 'member identity wins');
-ok($session === 'session:' . hash('sha256','session-1'), 'session identity wins');
+ok($session === 'device:' . hash('sha256','device-token'), 'stable device identity wins for anonymous events');
 ok($device === 'device:' . hash('sha256','device-token'), 'device identity is hashed');
+try { ApiV1EventContract::normalize(['event_type'=>'progress','public_id'=>'ABC234','position_seconds'=>1.5,'duration_seconds'=>4,'occurred_at'=>1700000000]); ok(false,'fractional seconds rejected'); } catch (InvalidArgumentException $e) {}
 try { ApiV1EventContract::actorKey(0, '', ''); ok(false, 'actor required'); }
 catch (InvalidArgumentException $e) {}
 
