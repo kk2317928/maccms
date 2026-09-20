@@ -1,6 +1,8 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types=1
+    __DIR__ . '/content_repair_command.php',
+);
 
 $tests = [
     'migration_cli_contract.php',
