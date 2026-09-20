@@ -13,6 +13,7 @@ $tests = [
     'vod_playback_codec.php',
     'vod_extension_contract.php',
     'vod_extension_hook.php',
+    'content_workflow_hooks.php',
 ];
 
 foreach ($tests as $test) {

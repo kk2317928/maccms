@@ -50,6 +50,7 @@ jobs:
           php -l tests/regression/vod_playback_codec.php
           php -l tests/regression/vod_extension_contract.php
           php -l tests/regression/vod_extension_hook.php
+          php -l tests/regression/content_workflow_hooks.php
           php -l tests/regression/run_foundation.php
           php -l tests/regression/content_job_contract.php
           php -l tests/regression/content_job_lifecycle.php

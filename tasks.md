@@ -767,7 +767,7 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 ```text
 Checkpoint: completion repair
 Next task: T-102 native workflow hooks
-Task status: READY
+Task status: IN_PROGRESS
 Starting commit: d818cb3088593a84309ca256bfac68c3501b7960
 Release status: headless-ai-v1.0.2 is retained for traceability but is not accepted for deployment
 Next action: add idempotent AI enqueue hooks to native admin and collection writes
@@ -780,3 +780,8 @@ Next action: add idempotent AI enqueue hooks to native admin and collection writ
 - RED contract: `tests/regression/content_workflow_coordinator.php` (local runner unavailable because this execution image has no PHP binary).
 - Commits: `2e8471ecd01116afbbc6c0a68c4e7fed7ff605e1`, `28d060d808223066a3df23ffb2b3334d660ecbc3`, `c25a29843fab9dd85152119ccf5ad7d310506c77`.
 - GREEN evidence: PHP 8.1 full regression `35526191574` passed.
+
+### T-102 Native video workflow hooks — `IN_PROGRESS`
+
+- RED contract: `tests/regression/content_workflow_hooks.php`.
+- Covers admin create, collection insert/update, deterministic fingerprints, repeated equivalent writes and playback-only updates.
