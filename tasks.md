@@ -730,8 +730,8 @@ Legacy API compatibility is a separate concern; do not expose raw DB records in 
 ### T-090 Remove official update check and admin update routes — `DONE`
 ### T-091 Remove/disable announcements, affiliate defaults and telemetry — `DONE`
 ### T-092 Centralize outbound policy and SSRF controls — `DONE`
-### T-093 Security regression suite — `IN_PROGRESS`
-### T-094 Full native and programme regression matrix — `TODO`
+### T-093 Security regression suite — `DONE`
+### T-094 Full native and programme regression matrix — `IN_PROGRESS`
 ### T-095 Deployment, migration, Cron, backup and disaster-recovery docs — `TODO`
 ### T-096 Release candidate acceptance and rollback rehearsal — `TODO`
 ### T-097 Tag `headless-ai-v1.0.0` — `TODO`
