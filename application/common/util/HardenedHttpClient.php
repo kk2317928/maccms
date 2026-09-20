@@ -43,6 +43,8 @@ class HardenedHttpClient
         if ($method === 'POST' && strlen($body) > $maxRequestBytes) {
             throw new InvalidArgumentException('External HTTP request exceeded the size limit.');
         }
+        // Validate before invoking any injected or production transport.
+        $this->headerLines($headers);
 
         for ($hop = 0; ; $hop++) {
             $target = $this->policy->validate($url, $allowedHosts);
