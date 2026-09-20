@@ -2,7 +2,7 @@
 
 Status: ACCEPTED  
 Candidate branch: `feature/headless-ai-v1`  
-Candidate SHA: `ac0b9b58cfe655e6fc318ddfb68fb39ec6f6978e` (review-fix implementation exercised by rollback rehearsal; later report-only commits do not change runtime code)  
+Candidate SHA: `fbd5521d7c688c2e430a7a746e07c771e30eb84e` (release-matrix candidate; rollback-specific implementation was exercised at ancestor `ac0b9b58cfe655e6fc318ddfb68fb39ec6f6978e`)  
 Acceptance date: 2026-09-20  
 Release tag: not created; T-097 remains a separate operator-confirmed publication action.
 
@@ -10,9 +10,9 @@ Release tag: not created; T-097 remains a separate operator-confirmed publicatio
 
 | Gate | Result | Evidence |
 |---|---|---|
-| PHP regression | PASS | GitHub Actions run `35510268063` |
-| MySQL 5.7 | PASS | Release matrix run `35510268068`, job `MySQL 5.7` |
-| MySQL 8.0 | PASS | Release matrix run `35510268068`, job `MySQL 8.0` |
+| PHP regression | PASS | GitHub Actions run `35511088543` on the candidate SHA |
+| MySQL 5.7 | PASS | Release matrix run `35511088544`, job `MySQL 5.7` |
+| MySQL 8.0 | PASS | Release matrix run `35511088544`, job `MySQL 8.0` |
 | Native video | PASS | Release matrix executes native admin/collection write and playback round-trip on both MySQL 5.7 and 8.0 |
 | Prohibited outbound | PASS | `outbound_inventory.php --enforce` in the release matrix and rehearsal |
 | Database restore | PASS | RC rollback rehearsal run `35510999172`; a pre-upgrade dump was restored into `maccms_ci_restore`, its marker row and absence of the candidate migration ledger were verified |
