@@ -53,7 +53,15 @@ jobs:
       - name: Verify release policy and baseline
         run: |
           php tests/regression/outbound_inventory.php --enforce
-          php tests/regression/run_baseline.php
+          php tests/regression/official_update_removed.php
+          php tests/regression/prohibited_defaults_removed.php
+          php tests/regression/outbound_policy_adoption.php
+          php tests/regression/security_release_hardening.php
+          php tests/regression/run_foundation.php
+          php tests/regression/run_ai_jobs.php
+          php tests/regression/run_duplicate_tmdb.php
+          php tests/regression/run_admin.php
+          php tests/regression/run_api_v1.php
 
       - name: Rehearse immutable application switch and rollback
         run: |
