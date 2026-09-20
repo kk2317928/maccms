@@ -14,7 +14,7 @@ final class VideoEventPolicy
     public function rawCutoff($now):int{return (int)$now-$this->retentionDays*86400;}
     public function acceptsOccurredAt($occurred,$now):bool{return (int)$occurred>=(int)$now-86400 && (int)$occurred<=(int)$now+300;}
     public function allowBatch($count):bool{return (int)$count>=1 && (int)$count<=$this->batchMax;}
-    public function allowActorRate($acceptedInMinute):bool{return (int)$acceptedInMinute<$this->perMinute;}
+    public function allowActorRate($acceptedInMinute,$incoming=1):bool{return (int)$acceptedInMinute>=0 && (int)$incoming>=1 && (int)$acceptedInMinute+(int)$incoming<=$this->perMinute;}
     public function purgeSql($prefix,$now):string
     {
         if(!preg_match('/^[A-Za-z0-9_]+$/',(string)$prefix))throw new InvalidArgumentException('Invalid table prefix.');
