@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-08 — events, rankings and recommendations.
 **Active checkpoint:** CP-09 — official communication removal and release hardening.
-**Active task:** T-092 — centralize outbound policy and SSRF controls (`IN_PROGRESS`).
+**Active task:** T-093 — security regression suite (`IN_PROGRESS`).
 **Starting commit:** T-073 final implementation commit `326515e67b85ac6e7f4509eb9dd4c3e2f99a5cea`.
-**Last completed task:** T-091 — installer telemetry, affiliate defaults, official clouds/catalogs and remote admin-background defaults removed; final implementation commit `8946148d5b580c7846f97c1ab6762bbef45f3b59`.
-**Last verification:** PHP regression `35504198813` passed T-091.
-**Next action:** define T-092 failing contracts for a centralized outbound policy and migrate retained SSRF-sensitive callers.
+**Last completed task:** T-092 — AI/TMDB/IMDb/Douban migrated to centralized HTTPS, DNS/IP, redirect, size, timeout and redaction controls; final implementation commit `9bcbb7e1f34545f0412550c5f120173db72f54a1`.
+**Last verification:** PHP regression `35505594615` passed T-092.
+**Next action:** expand T-093 security regressions for SSRF/DNS rebinding, redirects, metadata IPs, response bounds, token leakage, playback URLs, privilege and audit logs.
 
 ## 1. Confirmed product direction
 
@@ -181,11 +181,12 @@ Absence was established by repository text search against the pinned snapshot. I
 ## 9. Resumption template
 
 ```text
-Task: T-092 Centralize outbound policy and SSRF controls
-Starting commit: 8946148d5b580c7846f97c1ab6762bbef45f3b59
-Changed files: pending caller inventory
-Last command: PHP regression run 35504198813
-Result: T-091 complete; recursive prohibited-default gate and full PHP suite passed
-Next action: add failing centralized-policy adoption contract and inventory retained SSRF-sensitive callers
+Task: T-093 Security regression suite
+Starting commit: 9bcbb7e1f34545f0412550c5f120173db72f54a1
+Changed files: pending security test inventory
+Last command: PHP regression run 35505594615
+Result: T-092 complete; four content-provider HTTP paths use the centralized hardened boundary
+Ruling: protocol-specific S3/SMTP/SMS remain on their SDK transports because they are explicitly configured and disabled by default; legacy collection/resource callers are carried into T-093 security inventory
+Next action: add failing security edge-case contracts, then close uncovered controls
 Blocker: none
 ```
