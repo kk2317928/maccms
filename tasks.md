@@ -802,7 +802,15 @@ Next action: add idempotent AI enqueue hooks to native admin and collection writ
 - Implementation: `21856ab6e26d302a4d632f8ec30dad3ff43fd535`.
 - GREEN evidence: PHP `35531033623`, MySQL 5.7 `35531033626`, MySQL 8.0 `35531033568`, native `35531033533`, release matrix `35531033595`, rollback `35531033597`.
 
-### T-105 Version-2 relational duplicate merge/restore — `IN_PROGRESS`
+### T-105 Version-2 relational duplicate merge/restore — `DONE`
 
 - RED contract: `tests/regression/duplicate_relational_merge.php`.
 - Scope includes aliases, multilingual rows, taxonomy, external mappings, projection integrity and version-1 restore compatibility.
+- Version-2 snapshots retain both immutable pre-merge bundles and the exact merged projection used for conflict detection.
+- Merge rules union playback, aliases, taxonomy, language rows and field provenance; primary values win conflicts, while conflicting external mappings remain on the secondary record.
+- Restore replaces every changed relationship from the hashed snapshot; legacy version-1 restore remains supported.
+- MySQL round-trip: `tests/integration/duplicate_restore_mysql.php` on 5.7 and 8.0.
+- Implementation: `e8b5fcd74d72c61d97bac256bd5a46a9dc4c040f`, `8e339621eba1de57c1dc189d2247eee55f6ae2ac`.
+- GREEN evidence: PHP `35532349970`, release matrix MySQL 5.7/8.0 `35532349836`, rollback `35532349888`.
+
+Next task: T-106 indexed duplicate search and configurable AI usage/budget
