@@ -176,6 +176,7 @@ jobs:
           php -l application/admin/controller/System.php
           php -l application/command/MaccmsMigrate.php
           php -l application/command/MaccmsJobs.php
+          php -l application/command/MaccmsAnalytics.php
       - name: Baseline runner contract
         run: php tests/regression/baseline_runner_contract.php
       - name: Outbound inventory contract
