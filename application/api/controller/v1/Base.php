@@ -87,7 +87,8 @@ class Base extends \app\api\controller\Base
             'Content-Type'=>'application/json; charset=utf-8',
             'X-Request-ID'=>$requestId,
             'ETag'=>$etag,
-            'Cache-Control'=>'public, max-age=60, stale-while-revalidate=300',
+            'Cache-Control'=>'public, no-cache, must-revalidate',
+            'Vary'=>'Accept-Language, Origin',
         );
         if ($request!==null && ApiV1Etag::matches($request->header('If-None-Match'),$etag)) {
             return response('',304,$headers);
