@@ -18,8 +18,11 @@ foreach ([
     'sha256sum',
     'git archive',
     'ln -sfn',
-    'outbound_inventory.php --enforce',
+    'php think list',
+    "MACCMS_TEST_DATABASE=maccms_ci_restore",
+    'mysql_foundation.php',
     'native_vod_paths.php',
+    'outbound_inventory.php --enforce',
 ] as $needle) {
     if (strpos($workflow, $needle) === false) {
         fwrite(STDERR, "FAIL: rollback workflow missing: {$needle}\n");
@@ -29,6 +32,7 @@ foreach ([
 $report = (string) file_get_contents($reportPath);
 foreach ([
     'Status: ACCEPTED',
+    'Candidate SHA:',
     'PHP regression',
     'MySQL 5.7',
     'MySQL 8.0',
