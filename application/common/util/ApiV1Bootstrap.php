@@ -46,7 +46,7 @@ class ApiV1Bootstrap
         return array('module'=>'api','path_info'=>in_array($method, $allowed, true) ? $target : '/v1.index/methodNotAllowed');
     }
 
-    private static function requestPath(array $server)
+    public static function requestPath(array $server)
     {
         if (isset($server['PATH_INFO']) && is_string($server['PATH_INFO']) && $server['PATH_INFO'] !== '') {
             $path = parse_url($server['PATH_INFO'], PHP_URL_PATH);
