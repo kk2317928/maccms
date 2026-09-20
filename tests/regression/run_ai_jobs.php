@@ -11,6 +11,7 @@ $tests = [
     'ai_run_repository.php',
     'field_governance.php',
     'ai_normalization_pipeline.php',
+    'installed_ai_duplicate_workflow.php',
 ];
 
 foreach ($tests as $test) {
