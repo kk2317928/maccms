@@ -28,11 +28,11 @@ requireContains($root . '/application/admin/common/auth.php', [
 ], 'admin navigation');
 
 requireContains($root . '/application/admin/controller/Vod.php', [
-    "array_key_exists('vod_ext', \$param)",
-    "unset(\$param['vod_ext'])",
-    "if (\$vodId > 0 && \$hasVodExt)",
-    'VodExtensionAdminService::normalize(\$vodExt)',
-    'VodExtensionAdminService::save(\$vodId, \$vodExt)',
+    'array_key_exists(\'vod_ext\', $param)',
+    'unset($param[\'vod_ext\'])',
+    'if ($vodId > 0 && $hasVodExt)',
+    'VodExtensionAdminService::normalize($vodExt)',
+    'VodExtensionAdminService::save($vodId, $vodExt)',
 ], 'native video extension persistence');
 
 requireContains($root . '/application/admin/view_new/vod/info.html', [
