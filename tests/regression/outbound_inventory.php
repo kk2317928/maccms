@@ -106,8 +106,8 @@ foreach ($requiredReportTerms as $term) {
     }
 }
 
-if ($officialUpdateEvidence === []) {
-    fwrite(STDERR, "Expected official update endpoint evidence was not found.\n");
+if ($officialUpdateEvidence !== []) {
+    fwrite(STDERR, "PROHIBITED: update.maccms.la remains in " . implode(', ', $officialUpdateEvidence) . "\n");
     exit(1);
 }
 
@@ -117,11 +117,6 @@ fwrite(STDOUT, "URL references: {$urlReferences}\n");
 fwrite(STDOUT, "Network primitives: {$networkPrimitives}\n");
 fwrite(STDOUT, "Dynamic script indicators: {$dynamicScripts}\n");
 
-if ($mode === '--enforce') {
-    fwrite(STDERR, "PROHIBITED: update.maccms.la remains in " . implode(', ', $officialUpdateEvidence) . "\n");
-    exit(1);
-}
-
-fwrite(STDOUT, "QUARANTINED: update.maccms.la remains pending CP-09 removal (" . implode(', ', $officialUpdateEvidence) . ").\n");
-fwrite(STDOUT, "PASS: outbound endpoint families are inventoried; prohibited enforcement is intentionally not claimed.\n");
+fwrite(STDOUT, "PASS: prohibited official update endpoint is absent.\n");
+fwrite(STDOUT, "PASS: outbound endpoint families are inventoried and enforcement is active.\n");
 exit(0);
