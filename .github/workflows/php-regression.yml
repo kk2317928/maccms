@@ -92,6 +92,10 @@ jobs:
           php -l application/common/util/ApiV1PlaybackSigner.php
           php -l application/common/util/ApiV1PlaybackDto.php
           php -l application/common/util/ApiV1PlaybackService.php
+          php -l application/common/util/ApiV1EndpointPolicy.php
+          php -l application/common/util/ApiV1CorsPolicy.php
+          php -l application/common/util/ApiV1RateLimiter.php
+          php -l application/common/util/ApiV1Etag.php
           php -l application/common/util/ApiV1VideoDto.php
           php -l application/common/util/ApiV1EpisodeDto.php
           php -l application/common/util/ApiV1CatalogRepository.php
