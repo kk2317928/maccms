@@ -13,7 +13,7 @@ $GLOBALS['config']['app']['api_v1_cors_origins'] = array(
 );
 ```
 
-Wildcards, HTTP origins, origins containing credentials, and partial hostname matches are rejected. Same-origin requests normally omit the `Origin` header and continue without CORS headers. Allowed cross-origin requests expose `ETag`, `X-Request-ID`, and `Retry-After`. Preflight requests allow only the methods assigned to the endpoint group and the headers `Authorization`, `Content-Type`, and `X-Request-ID`.
+Wildcards, HTTP origins, origins containing credentials, and partial hostname matches are rejected. Same-origin requests normally omit the `Origin` header and continue without CORS headers. Allowed cross-origin requests expose `ETag`, `X-Request-ID`, and `Retry-After`. Preflight requests allow only the methods assigned to the endpoint group and the headers `Authorization`, `Content-Type`, `If-None-Match`, and `X-Request-ID`.
 
 The API uses bearer tokens and does not enable credentialed CORS cookies.
 
@@ -47,7 +47,7 @@ The limiter keys clients from the direct peer `REMOTE_ADDR`. It deliberately ign
 
 ## ETag and invalidation
 
-Published catalog GET responses include a strong ETag calculated from the stable response data and metadata, excluding the per-request request ID. They use:
+Published catalog GET responses include a weak ETag calculated from the stable response data and metadata, excluding the per-request request ID. Weak validation is intentional because the envelope carries a different request ID on each 200 response while the catalog representation remains semantically equivalent. They use:
 
 `Cache-Control: public, no-cache, must-revalidate`
 
