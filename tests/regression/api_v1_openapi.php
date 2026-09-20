@@ -44,6 +44,9 @@ $expected=array(
  '/me/progress/{public_id}'=>array('get','put','delete'),
  '/me/activity/merge'=>array('post'),
  '/openapi.json'=>array('get'),
+ '/events'=>array('post'),
+ '/rankings'=>array('get'),
+ '/videos/{public_id}/recommendations'=>array('get'),
 );
 foreach($expected as $path=>$methods){
  openapiAssert(isset($document['paths'][$path])&&is_array($document['paths'][$path]),'Undocumented v1 path '.$path);
@@ -53,7 +56,7 @@ foreach($expected as $path=>$methods){
  foreach($methods as $method){
   $operation=$document['paths'][$path][$method];
   openapiAssert(!empty($operation['operationId']),'Missing operationId for '.$method.' '.$path);
-  openapiAssert(isset($operation['responses']['200'])||isset($operation['responses']['201'])||isset($operation['responses']['204']),'Missing success response for '.$method.' '.$path);
+  openapiAssert(isset($operation['responses']['200'])||isset($operation['responses']['201'])||isset($operation['responses']['202'])||isset($operation['responses']['204']),'Missing success response for '.$method.' '.$path);
  }
 }
 openapiSame(count($expected),count($document['paths']),'Unexpected or missing v1 path.');
