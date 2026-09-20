@@ -164,24 +164,34 @@ class DuplicateMergeService
         $this->mergeRows('vod_field_state', 'field_name', 'vod_id', $primaryVodId, $secondaryVodId, $primary['field_states'], $secondary['field_states'], false);
         $this->mergeRows('content_lang', 'lang_code', 'content_id', $primaryVodId, $secondaryVodId, $primary['content_lang'], $secondary['content_lang'], false, ['content_type' => 'vod']);
         // Provider identity conflicts stay attached to the secondary record for manual review.
-        $this->mergeRows('ext_source_map', 'provider_code', 'cms_id', $primaryVodId, $secondaryVodId, $primary['external_maps'], $secondary['external_maps'], true, ['cms_mid' => 1]);
+        $this->mergeRows('ext_source_map', ['provider_code', 'item_key'], 'cms_id', $primaryVodId, $secondaryVodId, $primary['external_maps'], $secondary['external_maps'], true, ['cms_mid' => 1]);
     }
 
-    private function mergeRows(string $table, string $identity, string $owner, int $primaryId, int $secondaryId, array $primaryRows, array $secondaryRows, bool $keepConflicts, array $scope = []): void
+    private function mergeRows(string $table, $identity, string $owner, int $primaryId, int $secondaryId, array $primaryRows, array $secondaryRows, bool $keepConflicts, array $scope = []): void
     {
+        $identityFields = is_array($identity) ? $identity : [$identity];
         $known = [];
-        foreach ($primaryRows as $row) { $known[(string) ($row[$identity] ?? '')] = true; }
+        foreach ($primaryRows as $row) { $known[$this->relationIdentity($row, $identityFields)] = true; }
         foreach ($secondaryRows as $row) {
-            $key = (string) ($row[$identity] ?? '');
+            $key = $this->relationIdentity($row, $identityFields);
+            $query = Db::name($table)->where($scope)->where($owner, $secondaryId);
+            foreach ($identityFields as $field) { $query->where($field, $row[$field] ?? ''); }
             if ($key === '' || isset($known[$key])) {
-                if (!$keepConflicts) { Db::name($table)->where($scope)->where($owner, $secondaryId)->where($identity, $row[$identity] ?? '')->delete(); }
+                if (!$keepConflicts) { $query->delete(); }
                 continue;
             }
-            if (Db::name($table)->where($scope)->where($owner, $secondaryId)->where($identity, $row[$identity])->update([$owner => $primaryId]) === false) {
+            if ($query->update([$owner => $primaryId]) === false) {
                 throw new RuntimeException('Related duplicate data could not be merged.');
             }
             $known[$key] = true;
         }
+    }
+
+    private function relationIdentity(array $row, array $fields): string
+    {
+        $parts = [];
+        foreach ($fields as $field) { $parts[] = (string) ($row[$field] ?? ''); }
+        return implode("\x1f", $parts);
     }
 
     protected function markSecondaryMerged(int $secondaryVodId, int $primaryVodId, int $now): void
