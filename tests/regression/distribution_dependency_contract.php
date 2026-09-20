@@ -17,6 +17,8 @@ $requiredFiles = [
     'vendor/composer/autoload_real.php',
     'vendor/karsonzhang/fastadmin-addons/src/Addons.php',
     'vendor/topthink/think-captcha/src/Captcha.php',
+    'vendor/topthink/think-captcha/assets/bgs/1.jpg',
+    'vendor/topthink/think-captcha/assets/ttfs/1.ttf',
     'vendor/topthink/think-helper/src/Arr.php',
     'vendor/topthink/think-image/src/Image.php',
     'vendor/topthink/think-installer/src/Plugin.php',
