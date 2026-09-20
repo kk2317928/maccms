@@ -33,12 +33,7 @@ class Adminloginbg extends Addons
         $info = $this->getInfo();
         if($info['state'] ==1) {
             $config = $this->getConfig();
-            if ($config['mode'] == 'random' || $config['mode'] == 'daily') {
-                $index = $config['mode'] == 'random' ? mt_rand(1, 4000) : date("Ymd") % 4000;
-                $background = "http://img.infinitynewtab.com/wallpaper/" . $index . ".jpg";
-            } else {
-                $background = $config['image'];
-            }
+            $background = $config['image'];
             \think\View::instance()->assign('background', $background);
         }
     }
