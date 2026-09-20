@@ -15,12 +15,15 @@ $required = [
     'MySQL 5.7',
     'MySQL 8.0',
     'php think maccms:migrate',
-    'php think maccms:jobs',
+    'php think maccms:jobs --max-jobs=20',
     'php think maccms:analytics',
     'mysqldump --single-transaction',
+    'application/database.php',
     'application/extra',
     'application/data',
     'upload/',
+    'RESTORE_DATABASE',
+    'MACCMS_TEST_DATABASE',
     'maintenance mode',
     'health check',
     'rollback',
@@ -37,5 +40,9 @@ foreach ($required as $needle) {
         fwrite(STDERR, "FAIL: operations runbook missing: {$needle}\n");
         exit(1);
     }
+}
+if (strpos($doc, 'maccms:jobs --limit=') !== false) {
+    fwrite(STDERR, "FAIL: operations runbook uses unsupported maccms:jobs --limit option.\n");
+    exit(1);
 }
 fwrite(STDOUT, "OK: deployment and recovery runbook contract passed.\n");
