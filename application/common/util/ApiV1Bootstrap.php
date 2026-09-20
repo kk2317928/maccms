@@ -18,6 +18,8 @@ class ApiV1Bootstrap
         elseif ($path === '/api/v1/search') { $target = '/v1.catalog/search'; }
         elseif ($path === '/api/v1/taxonomies') { $target = '/v1.catalog/taxonomies'; }
         elseif ($path === '/api/v1/openapi.json') { $target = '/v1.docs/openapi'; }
+        elseif ($path === '/api/v1/events') { $target = '/v1.events/ingest'; $allowed = array('POST'); }
+        elseif ($path === '/api/v1/rankings') { $target = '/v1.discovery/rankings'; }
         elseif ($path === '/api/v1/auth/login') { $target = '/v1.auth/login'; $allowed = array('POST'); }
         elseif ($path === '/api/v1/auth/refresh') { $target = '/v1.auth/refresh'; $allowed = array('POST'); }
         elseif ($path === '/api/v1/auth/logout') { $target = '/v1.auth/logout'; $allowed = array('POST'); }
@@ -39,6 +41,7 @@ class ApiV1Bootstrap
             $target = '/v1.auth/revoke/session_id/'.$matches[1]; $allowed = array('DELETE');
         }
         elseif (preg_match('#\A/api/v1/videos/([A-Za-z0-9]{6})/playback/(s[1-9][0-9]{0,2})/(s[1-9][0-9]{0,2}e[1-9][0-9]{0,4})\z#D', $path, $matches)) { $target = '/v1.playback/resolve/public_id/'.$matches[1].'/source_id/'.$matches[2].'/episode_id/'.$matches[3]; }
+        elseif (preg_match('#\A/api/v1/videos/([A-Za-z0-9]{6})/recommendations\z#D', $path, $matches)) { $target = '/v1.discovery/recommendations/public_id/'.$matches[1]; }
         elseif (preg_match('#\A/api/v1/videos/([A-Za-z0-9]{6})/episodes\z#D', $path, $matches)) { $target = '/v1.catalog/episodes/public_id/'.$matches[1]; }
         elseif (preg_match('#\A/api/v1/videos/([A-Za-z0-9]{6})\z#D', $path, $matches)) { $target = '/v1.catalog/detail/public_id/'.$matches[1]; }
 
