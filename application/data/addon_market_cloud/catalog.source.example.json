@@ -1,5 +1,5 @@
 {
-  "base_url": "https://cdn.maccms.ai/addons",
+  "base_url": "https://packages.example.invalid/addons",
   "items": [
     {
       "id": "adminloginbg-1",
