@@ -767,7 +767,7 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 ```text
 Checkpoint: completion repair
 Next task: T-105 relational duplicate merge/restore
-Task status: READY
+Task status: IN_PROGRESS
 Starting commit: d818cb3088593a84309ca256bfac68c3501b7960
 Release status: headless-ai-v1.0.2 is retained for traceability but is not accepted for deployment
 Next action: add idempotent AI enqueue hooks to native admin and collection writes
@@ -801,3 +801,8 @@ Next action: add idempotent AI enqueue hooks to native admin and collection writ
 - Coordinator calls occur after stage commits; merged secondary videos never receive downstream TMDB work.
 - Implementation: `21856ab6e26d302a4d632f8ec30dad3ff43fd535`.
 - GREEN evidence: PHP `35531033623`, MySQL 5.7 `35531033626`, MySQL 8.0 `35531033568`, native `35531033533`, release matrix `35531033595`, rollback `35531033597`.
+
+### T-105 Version-2 relational duplicate merge/restore — `IN_PROGRESS`
+
+- RED contract: `tests/regression/duplicate_relational_merge.php`.
+- Scope includes aliases, multilingual rows, taxonomy, external mappings, projection integrity and version-1 restore compatibility.
