@@ -210,6 +210,19 @@ foreach ($publicIds as $publicId) {
     native_assert((bool) preg_match('/^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$/', $publicId), 'Invalid six-character public ID.');
 }
 
+$aiJobs = \think\Db::name('content_job')->where('job_type', 'ai_normalize')->order('job_id asc')->select();
+native_assert(count($aiJobs) === 2, 'Admin and collection creates must enqueue exactly one AI job each; playback-only collection update must not enqueue another.');
+$jobVodIds = [];
+foreach ($aiJobs as $job) {
+    $payload = json_decode((string) $job['payload_json'], true);
+    $jobVodIds[] = (int) ($payload['vod_id'] ?? 0);
+    native_assert(strpos((string) $job['idempotency_key'], 'video:' . (int) ($payload['vod_id'] ?? 0) . ':ai:') === 0, 'AI job key is not deterministic.');
+}
+sort($jobVodIds);
+$expectedJobVodIds = [$adminId, $collectId];
+sort($expectedJobVodIds);
+native_assert($jobVodIds === $expectedJobVodIds, 'AI jobs do not belong to the two created videos.');
+
 $adminRow = \think\Db::name('vod')->where('vod_id', $adminId)->find();
 $collectRowAfterUpdate = \think\Db::name('vod')->where('vod_id', $collectId)->find();
 native_playback_round_trip($adminRow);

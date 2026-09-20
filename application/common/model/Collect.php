@@ -950,6 +950,11 @@ class Collect extends Base {
                                 $color = 'red';
                                 $des = $extensionResult['msg'];
                             } else {
+                                try {
+                                    \app\common\util\VodExtensionService::enqueueAiAfterWrite((int) $vod_id, [], $v);
+                                } catch (\Throwable $exception) {
+                                    \think\Log::error('Collect AI enqueue failed vod_id=' . (int) $vod_id . ' class=' . get_class($exception));
+                                }
                                 $vod_search_enabled && $vod_search->checkAndUpdateTopResults(['vod_id' => $vod_id] + $v, true);
                                 $color = 'green';
                                 $des = lang('model/collect/add_ok');
@@ -1213,6 +1218,13 @@ class Collect extends Base {
                                 if ($extensionResult['code'] !== 1) {
                                     $color = 'red';
                                     $des = $extensionResult['msg'];
+                                } else {
+                                    try {
+                                        $workflowBefore = is_array($info) ? $info : (method_exists($info, 'toArray') ? $info->toArray() : []);
+                                        \app\common\util\VodExtensionService::enqueueAiAfterWrite((int) $info['vod_id'], $workflowBefore, $update);
+                                    } catch (\Throwable $exception) {
+                                        \think\Log::error('Collect AI enqueue failed vod_id=' . (int) $info['vod_id'] . ' class=' . get_class($exception));
+                                    }
                                 }
                             }
                         }

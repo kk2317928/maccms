@@ -11,6 +11,12 @@ use Throwable;
 
 final class VodExtensionService
 {
+    public const AI_INPUT_FIELDS = [
+        'type_id', 'vod_name', 'vod_sub', 'vod_en', 'vod_year', 'vod_area',
+        'vod_lang', 'vod_actor', 'vod_director', 'vod_class', 'vod_tag',
+        'vod_blurb', 'vod_content',
+    ];
+
     public const NATIVE_FIELDS = [
         'region' => 'vod_area',
         'genre' => 'vod_class',
@@ -24,6 +30,48 @@ final class VodExtensionService
             throw new InvalidArgumentException('Video does not exist.');
         }
         return VodExt::ensureForVod($vodId);
+    }
+
+    public static function contentFingerprint(array $data): string
+    {
+        $identity = [];
+        foreach (self::AI_INPUT_FIELDS as $field) {
+            $value = $data[$field] ?? '';
+            if (is_bool($value)) {
+                $value = $value ? '1' : '0';
+            } elseif (is_int($value) || is_float($value)) {
+                $value = (string) $value;
+            } elseif (!is_string($value)) {
+                $value = '';
+            }
+            $identity[$field] = preg_replace('/\s+/u', ' ', trim($value));
+        }
+        return hash('sha256', json_encode($identity, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+    }
+
+    public static function enqueueAiAfterWrite(
+        int $vodId,
+        array $before,
+        array $written,
+        callable $coordinatorFactory = null
+    ): ?array {
+        self::assertVodId($vodId);
+        $touched = array_intersect(self::AI_INPUT_FIELDS, array_keys($written));
+        if (!$touched) {
+            return null;
+        }
+        $after = array_merge($before, $written);
+        if ($before && self::contentFingerprint($before) === self::contentFingerprint($after)) {
+            return null;
+        }
+        $factory = $coordinatorFactory ?: static function () {
+            return new ContentWorkflowCoordinator();
+        };
+        $coordinator = $factory();
+        if (!is_object($coordinator) || !method_exists($coordinator, 'beginAi')) {
+            throw new RuntimeException('Invalid content workflow coordinator.');
+        }
+        return $coordinator->beginAi($vodId, self::contentFingerprint($after));
     }
 
     public static function replaceTerms(int $vodId, string $kind, array $termIds): void

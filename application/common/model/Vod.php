@@ -823,12 +823,15 @@ class Vod extends Base {
         $data = VodValidate::formatDataBeforeDb($data);
         $seoObjId = 0;
         $isNew = empty($data['vod_id']);
+        $workflowBefore = [];
         VodPublishService::normalizeOnSave($data);
         VodAuditService::applyOnSave($data, $isNew);
         if(!empty($data['vod_id'])){
 
             $where=[];
             $where['vod_id'] = ['eq',$data['vod_id']];
+            $workflowBefore = (array) $this->where($where)
+                ->field(implode(',', VodExtensionService::AI_INPUT_FIELDS))->find();
             $res = $this->allowField(true)->where($where)->update($data);
             //编辑 先获取到之前的name
             $old_name = $this->where('vod_id',$data['vod_id'])->value('vod_name');
@@ -865,6 +868,11 @@ class Vod extends Base {
         $extensionResult = $this->ensureExtension($ixVodId);
         if ($extensionResult['code'] !== 1) {
             return $extensionResult;
+        }
+        try {
+            VodExtensionService::enqueueAiAfterWrite($ixVodId, $workflowBefore, $data);
+        } catch (\Throwable $exception) {
+            \think\Log::error('Vod AI enqueue failed vod_id=' . $ixVodId . ' class=' . get_class($exception));
         }
         MeilisearchSync::afterVodSave($ixVodId);
 
