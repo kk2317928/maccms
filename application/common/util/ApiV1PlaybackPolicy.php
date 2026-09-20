@@ -14,7 +14,7 @@ final class ApiV1PlaybackPolicy
         $this->http=new ExternalHttpPolicy($resolver);
     }
 
-    public function authorize($source,array|string $url = null)
+    public function authorize($source,$url = null)
     {
         if ($url===null) { $url=$source[1]??''; $source=$source[0]??''; }
         $source=(string)$source;
