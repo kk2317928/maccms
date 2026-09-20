@@ -41,7 +41,7 @@ PEM;
         }
         $this->config = array_merge([
             'status' => 0,
-            'catalog_url' => 'https://api.maccms.ai/templates/catalog.json',
+            'catalog_url' => '',
             'cache_ttl' => 10800,
         ], $cfg);
     }
