@@ -36,7 +36,7 @@ final class ApiV1CorsPolicy
         $headers=$this->headers($origin,$requestedMethod,$methods);
         $allowed=array_values(array_unique(array_merge(array_map('strtoupper',$methods),array('OPTIONS'))));
         $headers['Access-Control-Allow-Methods']=implode(', ',$allowed);
-        $headers['Access-Control-Allow-Headers']='Authorization, Content-Type, If-None-Match, X-Request-ID';
+        $headers['Access-Control-Allow-Headers']='Authorization, Content-Type, If-None-Match, X-Request-ID, X-Session-ID, X-Device-ID';
         $headers['Access-Control-Max-Age']='600';
         return $headers;
     }
