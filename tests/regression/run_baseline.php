@@ -34,6 +34,7 @@ if ($suiteDir !== null) {
         __DIR__ . '/outbound_policy_adoption.php',
         __DIR__ . '/security_release_hardening.php',
         __DIR__ . '/release_matrix_contract.php',
+        __DIR__ . '/operations_runbook_contract.php',
         __DIR__ . '/user_register_validate.php',
     ];
 }
