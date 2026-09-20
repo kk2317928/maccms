@@ -733,7 +733,7 @@ Legacy API compatibility is a separate concern; do not expose raw DB records in 
 ### T-093 Security regression suite — `DONE`
 ### T-094 Full native and programme regression matrix — `DONE`
 ### T-095 Deployment, migration, Cron, backup and disaster-recovery docs — `DONE`
-### T-096 Release candidate acceptance and rollback rehearsal — `IN_PROGRESS`
+### T-096 Release candidate acceptance and rollback rehearsal — `DONE`
 ### T-097 Tag `headless-ai-v1.0.0` — `TODO`
 
 Release is blocked until prohibited outbound tests pass and both MySQL verification tracks are evidenced.
@@ -744,10 +744,10 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 
 ```text
 Checkpoint: CP-09
-Next task: T-090
-Task status: IN_PROGRESS
-Required starting state: feature/headless-ai-v1 after CP-08 final commit
-First verification: define failing prohibited update-route and client-request contracts
-Task commit: test: prohibit official update communication
-Push required: yes, immediately after task verification
+Next task: T-097
+Task status: AWAITING_EXPLICIT_AUTHORIZATION
+Required starting state: feature/headless-ai-v1 at the accepted RC candidate
+First verification: confirm exact candidate SHA and all final gates
+Task action: create tag headless-ai-v1.0.0
+Push required: only after explicit final authorization
 ```
