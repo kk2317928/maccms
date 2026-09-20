@@ -1,0 +1,18 @@
+CREATE TABLE IF NOT EXISTS `__PREFIX__api_video_event` (
+  `event_id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `dedupe_hash` char(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  `event_type` varchar(24) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  `actor_key` varchar(80) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  `user_id` int unsigned NOT NULL DEFAULT 0,
+  `vod_id` int unsigned NOT NULL,
+  `episode` varchar(191) NOT NULL DEFAULT '',
+  `position_seconds` int unsigned NOT NULL DEFAULT 0,
+  `duration_seconds` int unsigned NOT NULL DEFAULT 0,
+  `occurred_at` int unsigned NOT NULL,
+  `received_at` int unsigned NOT NULL,
+  PRIMARY KEY (`event_id`),
+  UNIQUE KEY `uk_api_video_event_dedupe` (`dedupe_hash`),
+  KEY `idx_api_video_event_vod_time` (`vod_id`,`occurred_at`),
+  KEY `idx_api_video_event_actor_time` (`actor_key`,`occurred_at`),
+  KEY `idx_api_video_event_received` (`received_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
