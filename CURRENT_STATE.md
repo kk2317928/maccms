@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-20
-State document version: 78
+State document version: 79
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -11,12 +11,12 @@ Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
 Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to the approved upstream while the programme is implemented incrementally on the integration branch.
 
 **Last completed checkpoint:** CP-09 — official communication removal and release hardening.
-**Active checkpoint:** none; Headless AI v1 programme complete.
-**Active task:** none.
+**Active checkpoint:** CP-09 release packaging hotfix.
+**Active task:** T-098 — publish `headless-ai-v1.0.1` (`AWAITING_TAG`).
 **Starting commit:** T-073 final implementation commit `326515e67b85ac6e7f4509eb9dd4c3e2f99a5cea`.
 **Last completed task:** T-097 — annotated tag `headless-ai-v1.0.0` targets accepted candidate `fbd5521d7c688c2e430a7a746e07c771e30eb84e`.
 **Last verification:** PHP regression `35511088543`, release matrix `35511088544`, and rollback rehearsal `35510999172` passed.
-**Next action:** deployment may proceed using the immutable `headless-ai-v1.0.0` tag and the operations runbook.
+**Next action:** create annotated tag `headless-ai-v1.0.1` at hotfix candidate `bab28456825e1cf170f3a4b3fb07c61f1a49b581`; do not deploy `v1.0.0` for fresh installation.
 
 ## 1. Confirmed product direction
 
@@ -181,12 +181,11 @@ Absence was established by repository text search against the pinned snapshot. I
 ## 9. Resumption template
 
 ```text
-Task: Programme complete
-Release tag: headless-ai-v1.0.0
-Tag object: 1a23eb496a0a55b59f6e8fb829fe031f44d09082
-Tag target: fbd5521d7c688c2e430a7a746e07c771e30eb84e
-Last verification: PHP 35511088543; release matrix 35511088544; rollback rehearsal 35510999172
-Result: CP-01 through CP-09 and T-097 complete
-Next action: deploy the immutable tag by following docs/deployment/operations-runbook.md
-Blocker: none
+Task: T-098 Publish headless-ai-v1.0.1
+Release candidate: bab28456825e1cf170f3a4b3fb07c61f1a49b581
+Fix: preserve upload/.gitkeep while ignoring user-uploaded content
+Last verification: PHP 35516297472; release matrix 35516296593; rollback rehearsal 35516297465
+Result: installer-required ./upload is present in release checkouts
+Next action: create and push annotated tag headless-ai-v1.0.1 at the release candidate
+Blocker: current GitHub connector cannot create tag refs
 ```
