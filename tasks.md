@@ -827,3 +827,15 @@ Next task: T-106 indexed duplicate search and configurable AI usage/budget
 - GREEN evidence: PHP `35533319406`, MySQL 5.7 `35533319413`, MySQL 8.0 `35533319407`, release matrix `35533077996`, rollback `35533077987`.
 
 Next task: T-107 intelligent-content admin operations
+
+### T-107 Intelligent-content admin operations — `DONE`
+
+- Added queued-job pause, paused-job resume and queued-job skip-with-reason controls; running jobs cannot be interrupted.
+- Existing terminal-failure retry remains available and preserves attempt history.
+- Every control requires exact AI/TMDB permission, explicit confirmation and controller CSRF validation.
+- Control actions append immutable audit events; displayed error and skip summaries use existing secret redaction.
+- Workspace now links directly to AI pending review and exposes visible job controls.
+- RED: `edcce6bd1653ddf2c5e8975801b28748a2fe4789`; implementation: `7b1065b73121e682a21b66cc9b0aed295ab84d4a`, `3ec7cb3893e8192b7878d9e7ba1eed926a9544fc`.
+- GREEN evidence: PHP `35534034311`, release matrix MySQL 5.7/8.0 `35534034267`, rollback `35534034274`.
+
+Next task: T-108 protected idempotent video import API
