@@ -668,8 +668,14 @@ Use `application/admin/view_new`; do not add a parallel obsolete `view/` tree.
 - RED contract: `855936a557e6ccd393dd2f0c6925dff2cc08fb3d`; implementation and independent-review fixes through `60a6e4bcbfa2f23560804e81b3ad7b917d4bafab`.
 - Added authenticated public-ID favorites/history/progress routes and allowlisted DTOs, canonical alias resolution, published-only access, deterministic anonymous merge, advisory locking for native MyISAM `ulog`, duration persistence, episode/range validation, and strict separation from paid type-4 entitlement rows.
 - GREEN evidence: PHP regression `35498624705` passed syntax plus baseline, foundation, AI jobs, duplicate/TMDB, admin and API v1 suites. Independent review fixes covered MyISAM serialization, prevalidation, duration persistence, episode/range validation, idempotent favorites, legacy whole-video rows and paid-entitlement isolation.
-### T-075 Playback source policy and optional signing — `IN_PROGRESS`
-### T-076 CORS, per-endpoint limits, ETag and invalidation — `TODO`
+### T-075 Playback source policy and optional signing — `DONE`
+
+- RED contracts: `1cd5cfdcb7be5723a2fa9599bff64f00dd3cdf58`, `6c8ccf9a90163c6a6acf12ddf69e5e2f45e6a80a`, `666fdcf0f697cdcaf33241cd8ada46bcc329754a`, and `5e294e475da274de52e3d67fc5db99531949cfee`.
+- Implementation and independent-review fixes through `04d0269af6395b765b4a640cccd04ce26c8e47a1`.
+- Added published canonical playback resolution over the native codec, per-source enablement and exact HTTPS host allowlists, DNS/private-address rejection, optional HMAC signing with configured TTL enforcement, server-only Next.js signer documentation, allowlisted DTOs, safe alias redirects and private no-store delivery responses.
+- GREEN evidence: PHP regression `35499394152`; independent final review found no Critical or Important issues.
+
+### T-076 CORS, per-endpoint limits, ETag and invalidation — `IN_PROGRESS`
 ### T-077 OpenAPI v1 and contract tests — `TODO`
 
 Legacy API compatibility is a separate concern; do not expose raw DB records in `/api/v1`.
@@ -705,10 +711,10 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 
 ```text
 Checkpoint: CP-07
-Next task: T-075
+Next task: T-076
 Task status: IN_PROGRESS
-Required starting state: feature/headless-ai-v1 after T-074 final commit `60a6e4bcbfa2f23560804e81b3ad7b917d4bafab`
-First verification: define playback source allowlist, URL safety and optional signing contracts
-Task commit: test: define API v1 playback delivery contract
+Required starting state: feature/headless-ai-v1 after T-075 implementation `04d0269af6395b765b4a640cccd04ce26c8e47a1`
+First verification: define CORS, per-endpoint rate-limit, ETag and invalidation contracts
+Task commit: test: define API v1 delivery policy contract
 Push required: yes, immediately after task verification
 ```
