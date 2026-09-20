@@ -732,8 +732,8 @@ Legacy API compatibility is a separate concern; do not expose raw DB records in 
 ### T-092 Centralize outbound policy and SSRF controls — `DONE`
 ### T-093 Security regression suite — `DONE`
 ### T-094 Full native and programme regression matrix — `DONE`
-### T-095 Deployment, migration, Cron, backup and disaster-recovery docs — `IN_PROGRESS`
-### T-096 Release candidate acceptance and rollback rehearsal — `TODO`
+### T-095 Deployment, migration, Cron, backup and disaster-recovery docs — `DONE`
+### T-096 Release candidate acceptance and rollback rehearsal — `IN_PROGRESS`
 ### T-097 Tag `headless-ai-v1.0.0` — `TODO`
 
 Release is blocked until prohibited outbound tests pass and both MySQL verification tracks are evidenced.
