@@ -95,6 +95,7 @@ $behaviorPath=$root.'/application/common/behavior/ApiV1DeliveryPolicy.php';
 deliveryAssert(is_file($behaviorPath),'Missing API v1 delivery behavior.');
 $behavior=file_get_contents($behaviorPath);
 deliveryAssert(strpos($behavior,'REMOTE_ADDR')!==false && strpos($behavior,'HTTP_X_FORWARDED_FOR')===false,'Rate limit identity must default to direct peer IP.');
+deliveryAssert(strpos($behavior,'ApiV1Bootstrap::requestPath')!==false,'Delivery behavior must reuse bootstrap path normalization.');
 deliveryAssert(strpos($behavior,'ApiV1RateLimiter')!==false,'Delivery behavior must enforce rate limits.');
 deliveryAssert(strpos($behavior,'ApiV1CorsPolicy')!==false,'Delivery behavior must enforce CORS.');
 deliveryAssert(strpos($behavior,'Retry-After')!==false && strpos($behavior,'429')!==false,'Rate-limit response contract missing.');
