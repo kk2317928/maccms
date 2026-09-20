@@ -42,8 +42,9 @@ class Base extends \app\api\controller\Base
         return $this->cacheableJsonResponse(ApiV1Response::collection($items,$pagination,$totalItems,$requestId,$meta),$request,$requestId);
     }
 
-    protected function cacheableDocumentResponse(array $document,Request $request)
+    protected function cacheableRawDocumentResponse($document,Request $request)
     {
+        $document=(string)$document;
         $requestId=$this->requestId($request);
         $etag=ApiV1Etag::make($document);
         $headers=array(
@@ -54,7 +55,7 @@ class Base extends \app\api\controller\Base
             'Vary'=>'Origin',
         );
         if (ApiV1Etag::matches($request->header('If-None-Match'),$etag)) return response('',304,$headers);
-        return json($document,200,$headers);
+        return response($document,200,$headers);
     }
 
     protected function errorResponse($code, $message, $status, Request $request = null, array $details = array())
