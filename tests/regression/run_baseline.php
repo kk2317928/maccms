@@ -31,6 +31,7 @@ if ($suiteDir !== null) {
         __DIR__ . '/outbound_inventory.php',
         __DIR__ . '/official_update_removed.php',
         __DIR__ . '/prohibited_defaults_removed.php',
+        __DIR__ . '/outbound_policy_adoption.php',
         __DIR__ . '/user_register_validate.php',
     ];
 }
