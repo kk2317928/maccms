@@ -36,7 +36,7 @@ jobs:
         image: ${{ matrix.mysql.image }}
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: maccms_release_ci
+          MYSQL_DATABASE: maccms_ci_release
         ports:
           - 3306:3306
         options: >-
@@ -45,7 +45,7 @@ jobs:
           --health-timeout=5s
           --health-retries=12
     env:
-      MACCMS_TEST_DATABASE: maccms_release_ci
+      MACCMS_TEST_DATABASE: maccms_ci_release
       MACCMS_TEST_HOST: 127.0.0.1
       MACCMS_TEST_PORT: 3306
       MACCMS_TEST_USER: root
@@ -61,7 +61,7 @@ jobs:
           coverage: none
 
       - name: Configure disposable database
-        run: sed -i "s/'database'        => 'maccms10'/'database'        => 'maccms_release_ci'/" application/database.php
+        run: sed -i "s/'database'        => 'maccms10'/'database'        => 'maccms_ci_release'/" application/database.php
 
       - name: Enforce prohibited outbound policy
         run: php tests/regression/outbound_inventory.php --enforce
@@ -76,7 +76,7 @@ jobs:
           php tests/regression/run_api_v1.php
 
       - name: Install native schema
-        run: mysql --protocol=tcp --host=127.0.0.1 --port=3306 --user=root --database=maccms_release_ci < application/install/sql/install.sql
+        run: mysql --protocol=tcp --host=127.0.0.1 --port=3306 --user=root --database=maccms_ci_release < application/install/sql/install.sql
 
       - name: First migration run
         run: |
