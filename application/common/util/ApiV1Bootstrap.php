@@ -37,6 +37,7 @@ class ApiV1Bootstrap
         elseif (preg_match('#\A/api/v1/auth/sessions/([a-f0-9]{32})\z#D', $path, $matches)) {
             $target = '/v1.auth/revoke/session_id/'.$matches[1]; $allowed = array('DELETE');
         }
+        elseif (preg_match('#\A/api/v1/videos/([A-Za-z0-9]{6})/playback/(s[1-9][0-9]{0,2})/(s[1-9][0-9]{0,2}e[1-9][0-9]{0,4})\z#D', $path, $matches)) { $target = '/v1.playback/resolve/public_id/'.$matches[1].'/source_id/'.$matches[2].'/episode_id/'.$matches[3]; }
         elseif (preg_match('#\A/api/v1/videos/([A-Za-z0-9]{6})/episodes\z#D', $path, $matches)) { $target = '/v1.catalog/episodes/public_id/'.$matches[1]; }
         elseif (preg_match('#\A/api/v1/videos/([A-Za-z0-9]{6})\z#D', $path, $matches)) { $target = '/v1.catalog/detail/public_id/'.$matches[1]; }
 
