@@ -20,8 +20,9 @@ class AiNormalizationPipeline
     private $fields;
     private $config;
     private $clock;
+    private $duplicateDetector;
 
-    public function __construct(callable $provider, $validator, $runs, $fields, array $config, callable $clock = null)
+    public function __construct(callable $provider, $validator, $runs, $fields, array $config, callable $clock = null, $duplicateDetector = null)
     {
         foreach (['provider', 'model', 'prompt_version', 'daily_budget_micros'] as $key) {
             if (!array_key_exists($key, $config)) {
@@ -37,6 +38,7 @@ class AiNormalizationPipeline
         $this->fields = $fields;
         $this->config = $config;
         $this->clock = $clock ?: 'time';
+        $this->duplicateDetector = $duplicateDetector;
     }
 
     public function handle(array $payload, array $job): array
@@ -85,17 +87,52 @@ class AiNormalizationPipeline
             throw $exception;
         }
 
-        $staged = [];
+        $candidates = [];
         foreach (self::FIELD_MAP as $candidateKey => $field) {
+            $candidates[$field] = $normalized[$candidateKey];
+        }
+        $taxonomy = (array) $normalized['taxonomy'];
+        $candidates['vod_area'] = implode(',', (array) ($taxonomy['regions'] ?? []));
+        $candidates['vod_class'] = implode(',', (array) ($taxonomy['genres'] ?? []));
+        $candidates['vod_tag'] = implode(',', (array) ($taxonomy['tags'] ?? []));
+
+        $staged = [];
+        foreach ($candidates as $field => $candidate) {
+            if (!isset($baselines[$field])) {
+                $current = $this->fields->inspect($vodId, $field);
+                $baseline = $current['value'] ?? null;
+                $baselines[$field] = ['value' => $baseline, 'hash' => $this->valueHash($baseline)];
+            }
             $staged[] = [
                 'field_name' => $field,
-                'candidate' => $normalized[$candidateKey],
+                'candidate' => $candidate,
                 'baseline' => $baselines[$field]['value'],
                 'baseline_hash' => $baselines[$field]['hash'],
             ];
         }
         $runId = $this->runs->recordWithReviews($run, $vodId, $staged, $now);
-        return ['ai_run_id' => $runId, 'fields_proposed' => 7, 'total_tokens' => $response['input_tokens'] + $response['output_tokens']];
+
+        $adopted = 0;
+        if (!empty($this->config['auto_adopt_empty'])) {
+            foreach ($candidates as $field => $candidate) {
+                $empty = $baselines[$field]['value'] === null || trim((string) $baselines[$field]['value']) === '';
+                if ($empty && trim((string) $candidate) !== ''
+                    && $this->fields->apply($vodId, $field, $candidate, 'ai', 'ai_run:' . $runId)) {
+                    $adopted++;
+                }
+            }
+        }
+
+        $duplicateMetrics = ['candidates_recorded' => 0];
+        if ($this->duplicateDetector !== null) {
+            $duplicateMetrics = (array) $this->duplicateDetector->detect($vodId, $normalized);
+        }
+        return array_merge([
+            'ai_run_id' => $runId,
+            'fields_proposed' => count($staged),
+            'fields_auto_adopted' => $adopted,
+            'total_tokens' => $response['input_tokens'] + $response['output_tokens'],
+        ], $duplicateMetrics);
     }
 
     private function valueHash($value): string
