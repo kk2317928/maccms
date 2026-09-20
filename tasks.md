@@ -738,10 +738,11 @@ Legacy API compatibility is a separate concern; do not expose raw DB records in 
 - Annotated tag object: `1a23eb496a0a55b59f6e8fb829fe031f44d09082`.
 - Tag target: accepted RC commit `fbd5521d7c688c2e430a7a746e07c771e30eb84e`.
 
-### T-098 Restore installer upload directory and publish `headless-ai-v1.0.1` — `AWAITING_TAG`
+### T-098 Restore installer runtime dependencies and publish `headless-ai-v1.0.1` — `AWAITING_TAG`
 - Root cause: `/upload` was fully ignored, while the installer requires `./upload` to exist and be writable.
-- Fix candidate: `bab28456825e1cf170f3a4b3fb07c61f1a49b581`.
-- Evidence: PHP `35516297472`, release matrix `35516296593`, rollback rehearsal `35516297465`.
+- Upload-directory fix candidate: `bab28456825e1cf170f3a4b3fb07c61f1a49b581`.
+- Captcha-runtime fix candidate: `0b70890bba914dd161672eca681dc4b44eed7a2c`.
+- Final evidence: PHP `35517149734`, release matrix `35517149693`, rollback rehearsal `35517149692`.
 
 Release is blocked until prohibited outbound tests pass and both MySQL verification tracks are evidenced.
 
@@ -754,7 +755,7 @@ Checkpoint: CP-09 hotfix
 Next task: T-098
 Task status: AWAITING_TAG
 Release tag: headless-ai-v1.0.1
-Tag target: bab28456825e1cf170f3a4b3fb07c61f1a49b581
+Tag target: 0b70890bba914dd161672eca681dc4b44eed7a2c
 Programme status: code and all gates complete; tag publication pending
 Push required: create and push the annotated tag
 ```
