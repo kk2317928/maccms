@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-20
-State document version: 76
+State document version: 77
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-08 — events, rankings and recommendations.
 **Active checkpoint:** CP-09 — official communication removal and release hardening.
-**Active task:** T-096 — release candidate acceptance and rollback rehearsal (`IN_PROGRESS`).
+**Active task:** T-097 — create `headless-ai-v1.0.0` tag (`AWAITING_EXPLICIT_AUTHORIZATION`).
 **Starting commit:** T-073 final implementation commit `326515e67b85ac6e7f4509eb9dd4c3e2f99a5cea`.
-**Last completed task:** T-095 — deployment, migration, Cron, backup, rollback and disaster-recovery runbook; final implementation commit `e0f4d23f658c2158fce9373dad525357b2eb71c9`.
-**Last verification:** PHP regression `35510417972` passed T-095.
-**Next action:** add RC acceptance contract and execute application/database rollback rehearsal.
+**Last completed task:** T-096 — release candidate acceptance and rollback rehearsal; accepted candidate commit `fbd5521d7c688c2e430a7a746e07c771e30eb84e`.
+**Last verification:** PHP regression `35511088543`, release matrix `35511088544`, and rollback rehearsal `35510999172` passed.
+**Next action:** wait for explicit final authorization before creating the T-097 release tag.
 
 ## 1. Confirmed product direction
 
@@ -181,11 +181,11 @@ Absence was established by repository text search against the pinned snapshot. I
 ## 9. Resumption template
 
 ```text
-Task: T-096 Release candidate acceptance and rollback rehearsal
-Starting commit: e0f4d23f658c2158fce9373dad525357b2eb71c9
-Changed files: pending RC acceptance contract/report/workflow
-Last command: PHP regression run 35510417972
-Result: T-095 complete; deployment and recovery runbook contract passed
-Next action: create failing RC acceptance contract, run database restore and application rollback rehearsal
-Blocker: none
+Task: T-097 Tag headless-ai-v1.0.0
+Starting commit: accepted RC candidate fbd5521d7c688c2e430a7a746e07c771e30eb84e
+Changed files: none; tag not created
+Last verification: PHP 35511088543; release matrix 35511088544; rollback rehearsal 35510999172
+Result: T-093 through T-096 complete; independent review Important findings fixed
+Next action: confirm current branch head and create/push the tag only after explicit final authorization
+Blocker: explicit final authorization required
 ```
