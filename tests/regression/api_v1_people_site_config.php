@@ -1,0 +1,48 @@
+<?php
+declare(strict_types=1);
+
+require_once __DIR__.'/../../application/common/util/ApiV1Dto.php';
+require_once __DIR__.'/../../application/common/util/ApiV1Locale.php';
+require_once __DIR__.'/../../application/common/util/ApiV1VideoDto.php';
+require_once __DIR__.'/../../application/common/util/ApiV1PeopleService.php';
+require_once __DIR__.'/../../application/common/util/ApiV1SiteConfig.php';
+
+use app\common\util\ApiV1Locale;
+use app\common\util\ApiV1PeopleService;
+use app\common\util\ApiV1SiteConfig;
+
+function peopleFail($message){fwrite(STDERR,"FAIL: ".$message.PHP_EOL);exit(1);}
+function peopleAssert($condition,$message){if(!$condition)peopleFail($message);}
+
+$person=['actor_name'=>'Jessica Jung','actor_alias'=>'鄭秀妍,郑秀妍','actor_pic'=>'/jessica.jpg','actor_content'=>'Biography','actor_status'=>1];
+$slug=ApiV1PeopleService::slug('Jessica Jung');
+peopleAssert(strlen($slug)===6 && preg_match('/^[A-Z0-9]{6}$/',$slug)===1,'person slug must be six public characters');
+peopleAssert($slug===ApiV1PeopleService::slug(' Jessica  Jung '),'person slug must be stable after name normalization');
+peopleAssert(strpos($slug,'1')!==0,'person slug must not expose an incrementing ID');
+
+$videos=[
+ ['public_id'=>'PUB001','vod_name'=>'Published','vod_status'=>1,'workflow_status'=>'published','merged_into_vod_id'=>null,'vod_year'=>'2026','published_at'=>100],
+ ['public_id'=>'DRAFT1','vod_name'=>'Draft','vod_status'=>0,'workflow_status'=>'manual_review','merged_into_vod_id'=>null],
+ ['public_id'=>'MERGED','vod_name'=>'Merged','vod_status'=>1,'workflow_status'=>'published','merged_into_vod_id'=>9],
+];
+$service=new ApiV1PeopleService(function()use($person){return [$person];},function($name)use($videos){return $videos;});
+$result=$service->detail($slug,ApiV1Locale::fromCode('en'));
+peopleAssert($result['slug']===$slug && $result['name']==='Jessica Jung','person public identity mismatch');
+peopleAssert($result['aliases']===['鄭秀妍','郑秀妍'],'person aliases must be explicit');
+peopleAssert(count($result['videos'])===1 && $result['videos'][0]['public_id']==='PUB001','only published unmerged videos may be returned');
+peopleAssert($service->detail('ZZZZZZ',ApiV1Locale::fromCode('en'))===null,'unknown person must resolve to 404 boundary');
+foreach(['actor_id','vod_id','workflow_status','merged_into_vod_id'] as $internal)peopleAssert(strpos(json_encode($result),$internal)===false,'person DTO leaks '.$internal);
+
+$config=new ApiV1SiteConfig([
+ 'site'=>['site_name'=>'MACCMS','site_url'=>'https://video.example','site_description'=>'Video','site_logo'=>'/logo.png','site_waplogo'=>'/mobile.png','site_tj'=>'secret-js'],
+ 'app'=>['lang'=>'zh-tw','cache_password'=>'cache-secret','search'=>'1'],
+ 'email'=>['phpmailer'=>['password'=>'smtp-secret']],
+ 'upload'=>['api'=>['qiniu'=>['secretkey'=>'storage-secret']]],
+]);
+$public=$config->toArray();
+peopleAssert(array_keys($public)===['name','base_url','description','logo','mobile_logo','language','search_enabled'],'site config public keys changed');
+peopleAssert($public['name']==='MACCMS' && $public['search_enabled']===true,'site config values mismatch');
+$encoded=json_encode($public);
+foreach(['secret','password','site_tj','cache','email','upload'] as $forbidden)peopleAssert(stripos($encoded,$forbidden)===false,'site config leaks '.$forbidden);
+
+fwrite(STDOUT,"API v1 people and site config regression passed.".PHP_EOL);
