@@ -1743,7 +1743,7 @@ https://www.baidu.com/123.jpg
   'admin/addon/cloud_tab' => '雲市場',
   'admin/addon/cloud_disabled' => '外掛雲市場未開啟',
   'admin/addon/cloud_disabled_hint' => '雲市場未開啟。請設定 addon_cloud.status=1；聯調可設 mock=1 使用本機 catalog.mock.json（禁安裝）。真安裝需 RS256 簽目錄與公鑰。',
-  'admin/addon/legacy_catalog_hint' => '本機列表可只讀合併舊版 api.maccms.com 展示資訊；裝包請用雲市場簽目錄或本機 zip（legacy_catalog=0 可關閉）。',
+  'admin/addon/legacy_catalog_hint' => '本機列表可只讀合併舊版 legacy official catalog 展示資訊；裝包請用雲市場簽目錄或本機 zip（legacy_catalog=0 可關閉）。',
   'admin/addon/cloud_mock_no_install' => '目前為 mock 骨架模式，禁止雲安裝',
   'admin/addon/cloud_mock_hint' => '目前為 mock 列表骨架（addon_cloud.mock=1），僅聯調展示，不可雲安裝。',
   'admin/addon/cloud_use_catalog' => '舊版未簽名遠端安裝已關閉；請使用「雲市場」簽目錄安裝，或上傳本機 zip',
