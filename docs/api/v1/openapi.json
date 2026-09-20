@@ -1243,6 +1243,147 @@
           }
         }
       }
+    },
+    "/api/v1/events": {
+      "post": {
+        "summary": "Ingest deduplicated playback or favorite events",
+        "operationId": "ingestVideoEvents",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/VideoEvent"
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "events"
+                    ],
+                    "properties": {
+                      "events": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 20,
+                        "items": {
+                          "$ref": "#/components/schemas/VideoEvent"
+                        }
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Events accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "/api/v1/rankings": {
+      "get": {
+        "summary": "List published video rankings",
+        "operationId": "listVideoRankings",
+        "parameters": [
+          {
+            "name": "window",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "today",
+                "days_7",
+                "days_30",
+                "all_time"
+              ],
+              "default": "days_7"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/videos/{public_id}/recommendations": {
+      "get": {
+        "summary": "List explainable recommendations",
+        "operationId": "listVideoRecommendations",
+        "parameters": [
+          {
+            "name": "public_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9]{6}$"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 12
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2543,6 +2684,52 @@
             }
           }
         }
+      },
+      "VideoEvent": {
+        "type": "object",
+        "required": [
+          "event_type",
+          "public_id",
+          "occurred_at"
+        ],
+        "properties": {
+          "event_type": {
+            "type": "string",
+            "enum": [
+              "play_start",
+              "valid_watch",
+              "progress",
+              "completion",
+              "favorite"
+            ]
+          },
+          "public_id": {
+            "type": "string",
+            "pattern": "^[A-Z2-9]{6}$"
+          },
+          "episode": {
+            "type": "string",
+            "maxLength": 191
+          },
+          "position_seconds": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "duration_seconds": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "occurred_at": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "event_id": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 80
+          }
+        },
+        "additionalProperties": false
       }
     },
     "responses": {
