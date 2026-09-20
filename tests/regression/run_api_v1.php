@@ -9,6 +9,7 @@ $tests = array(
     __DIR__ . '/api_v1_member_activity.php',
     __DIR__ . '/api_v1_playback.php',
     __DIR__ . '/api_v1_delivery_policy.php',
+    __DIR__ . '/api_v1_openapi.php',
 );
 
 foreach ($tests as $test) {
