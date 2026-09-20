@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS `__PREFIX__content_taxonomy_suggestion` (
+  `suggestion_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `vod_id` int(10) unsigned NOT NULL,
+  `source` varchar(16) NOT NULL,
+  `source_ref` varchar(191) NOT NULL,
+  `kind` varchar(16) NOT NULL,
+  `proposed_value` varchar(191) NOT NULL,
+  `normalized_value` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `matched_term_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `match_status` varchar(16) NOT NULL DEFAULT 'missing',
+  `decision` varchar(16) NOT NULL DEFAULT 'pending',
+  `actor_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `actor_name` varchar(100) NOT NULL DEFAULT '',
+  `created_at` int(10) unsigned NOT NULL DEFAULT '0',
+  `updated_at` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`suggestion_id`),
+  UNIQUE KEY `uk_source_value` (`vod_id`,`source`,`source_ref`,`kind`,`normalized_value`),
+  KEY `idx_vod_decision` (`vod_id`,`decision`,`kind`),
+  KEY `idx_matched_term` (`matched_term_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

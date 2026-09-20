@@ -14,6 +14,7 @@ use app\common\util\DuplicateRestoreService;
 use app\common\util\DuplicateReviewWorkspace;
 use app\common\util\TmdbImportService;
 use app\common\util\TmdbReviewWorkspace;
+use app\common\util\TaxonomySuggestionService;
 use app\common\util\FinalPublicationWorkspace;
 use app\common\util\FinalPublicationService;
 use think\Db;
@@ -46,7 +47,8 @@ class ContentWorkspace extends Base
 
     public function review()
     {
-        $service = new AiFieldReviewService(new FieldGovernance(), new ContentAdminAudit());
+        $taxonomy = new TaxonomySuggestionService();
+        $service = new AiFieldReviewService(new FieldGovernance(), new ContentAdminAudit(), null, $taxonomy);
         if (request()->isPost()) {
             $param = input('post.');
             $token = (string) ($param['__token__'] ?? '');
@@ -56,6 +58,15 @@ class ContentWorkspace extends Base
                 return json(['code' => 0, 'msg' => lang('token_err')]);
             }
             try {
+                if (in_array((string) ($param['review_action'] ?? ''), ['accept_taxonomy', 'reject_taxonomy'], true)) {
+                    $result = $taxonomy->review(
+                        (int) ($param['suggestion_id'] ?? 0),
+                        (string) $param['review_action'] === 'accept_taxonomy' ? 'accept' : 'reject',
+                        (int) $this->_admin['admin_id'],
+                        (string) ($this->_admin['admin_name'] ?? ('admin-' . $this->_admin['admin_id']))
+                    );
+                    return json(['code' => 1, 'msg' => 'ok', 'data' => $result]);
+                }
                 $result = $service->review(
                     (int) ($param['run_id'] ?? 0), (string) ($param['field'] ?? ''),
                     (string) ($param['review_action'] ?? ''), $param['edited_value'] ?? null,

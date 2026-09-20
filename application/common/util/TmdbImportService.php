@@ -6,6 +6,13 @@ use InvalidArgumentException;
 
 class TmdbImportService
 {
+    private $taxonomySuggestions;
+
+    public function __construct($taxonomySuggestions = false)
+    {
+        $this->taxonomySuggestions = $taxonomySuggestions === false ? new TaxonomySuggestionService() : $taxonomySuggestions;
+    }
+
     public function preview(int $vodId, array $candidate, FieldGovernance $fields): array
     {
         $mapped = $this->mapCandidate($candidate);
@@ -42,9 +49,19 @@ class TmdbImportService
             throw new InvalidArgumentException('TMDB import candidate identity is invalid.');
         }
         $sourceRef = 'tmdb:' . $type . ':' . $id . ':admin:' . $reviewerId;
+        if ($this->taxonomySuggestions !== null) {
+            $this->taxonomySuggestions->stage($vodId, 'tmdb', $sourceRef, [
+                'regions' => (array) ($candidate['regions'] ?? []),
+                'genres' => (array) ($candidate['genres'] ?? []),
+                'tags' => (array) ($candidate['tags'] ?? []),
+            ]);
+        }
         $applied = [];
         $blocked = [];
         foreach (array_values(array_unique($approvedFields)) as $field) {
+            if ($this->taxonomySuggestions !== null && in_array($field, ['vod_area', 'vod_class', 'vod_tag'], true)) {
+                throw new InvalidArgumentException('TMDB taxonomy must be adopted through reviewed term suggestions.');
+            }
             if (!array_key_exists($field, $mapped) || $this->isMissing($mapped[$field])) {
                 throw new InvalidArgumentException('Approved TMDB field is unavailable.');
             }

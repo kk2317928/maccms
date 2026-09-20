@@ -20,9 +20,16 @@
             <td><button class="layui-btn layui-btn-xs j-review" data-field="{$field|htmlentities}" data-action="accept" {if condition="$item.locked or $item.stale"}disabled{/if}>接受</button> <button class="layui-btn layui-btn-xs layui-btn-normal j-review" data-field="{$field|htmlentities}" data-action="edit">修改</button> <button class="layui-btn layui-btn-xs layui-btn-danger j-review" data-field="{$field|htmlentities}" data-action="reject">拒絕</button> <button class="layui-btn layui-btn-xs layui-btn-warm j-review" data-field="{$field|htmlentities}" data-action="lock">鎖定目前值</button></td></tr>
         {/foreach}
     </tbody></table>
+    <h3 style="margin:20px 0 10px;">分類詞條建議</h3>
+    <table class="layui-table"><thead><tr><th>類型</th><th>建議值</th><th>匹配狀態</th><th>詞條 ID</th><th>決策</th><th>操作</th></tr></thead><tbody>
+        {foreach name="preview.taxonomy_suggestions" item="suggestion"}
+        <tr><td>{$suggestion.kind|htmlentities}</td><td>{$suggestion.proposed_value|htmlentities}</td><td>{$suggestion.match_status|htmlentities}</td><td>{$suggestion.matched_term_id}</td><td>{$suggestion.decision|htmlentities}</td><td>{if condition="$suggestion.decision eq 'pending'"}<button class="layui-btn layui-btn-xs j-taxonomy" data-id="{$suggestion.suggestion_id}" data-action="accept_taxonomy" {if condition="$suggestion.match_status neq 'matched'"}disabled{/if}>採用既有詞條</button> <button class="layui-btn layui-btn-xs layui-btn-danger j-taxonomy" data-id="{$suggestion.suggestion_id}" data-action="reject_taxonomy">拒絕</button>{/if}</td></tr>
+        {/foreach}
+        {empty name="preview.taxonomy_suggestions"}<tr><td colspan="6">沒有分類詞條建議。</td></tr>{/empty}
+    </tbody></table>
     {/if}
 </div>
 {include file="../../../application/admin/view_new/public/foot" /}
 <script>
-layui.use(['layer'],function(){var layer=layui.layer;$('.j-review').on('click',function(){var button=$(this),action=button.data('action'),value='';if(action==='edit'){value=window.prompt('輸入人工審核值：','');if(value===null){return;}}$.post("{:url('content_workspace/review')}",{__token__:$('#review-token').val(),run_id:'{$preview.run.ai_run_id|default=0}',field:button.data('field'),review_action:action,edited_value:value},function(res){if(res.code===1){location.reload();return;}layer.msg(res.msg||'操作失敗');});});});
+layui.use(['layer'],function(){var layer=layui.layer;$('.j-review').on('click',function(){var button=$(this),action=button.data('action'),value='';if(action==='edit'){value=window.prompt('輸入人工審核值：','');if(value===null){return;}}$.post("{:url('content_workspace/review')}",{__token__:$('#review-token').val(),run_id:'{$preview.run.ai_run_id|default=0}',field:button.data('field'),review_action:action,edited_value:value},function(res){if(res.code===1){location.reload();return;}layer.msg(res.msg||'操作失敗');});});$('.j-taxonomy').on('click',function(){var button=$(this);$.post("{:url('content_workspace/review')}",{__token__:$('#review-token').val(),suggestion_id:button.data('id'),review_action:button.data('action')},function(res){if(res.code===1){location.reload();return;}layer.msg(res.msg||'分類審核失敗');});});});
 </script>

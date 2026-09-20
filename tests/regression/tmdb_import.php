@@ -38,7 +38,7 @@ $candidate = [
     'poster_url' => 'https://image.test/poster.jpg', 'backdrop_url' => 'https://image.test/backdrop.jpg',
     'trailer_url' => 'https://video.test/trailer', 'score' => 8.4,
 ];
-$service = new TmdbImportService();
+$service = new TmdbImportService(null);
 $preview = $service->preview(42, $candidate, $fields);
 tmdb_import_assert($preview['title_tw']['current'] === '人工片名' && $preview['title_tw']['locked'] === true, 'difference preview must expose current value and manual lock.');
 tmdb_import_assert(!isset($preview['title_cn']), 'missing TMDB locale values must remain untouched for AI fallback.');

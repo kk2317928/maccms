@@ -46,6 +46,7 @@ jobs:
           php -l tests/regression/vod_ext_public_id.php
           php -l tests/regression/vod_workflow.php
           php -l application/common/util/ContentWorkflowCoordinator.php
+          php -l application/common/util/TaxonomySuggestionService.php
           php -l tests/regression/content_workflow_coordinator.php
           php -l tests/regression/taxonomy_suggestions.php
           php -l tests/regression/vod_playback_codec.php
@@ -95,6 +96,7 @@ jobs:
           php -l tests/regression/run_api_v1.php
           php -l tests/integration/mysql_foundation.php
           php -l tests/integration/native_vod_paths.php
+          php -l tests/integration/taxonomy_review_mysql.php
           php -l application/common/util/ApiV1Dto.php
           php -l application/common/util/ApiV1AllowlistDto.php
           php -l application/common/util/ApiV1RequestId.php

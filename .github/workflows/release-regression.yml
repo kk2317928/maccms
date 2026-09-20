@@ -88,7 +88,7 @@ jobs:
           set -e
           echo "$output"
           test "$status" -eq 0
-          grep -q 'done, applied=18, skipped=0' <<< "$output"
+          grep -q 'done, applied=19, skipped=0' <<< "$output"
 
       - name: Second migration run is idempotent
         run: |
@@ -98,13 +98,14 @@ jobs:
           set -e
           echo "$output"
           test "$status" -eq 0
-          grep -q 'done, applied=0, skipped=18' <<< "$output"
+          grep -q 'done, applied=0, skipped=19' <<< "$output"
 
       - name: Database and native-path integration
         run: |
           php tests/integration/mysql_foundation.php
           php tests/integration/content_job_lifecycle.php
           php tests/integration/api_v1_analytics.php
+          php tests/integration/taxonomy_review_mysql.php
           php tests/regression/admin_permission_compatibility.php
 
       # This step is intentionally unconditional: both supported MySQL families must pass.

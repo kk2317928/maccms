@@ -13,18 +13,19 @@ class AiFieldReviewService
         'normalized_title' => 'vod_name', 'original_title' => 'original_title',
         'title_tw' => 'title_tw', 'title_cn' => 'title_cn', 'title_en' => 'title_en',
         'year' => 'vod_year', 'media_type' => 'type2',
-        'taxonomy.regions' => 'vod_area', 'taxonomy.genres' => 'vod_class', 'taxonomy.tags' => 'vod_tag',
     ];
 
     protected $governance;
     protected $audit;
     private $clock;
+    private $taxonomySuggestions;
 
-    public function __construct($governance, $audit, callable $clock = null)
+    public function __construct($governance, $audit, callable $clock = null, $taxonomySuggestions = false)
     {
         $this->governance = $governance;
         $this->audit = $audit;
         $this->clock = $clock ?: 'time';
+        $this->taxonomySuggestions = $taxonomySuggestions === false ? new TaxonomySuggestionService() : $taxonomySuggestions;
     }
 
     public function preview(int $runId): array
@@ -56,7 +57,8 @@ class AiFieldReviewService
                 'decision' => $stored,
             ];
         }
-        return ['run' => $run, 'fields' => $fields];
+        $taxonomy = $this->taxonomySuggestions === null ? [] : $this->taxonomySuggestions->pendingForSource((int) $run['vod_id'], 'ai_run:' . $runId);
+        return ['run' => $run, 'fields' => $fields, 'taxonomy_suggestions' => $taxonomy];
     }
 
     public function review(int $runId, string $field, string $action, $editedValue, int $actorId, string $actorName): array

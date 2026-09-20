@@ -69,7 +69,7 @@ $governance->states[42] = [
 ];
 $events = [];
 $audit = new ContentAdminAudit(static function (array $row) use (&$events): int { $events[] = $row; return count($events); }, static fn (): int => 120);
-$service = new MemoryAiFieldReviewService($governance, $audit, static fn (): int => 120);
+$service = new MemoryAiFieldReviewService($governance, $audit, static fn (): int => 120, null);
 $service->run = ['ai_run_id' => 7, 'vod_id' => 42, 'public_id' => 'ABC234', 'validation_status' => 'valid', 'decision_status' => 'pending', 'provider' => 'compatible', 'model' => 'model-x', 'prompt_version' => 'v1', 'raw_response_json' => $valid, 'created_at' => 100];
 $candidates = json_decode($valid, true);
 $mapping = ['vod_name' => 'normalized_title', 'original_title' => 'original_title', 'title_tw' => 'title_tw', 'title_cn' => 'title_cn', 'title_en' => 'title_en', 'vod_year' => 'year', 'type2' => 'media_type'];
@@ -110,7 +110,7 @@ fieldReviewAssert($events[0]['subject_public_id'] === 'ABC234', 'field-review au
 $service->review(7, 'vod_name', 'edit', 'Quoted " Name', 55, 'reviewer');
 fieldReviewAssert($governance->values[42]['vod_name'] === 'Quoted &quot; Name', 'reviewed titles must use the native XSS canonicalization boundary.');
 
-$failing = new MemoryAiFieldReviewService($governance, new ContentAdminAudit(static fn (array $row): int => 0), static fn (): int => 130);
+$failing = new MemoryAiFieldReviewService($governance, new ContentAdminAudit(static fn (array $row): int => 0), static fn (): int => 130, null);
 $failing->run = $service->run;
 $failing->decisions = $service->decisions;
 $before = $governance->values[42]['title_cn'];
@@ -127,7 +127,7 @@ $service->decisions['title_cn']['candidate_value_json'] = json_encode('<svg onlo
 try { $service->review(7, 'title_cn', 'accept', null, 55, 'reviewer'); fieldReviewAssert(false, 'unsafe stored candidate was accepted.'); }
 catch (InvalidArgumentException $exception) {}
 $service->decisions['title_cn']['candidate_value_json'] = $safeCandidate;
-$missingIdentity = new MemoryAiFieldReviewService($governance, $audit, static fn (): int => 120);
+$missingIdentity = new MemoryAiFieldReviewService($governance, $audit, static fn (): int => 120, null);
 $missingIdentity->run = array_merge($service->run, ['public_id' => '']);
 try { $missingIdentity->preview(7); fieldReviewAssert(false, 'missing stable public ID must fail closed.'); } catch (RuntimeException $exception) {}
 $missingIdentity->run = array_merge($service->run, ['public_id' => '000000']);

@@ -21,8 +21,9 @@ class AiNormalizationPipeline
     private $config;
     private $clock;
     private $duplicateDetector;
+    private $taxonomySuggestions;
 
-    public function __construct(callable $provider, $validator, $runs, $fields, array $config, callable $clock = null, $duplicateDetector = null)
+    public function __construct(callable $provider, $validator, $runs, $fields, array $config, callable $clock = null, $duplicateDetector = null, $taxonomySuggestions = false)
     {
         foreach (['provider', 'model', 'prompt_version', 'daily_budget_micros'] as $key) {
             if (!array_key_exists($key, $config)) {
@@ -39,6 +40,7 @@ class AiNormalizationPipeline
         $this->config = $config;
         $this->clock = $clock ?: 'time';
         $this->duplicateDetector = $duplicateDetector;
+        $this->taxonomySuggestions = $taxonomySuggestions === false ? new TaxonomySuggestionService() : $taxonomySuggestions;
     }
 
     public function handle(array $payload, array $job): array
@@ -112,9 +114,14 @@ class AiNormalizationPipeline
         }
         $runId = $this->runs->recordWithReviews($run, $vodId, $staged, $now);
 
+        if ($this->taxonomySuggestions !== null) {
+            $this->taxonomySuggestions->stage($vodId, 'ai', 'ai_run:' . $runId, $taxonomy);
+        }
+
         $adopted = 0;
         if (!empty($this->config['auto_adopt_empty'])) {
             foreach ($candidates as $field => $candidate) {
+                if (in_array($field, ['vod_area', 'vod_class', 'vod_tag'], true)) { continue; }
                 $empty = $baselines[$field]['value'] === null || trim((string) $baselines[$field]['value']) === '';
                 if ($empty && trim((string) $candidate) !== ''
                     && $this->fields->apply($vodId, $field, $candidate, 'ai', 'ai_run:' . $runId)) {
