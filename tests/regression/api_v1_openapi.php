@@ -18,6 +18,8 @@ require_once $root.'/application/common/util/ApiV1OpenApi.php';
 use app\common\util\ApiV1Bootstrap;
 use app\common\util\ApiV1OpenApi;
 
+$raw=ApiV1OpenApi::raw($root.'/docs/api/v1/openapi.json');
+openapiAssert(strpos($raw,'"data": {}')!==false,'Raw OpenAPI must preserve empty schema objects.');
 $document=ApiV1OpenApi::document($root.'/docs/api/v1/openapi.json');
 openapiSame('3.0.3',$document['openapi']??null,'OpenAPI version mismatch.');
 openapiSame('/api/v1',$document['servers'][0]['url']??null,'OpenAPI server base mismatch.');
@@ -70,6 +72,38 @@ openapiSame(array('public_id','title','titles','poster','year','remarks','score'
 $playbackProps=array_keys($document['components']['schemas']['Playback']['properties']??array());
 openapiSame(array('public_id','source_id','episode_id','url','expires_at'),$playbackProps,'Playback schema drift.');
 
+$mergeSchema=$document['paths']['/me/activity/merge']['post']['requestBody']['content']['application/json']['schema']??array();
+openapiSame(array('favorites','progress'),array_keys($mergeSchema['properties']??array()),'Anonymous merge request fields mismatch.');
+openapiSame(array('public_id','source_id','episode_id','position_seconds','duration_seconds','updated_at'),$mergeSchema['properties']['progress']['items']['required']??null,'Anonymous progress requirements mismatch.');
+
+$detailSchema=$document['components']['schemas']['VideoDetail']??array();
+openapiAssert(!isset($detailSchema['allOf']),'Closed VideoDetail schema must be flattened.');
+openapiSame(array_merge($summaryProps,array('synopsis','actors','directors','area','language','episode','trailer_url','preview_url','taxonomies')),array_keys($detailSchema['properties']??array()),'VideoDetail schema fields mismatch.');
+
+$operationSchemas=array(
+ '/videos'=>'#/components/schemas/VideoSummaryCollectionResponse',
+ '/videos/{public_id}'=>'#/components/schemas/VideoDetailResponse',
+ '/videos/{public_id}/episodes'=>'#/components/schemas/EpisodeCollectionResponse',
+ '/videos/{public_id}/playback/{source_id}/{episode_id}'=>'#/components/schemas/PlaybackResponse',
+ '/auth/login'=>'#/components/schemas/TokenEnvelope',
+ '/me/favorites'=>'#/components/schemas/FavoriteCollectionResponse',
+ '/me/history'=>'#/components/schemas/HistoryCollectionResponse',
+ '/me/progress/{public_id}'=>'#/components/schemas/ProgressResponse',
+);
+foreach($operationSchemas as $path=>$ref){
+ $method=$path==='/auth/login'?'post':'get';
+ $status=$path==='/auth/login'?'201':'200';
+ $actual=$document['paths'][$path][$method]['responses'][$status]['content']['application/json']['schema']['$ref']??null;
+ openapiSame($ref,$actual,'Typed response mismatch for '.$path);
+}
+foreach(array('/home','/videos','/videos/{public_id}','/videos/{public_id}/episodes','/search','/taxonomies','/openapi.json') as $path){
+ openapiAssert(isset($document['paths'][$path]['get']['responses']['304']),'Missing 304 response for '.$path);
+}
+foreach(array('/videos/{public_id}','/videos/{public_id}/episodes','/videos/{public_id}/playback/{source_id}/{episode_id}') as $path){
+ openapiAssert(isset($document['paths'][$path]['get']['responses']['308']),'Missing canonical 308 response for '.$path);
+ openapiAssert(isset($document['paths'][$path]['get']['responses']['308']['headers']['Location']),'Canonical redirect must document Location.');
+}
+
 $encoded=json_encode($document);
 foreach(array('vod_id','user_id','token_hash','vod_play_url','merged_into_vod_id') as $forbidden){
  openapiAssert(strpos($encoded,$forbidden)===false,'OpenAPI leaks internal field '.$forbidden);
@@ -84,7 +118,7 @@ $wrong=ApiV1Bootstrap::resolve(array('REQUEST_METHOD'=>'POST','REQUEST_URI'=>'/a
 openapiSame('/v1.index/methodNotAllowed',$wrong['path_info'],'OpenAPI route must reject POST.');
 
 $controller=file_get_contents($root.'/application/api/controller/v1/Docs.php');
-openapiAssert(strpos($controller,'cacheableDocumentResponse')!==false,'OpenAPI endpoint must return a raw conditional document.');
-openapiAssert(strpos($controller,'ApiV1OpenApi::document')!==false,'OpenAPI controller must use the checked-in contract.');
+openapiAssert(strpos($controller,'cacheableRawDocumentResponse')!==false,'OpenAPI endpoint must return a raw conditional document.');
+openapiAssert(strpos($controller,'ApiV1OpenApi::raw')!==false,'OpenAPI controller must use the checked-in contract.');
 
 fwrite(STDOUT,"API v1 OpenAPI contract passed.".PHP_EOL);
