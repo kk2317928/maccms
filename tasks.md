@@ -838,4 +838,14 @@ Next task: T-107 intelligent-content admin operations
 - RED: `edcce6bd1653ddf2c5e8975801b28748a2fe4789`; implementation: `7b1065b73121e682a21b66cc9b0aed295ab84d4a`, `3ec7cb3893e8192b7878d9e7ba1eed926a9544fc`.
 - GREEN evidence: PHP `35534034311`, release matrix MySQL 5.7/8.0 `35534034267`, rollback `35534034274`.
 
-Next task: T-108 protected idempotent video import API
+### T-108 Protected idempotent video import API — `DONE`
+
+- Independent HMAC-SHA256 credential uses timestamp, one-time nonce, method, path and body digest; secret is read from `MACCMS_CONTENT_IMPORT_SECRET`.
+- Persistent nonce and request ledgers enforce replay protection and payload-bound `Idempotency-Key` results on MySQL 5.7/8.0.
+- Import validates size, exact field allowlist and HTTP(S)-only playback URLs; publishing and merge-control fields are rejected.
+- Persistence delegates to native `Vod::saveData()`, retaining extension/public-ID creation and the existing single idempotent AI enqueue hook.
+- Public OpenAPI uses `playback_sources` and never exposes native IDs or `vod_play_url`.
+- RED contract: `d2b7f60aa6f8d2501ca4a578b745f4e903af0eba`; implementation/fixes: `09c35165966373fbcebf359a6311f61d8ab88002` through `f571b7df1aba146e9ba0e5d3cc598c5fd439cae2`.
+- GREEN evidence: PHP `35535111718`, MySQL 5.7 `35535111683`, MySQL 8.0 `35535111687`, release matrix `35535111709`, rollback `35535111684`.
+
+Next task: T-109 people and public site-config APIs
