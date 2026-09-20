@@ -766,16 +766,17 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 
 ```text
 Checkpoint: completion repair
-Next task: T-101 workflow coordinator
-Task status: IN_PROGRESS
+Next task: T-102 native workflow hooks
+Task status: READY
 Starting commit: d818cb3088593a84309ca256bfac68c3501b7960
 Release status: headless-ai-v1.0.2 is retained for traceability but is not accepted for deployment
-Next action: verify the workflow coordinator in GitHub Actions, then continue with native write hooks
+Next action: add idempotent AI enqueue hooks to native admin and collection writes
 ```
 
-### T-101 Central content workflow coordinator — `IN_PROGRESS`
+### T-101 Central content workflow coordinator — `DONE`
 
 - Added a transaction-bound coordinator for legal AI, duplicate, TMDB, failure and retry transitions.
 - Added deterministic AI/TMDB idempotency keys and post-commit downstream enqueue.
 - RED contract: `tests/regression/content_workflow_coordinator.php` (local runner unavailable because this execution image has no PHP binary).
-- Verification is delegated to the PHP 8.1 GitHub Actions gate before this task can be marked `DONE`.
+- Commits: `2e8471ecd01116afbbc6c0a68c4e7fed7ff605e1`, `28d060d808223066a3df23ffb2b3334d660ecbc3`, `c25a29843fab9dd85152119ccf5ad7d310506c77`.
+- GREEN evidence: PHP 8.1 full regression `35526191574` passed.
