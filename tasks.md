@@ -24,8 +24,8 @@ Do not mark a task `DONE` with a future or local-only SHA. A checkpoint complete
 | CP-05 | Add duplicate review, reversible merge and TMDB workflow | DONE | CP-04 |
 | CP-06 | Add intelligent-content admin workspace and permissions | DONE | CP-05 |
 | CP-07 | Add versioned Headless API, sessions, favorites and progress | DONE | CP-06 |
-| CP-08 | Add event deduplication, rankings and recommendations | IN_PROGRESS | CP-07 |
-| CP-09 | Remove prohibited communication and complete release hardening | TODO | CP-08 |
+| CP-08 | Add event deduplication, rankings and recommendations | DONE | CP-07 |
+| CP-09 | Remove prohibited communication and complete release hardening | IN_PROGRESS | CP-08 |
 
 ---
 
@@ -695,17 +695,39 @@ Legacy API compatibility is a separate concern; do not expose raw DB records in 
 
 ## CP-08 — Events, rankings and recommendations
 
-### T-080 Playback/favorite event contract and deduplication — `IN_PROGRESS`
-### T-081 Today/7-day/30-day/all-time aggregates — `TODO`
-### T-082 Deterministic explainable recommendation service — `TODO`
-### T-083 Retention, purge and abuse limits — `TODO`
-### T-084 Ranking/recommendation API and boundary tests — `TODO`
+### T-080 Playback/favorite event contract and deduplication — `DONE`
+- Member/session/device identity, fixed event windows, strict validation, database uniqueness and atomic batch ingestion.
+- Evidence: PHP regression run `35502082444`; MySQL 5.7 `35502081543`; MySQL 8.0 `35502082452`.
+- Final implementation: `6bfac1cbef76f0af2804cb8eaf47c4373fe1a2c1`.
+
+### T-081 Today/7-day/30-day/all-time aggregates — `DONE`
+- Bounded unprocessed-event aggregation, UTC windows and durable per-video lifetime totals.
+- Final implementation: `7df86964b05800b3dc55f732fb3b9c1b39eb4268`.
+
+### T-082 Deterministic explainable recommendation service — `DONE`
+- Stable feature/popularity/freshness scoring with current and unavailable content excluded.
+- Final implementation: `c096fa92ce80f2f6fe0b7cfd471ffb2a1c2b7ac3`.
+
+### T-083 Retention, purge and abuse limits — `DONE`
+- Ninety-day processed-raw retention, bounded purge, event request/actor limits and Cron command.
+- Final implementation: `d085b4c7f9dae9916aabeeb99e06b6fcb0e6ca1e`.
+
+### T-084 Ranking/recommendation API and boundary tests — `DONE`
+- Event, ranking and recommendation routes/controllers/OpenAPI plus PHP and MySQL boundary coverage.
+- Final implementation: `b17289d92cb8dfc22aaf0486bc244d6da9723b44`.
+
+### CP-08 gate
+- [x] Replayed events do not inflate counts.
+- [x] Ranking windows are deterministic across UTC date boundaries and lifetime totals survive raw-event purge.
+- [x] Recommendations are explainable and exclude current/unavailable content.
+- [x] PHP regression, MySQL 5.7 and MySQL 8.0 gates pass.
+- [x] Independent review completed; all Critical/Important findings received one RED→GREEN fix pass.
 
 ---
 
 ## CP-09 — Official communication removal and release hardening
 
-### T-090 Remove official update check and admin update routes — `TODO`
+### T-090 Remove official update check and admin update routes — `IN_PROGRESS`
 ### T-091 Remove/disable announcements, affiliate defaults and telemetry — `TODO`
 ### T-092 Centralize outbound policy and SSRF controls — `TODO`
 ### T-093 Security regression suite — `TODO`
@@ -721,11 +743,11 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 ## Current execution pointer
 
 ```text
-Checkpoint: CP-08
-Next task: T-080
+Checkpoint: CP-09
+Next task: T-090
 Task status: IN_PROGRESS
-Required starting state: feature/headless-ai-v1 after T-077 final commit `876c969a5c8070d503c3f8e8480c0dd589eaa888`
-First verification: define playback/favorite event and deduplication contracts
-Task commit: test: define analytics event contract
+Required starting state: feature/headless-ai-v1 after CP-08 final commit
+First verification: define failing prohibited update-route and client-request contracts
+Task commit: test: prohibit official update communication
 Push required: yes, immediately after task verification
 ```
