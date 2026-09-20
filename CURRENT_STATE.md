@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-08 — events, rankings and recommendations.
 **Active checkpoint:** CP-09 — official communication removal and release hardening.
-**Active task:** T-095 — deployment, migration, Cron, backup and disaster-recovery docs (`IN_PROGRESS`).
+**Active task:** T-096 — release candidate acceptance and rollback rehearsal (`IN_PROGRESS`).
 **Starting commit:** T-073 final implementation commit `326515e67b85ac6e7f4509eb9dd4c3e2f99a5cea`.
-**Last completed task:** T-094 — full PHP/MySQL 5.7/MySQL 8.0/native-path release matrix; final implementation commit `602b1611b91b4d78c00693be133182b8c4b77bd7`.
-**Last verification:** PHP `35510268063` and release matrix `35510268068` passed on MySQL 5.7/8.0.
-**Next action:** add executable documentation contract and complete deployment/migration/Cron/backup/disaster-recovery runbook.
+**Last completed task:** T-095 — deployment, migration, Cron, backup, rollback and disaster-recovery runbook; final implementation commit `e0f4d23f658c2158fce9373dad525357b2eb71c9`.
+**Last verification:** PHP regression `35510417972` passed T-095.
+**Next action:** add RC acceptance contract and execute application/database rollback rehearsal.
 
 ## 1. Confirmed product direction
 
@@ -181,11 +181,11 @@ Absence was established by repository text search against the pinned snapshot. I
 ## 9. Resumption template
 
 ```text
-Task: T-095 Deployment, migration, Cron, backup and disaster-recovery docs
-Starting commit: 602b1611b91b4d78c00693be133182b8c4b77bd7
-Changed files: pending operations runbook and contract
-Last command: release matrix runs 35510268063 and 35510268068
-Result: T-094 complete; PHP, MySQL 5.7, MySQL 8.0 and native paths passed
-Next action: add failing operations documentation contract, then write verified runbook
+Task: T-096 Release candidate acceptance and rollback rehearsal
+Starting commit: e0f4d23f658c2158fce9373dad525357b2eb71c9
+Changed files: pending RC acceptance contract/report/workflow
+Last command: PHP regression run 35510417972
+Result: T-095 complete; deployment and recovery runbook contract passed
+Next action: create failing RC acceptance contract, run database restore and application rollback rehearsal
 Blocker: none
 ```
