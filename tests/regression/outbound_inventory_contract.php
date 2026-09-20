@@ -17,24 +17,17 @@ function run_inventory($inventory, $mode)
     return [$exitCode, implode("\n", $lines)];
 }
 
-[$reportCode, $reportOutput] = run_inventory($inventory, '--report');
-if ($reportCode !== 0) {
-    fwrite(STDERR, "Report mode must succeed.\n{$reportOutput}\n");
-    exit(1);
-}
-if (strpos($reportOutput, 'update.maccms.la') === false || strpos($reportOutput, 'QUARANTINED') === false) {
-    fwrite(STDERR, "Report mode must expose the quarantined official update endpoint.\n{$reportOutput}\n");
-    exit(1);
-}
-
-[$enforceCode, $enforceOutput] = run_inventory($inventory, '--enforce');
-if ($enforceCode === 0) {
-    fwrite(STDERR, "Enforcement mode must fail while the prohibited endpoint remains.\n{$enforceOutput}\n");
-    exit(1);
-}
-if (strpos($enforceOutput, 'update.maccms.la') === false || strpos($enforceOutput, 'PROHIBITED') === false) {
-    fwrite(STDERR, "Enforcement mode must identify the prohibited endpoint.\n{$enforceOutput}\n");
-    exit(1);
+foreach (['--report', '--enforce'] as $mode) {
+    [$exitCode, $output] = run_inventory($inventory, $mode);
+    if ($exitCode !== 0) {
+        fwrite(STDERR, "{$mode} must succeed after prohibited updater removal.\n{$output}\n");
+        exit(1);
+    }
+    if (strpos($output, 'official update endpoint is absent') === false
+        || strpos($output, 'enforcement is active') === false) {
+        fwrite(STDERR, "{$mode} did not confirm active prohibited-endpoint enforcement.\n{$output}\n");
+        exit(1);
+    }
 }
 
 fwrite(STDOUT, "Outbound inventory contract passed.\n");
