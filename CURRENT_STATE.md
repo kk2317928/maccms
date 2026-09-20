@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-20
-State document version: 77
+State document version: 78
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -10,13 +10,13 @@ Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
 
 Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to the approved upstream while the programme is implemented incrementally on the integration branch.
 
-**Last completed checkpoint:** CP-08 — events, rankings and recommendations.
-**Active checkpoint:** CP-09 — official communication removal and release hardening.
-**Active task:** T-097 — create `headless-ai-v1.0.0` tag (`AWAITING_EXPLICIT_AUTHORIZATION`).
+**Last completed checkpoint:** CP-09 — official communication removal and release hardening.
+**Active checkpoint:** none; Headless AI v1 programme complete.
+**Active task:** none.
 **Starting commit:** T-073 final implementation commit `326515e67b85ac6e7f4509eb9dd4c3e2f99a5cea`.
-**Last completed task:** T-096 — release candidate acceptance and rollback rehearsal; accepted candidate commit `fbd5521d7c688c2e430a7a746e07c771e30eb84e`.
+**Last completed task:** T-097 — annotated tag `headless-ai-v1.0.0` targets accepted candidate `fbd5521d7c688c2e430a7a746e07c771e30eb84e`.
 **Last verification:** PHP regression `35511088543`, release matrix `35511088544`, and rollback rehearsal `35510999172` passed.
-**Next action:** wait for explicit final authorization before creating the T-097 release tag.
+**Next action:** deployment may proceed using the immutable `headless-ai-v1.0.0` tag and the operations runbook.
 
 ## 1. Confirmed product direction
 
@@ -170,7 +170,7 @@ Absence was established by repository text search against the pinned snapshot. I
 | Native collection insert/update | PASS (automated) | `Collect::vod_data()` insert/update on `maccms_ci_native`; run `35349617886` |
 | Native playback storage round trip | PASS (automated) | Both created rows round-tripped all four `vod_play_*` fields byte-for-byte; run `35349617886` |
 | Fresh web-installer/manual smoke | UNVERIFIED | `docs/testing/native-smoke-checklist.md` remains `NOT_RUN` |
-| No prohibited outbound request | FAIL by static inspection | `static_new/js/admin_common.js` update check remains |
+| No prohibited outbound request | PASS | Recursive enforcement passed in PHP `35511088543`, release matrix `35511088544`, and rollback rehearsal `35510999172` |
 
 ## 8. Open decisions
 
@@ -181,11 +181,12 @@ Absence was established by repository text search against the pinned snapshot. I
 ## 9. Resumption template
 
 ```text
-Task: T-097 Tag headless-ai-v1.0.0
-Starting commit: accepted RC candidate fbd5521d7c688c2e430a7a746e07c771e30eb84e
-Changed files: none; tag not created
+Task: Programme complete
+Release tag: headless-ai-v1.0.0
+Tag object: 1a23eb496a0a55b59f6e8fb829fe031f44d09082
+Tag target: fbd5521d7c688c2e430a7a746e07c771e30eb84e
 Last verification: PHP 35511088543; release matrix 35511088544; rollback rehearsal 35510999172
-Result: T-093 through T-096 complete; independent review Important findings fixed
-Next action: confirm current branch head and create/push the tag only after explicit final authorization
-Blocker: explicit final authorization required
+Result: CP-01 through CP-09 and T-097 complete
+Next action: deploy the immutable tag by following docs/deployment/operations-runbook.md
+Blocker: none
 ```
