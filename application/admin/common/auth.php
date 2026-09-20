@@ -938,7 +938,7 @@ return array (
         'show' => 1,
         'name' => '智能內容工作區',
         'controller' => 'ContentWorkspace',
-        'action' => 'index',
+        'action' => 'view',
       ),
       44 => 
       array (

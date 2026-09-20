@@ -23,14 +23,16 @@ requireContains($root . '/application/install/controller/Index.php', [
 
 requireContains($root . '/application/admin/common/auth.php', [
     "'controller' => 'ContentWorkspace'",
-    "'action' => 'index'",
+    "'action' => 'view'",
     '智能內容工作區',
 ], 'admin navigation');
 
 requireContains($root . '/application/admin/controller/Vod.php', [
+    "array_key_exists('vod_ext', \$param)",
     "unset(\$param['vod_ext'])",
-    'VodExtensionAdminService::save',
-    "'vod_ext'",
+    "if (\$vodId > 0 && \$hasVodExt)",
+    'VodExtensionAdminService::normalize(\$vodExt)',
+    'VodExtensionAdminService::save(\$vodId, \$vodExt)',
 ], 'native video extension persistence');
 
 requireContains($root . '/application/admin/view_new/vod/info.html', [

@@ -554,10 +554,16 @@ class Vod extends Base
             }
             $contentLang = $param['content_lang'] ?? [];
             unset($param['content_lang']);
-            $vodExt = $param['vod_ext'] ?? [];
+            $hasVodExt = array_key_exists('vod_ext', $param);
+            $vodExt = $hasVodExt ? $param['vod_ext'] : null;
             unset($param['vod_ext']);
+            if ($hasVodExt && !is_array($vodExt)) {
+                return $this->error('vod_ext must be an object.');
+            }
             try {
-                $vodExt = VodExtensionAdminService::normalize(is_array($vodExt) ? $vodExt : []);
+                if ($hasVodExt) {
+                    VodExtensionAdminService::normalize($vodExt);
+                }
             } catch (\InvalidArgumentException $e) {
                 return $this->error($e->getMessage());
             }
@@ -566,7 +572,7 @@ class Vod extends Base
                 return $this->error($res['msg']);
             }
             $vodId = (int)($res['vod_id'] ?? 0);
-            if ($vodId > 0) {
+            if ($vodId > 0 && $hasVodExt) {
                 try {
                     VodExtensionAdminService::save($vodId, $vodExt);
                 } catch (\Throwable $e) {
