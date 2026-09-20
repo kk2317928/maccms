@@ -675,8 +675,14 @@ Use `application/admin/view_new`; do not add a parallel obsolete `view/` tree.
 - Added published canonical playback resolution over the native codec, per-source enablement and exact HTTPS host allowlists, DNS/private-address rejection, optional HMAC signing with configured TTL enforcement, server-only Next.js signer documentation, allowlisted DTOs, safe alias redirects and private no-store delivery responses.
 - GREEN evidence: PHP regression `35499394152`; independent final review found no Critical or Important issues.
 
-### T-076 CORS, per-endpoint limits, ETag and invalidation — `IN_PROGRESS`
-### T-077 OpenAPI v1 and contract tests — `TODO`
+### T-076 CORS, per-endpoint limits, ETag and invalidation — `DONE`
+
+- RED contracts: `fb9d42a4c670124903a2051763722d1aa4c4e238`, `ec587d42cdd8bc4af91a19ad3a10fa8bcc946914`, `1c39a00ff6b68a5f31ffceea3dc9d5f5892d565e`, `59911141260cd035096398a1ea0b728d039c7a3a`, and review-finding contract `15d13487e9c018189a851312493b18d47066b55b`.
+- Implementation and review fixes through `2111a6d285911eef517334e7b63e354cdde4fda9`.
+- Added exact HTTPS-origin CORS with route-specific preflight methods, atomic fail-closed endpoint buckets keyed by direct peer IP, public catalog weak ETag revalidation, 304 responses, locale/origin variation and deployment guidance. Authentication and playback responses remain no-store.
+- GREEN evidence: PHP regression `35500353097`. Independent review found no Critical and identified three Important issues; normalized prefixed paths, `If-None-Match` preflight support and semantically correct weak validators received RED→GREEN fixes.
+
+### T-077 OpenAPI v1 and contract tests — `IN_PROGRESS`
 
 Legacy API compatibility is a separate concern; do not expose raw DB records in `/api/v1`.
 
@@ -711,10 +717,10 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 
 ```text
 Checkpoint: CP-07
-Next task: T-076
+Next task: T-077
 Task status: IN_PROGRESS
-Required starting state: feature/headless-ai-v1 after T-075 implementation `04d0269af6395b765b4a640cccd04ce26c8e47a1`
-First verification: define CORS, per-endpoint rate-limit, ETag and invalidation contracts
-Task commit: test: define API v1 delivery policy contract
+Required starting state: feature/headless-ai-v1 after T-076 final commit `2111a6d285911eef517334e7b63e354cdde4fda9`
+First verification: define OpenAPI v1 coverage and stable example payload contracts
+Task commit: test: define API v1 OpenAPI contract
 Push required: yes, immediately after task verification
 ```
