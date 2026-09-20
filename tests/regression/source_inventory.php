@@ -56,7 +56,7 @@ $counts = [
 
 $expectedCounts = [
     'admin_controllers' => 71,
-    'api_controllers' => 41,
+    'api_controllers' => 39,
     'index_controllers' => 24,
     'common_models' => 68,
     'common_utilities' => 143,
