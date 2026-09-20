@@ -298,6 +298,11 @@ class ContentWorkspace extends Base
                 $grants = array_filter(array_map('trim', explode(',', strtolower((string) ($this->_admin['admin_auth'] ?? '')))));
                 if ($actorId === 1) { $grants = array_merge($grants, ['content_workspace/run_ai', 'content_workspace/run_tmdb']); }
                 $confirmed = (int) ($param['confirmed'] ?? 0) === 1;
+                $jobAction = (string) ($param['job_action'] ?? '');
+                if (in_array($jobAction, ['pause','resume','skip'], true)) {
+                    $result = $service->control((int) ($param['job_id'] ?? 0), $jobAction, (string) ($param['reason'] ?? ''), $actorId, $actorName, $grants, $confirmed);
+                    return json(['code'=>1,'msg'=>'工作狀態已更新。','data'=>$result]);
+                }
                 if ((string) ($param['job_action'] ?? '') === 'retry') {
                     $result = $service->retry((int) ($param['job_id'] ?? 0), $actorId, $actorName, $grants, $confirmed);
                     return json(['code' => 1, 'msg' => '失敗工作已重新排入佇列。', 'data' => $result]);

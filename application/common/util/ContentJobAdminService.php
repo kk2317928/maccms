@@ -15,6 +15,7 @@ class ContentJobAdminService
     private $retryFailed;
     private $transaction;
     private $clock;
+    private $transition;
 
     public function __construct(
         ContentAdminAudit $audit = null,
@@ -23,7 +24,8 @@ class ContentJobAdminService
         callable $runPage = null,
         callable $retryFailed = null,
         callable $transaction = null,
-        callable $clock = null
+        callable $clock = null,
+        callable $transition = null
     ) {
         $this->audit = $audit ?: new ContentAdminAudit();
         if ($enqueue !== null) {
@@ -63,6 +65,18 @@ class ContentJobAdminService
         };
         $this->transaction = $transaction ?: static fn (callable $callback) => Db::transaction($callback);
         $this->clock = $clock ?: 'time';
+        $this->transition = $transition ?: function (int $jobId, string $action, string $reason, int $now, callable $authorize): array {
+            $before = Db::name('content_job')->where('job_id', $jobId)->lock(true)->find();
+            if (!$before) { throw new RuntimeException('Content job was not found.'); }
+            $authorize($before);
+            $states = ['pause' => ['queued','paused'], 'resume' => ['paused','queued'], 'skip' => ['queued','skipped']];
+            if (!isset($states[$action]) || (string) $before['status'] !== $states[$action][0]) { throw new RuntimeException('Content job state does not allow this action.'); }
+            if ($action === 'skip' && trim($reason) === '') { throw new InvalidArgumentException('Skip reason is required.'); }
+            $update = ['status' => $states[$action][1], 'updated_at' => $now];
+            if ($action === 'skip') { $update += ['error_class' => 'admin_skipped', 'error_summary' => trim($reason), 'completed_at' => $now]; }
+            if (Db::name('content_job')->where(['job_id'=>$jobId,'status'=>$states[$action][0]])->update($update) !== 1) { throw new RuntimeException('Content job control conflicted.'); }
+            return [$before, array_merge($before, $update)];
+        };
     }
 
     public function enqueueBatch(string $requestedType, array $vodIds, int $actorId, string $actorName, array $grants, bool $confirmed): array
@@ -101,7 +115,7 @@ class ContentJobAdminService
     {
         $type = $requestedType === '' ? '' : $this->typeContract($requestedType)[0];
         $status = strtolower(trim($status));
-        if ($status !== '' && !in_array($status, ['queued', 'running', 'succeeded', 'failed'], true)) {
+        if ($status !== '' && !in_array($status, ['queued', 'paused', 'running', 'succeeded', 'failed', 'skipped'], true)) {
             throw new InvalidArgumentException('Unsupported job status filter.');
         }
         $page = max(1, $page);
@@ -142,6 +156,20 @@ class ContentJobAdminService
                 ['status' => 'queued', 'attempt' => (int) ($job['attempt'] ?? 0), 'max_attempts' => (int) ($job['max_attempts'] ?? 0)], ['job_type' => (string) ($job['job_type'] ?? '')]
             );
             return $job;
+        });
+    }
+
+    public function control(int $jobId, string $action, string $reason, int $actorId, string $actorName, array $grants, bool $confirmed): array
+    {
+        if ($jobId <= 0) { throw new InvalidArgumentException('Job ID must be positive.'); }
+        $action = strtolower(trim($action));
+        if (!in_array($action, ['pause','resume','skip'], true)) { throw new InvalidArgumentException('Unsupported job control action.'); }
+        return call_user_func($this->transaction, function () use ($jobId,$action,$reason,$actorId,$actorName,$grants,$confirmed) {
+            [$before,$after] = call_user_func($this->transition,$jobId,$action,$reason,(int) call_user_func($this->clock),function(array $job) use ($grants,$confirmed) {
+                $this->authorize($this->permissionForStoredType((string) ($job['job_type'] ?? '')),$grants,$confirmed);
+            });
+            $this->audit->append($actorId,$actorName,'content.job.'.($action==='skip'?'skipped':$action.'d'),'content_job',(string)$jobId,['status'=>$before['status']],['status'=>$after['status']],['reason'=>$action==='skip'?$this->redactSummary($reason):'']);
+            return $after;
         });
     }
 
