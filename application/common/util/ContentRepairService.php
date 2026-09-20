@@ -28,7 +28,7 @@ final class ContentRepairService
                 ->join($prefix.'vod_ext e','e.vod_id=v.vod_id','LEFT')
                 ->field($fields)->where('v.vod_recycle_time',0)
                 ->whereRaw("(e.merged_into_vod_id IS NULL OR e.merged_into_vod_id=0) AND (e.workflow_status IS NULL OR e.workflow_status NOT IN ('published','merged','manual_review'))")
-                ->whereNotExists(function($query)use($prefix){$query->table($prefix.'vod_field_state')->alias('lf')->whereRaw('lf.vod_id=v.vod_id AND lf.is_locked=1');})
+                ->whereRaw("NOT EXISTS (SELECT 1 FROM {$prefix}vod_field_state lf WHERE lf.vod_id=v.vod_id AND lf.is_locked=1)")
                 ->whereRaw($eligible)->order('v.vod_id asc')->limit((int)$limit)->select()?:[];
         };
         $this->repair=$repair?:static function($id,$state){
