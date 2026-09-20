@@ -88,7 +88,8 @@ deliveryAssert(strpos($tags,'ApiV1DeliveryPolicy')!==false,'Delivery policy beha
 $base=file_get_contents($root.'/application/api/controller/v1/Base.php');
 deliveryAssert(strpos($base,'ApiV1Etag')!==false,'API base must generate ETags.');
 deliveryAssert(strpos($base,'If-None-Match')!==false && strpos($base,'304')!==false,'Conditional GET handling missing.');
-deliveryAssert(strpos($base,"'Cache-Control'=>'public, max-age=60, stale-while-revalidate=300'")!==false,'Public cache policy mismatch.');
+deliveryAssert(strpos($base,"'Cache-Control'=>'public, no-cache, must-revalidate'")!==false,'Public cache policy must revalidate every request.');
+deliveryAssert(strpos($base,"'Vary'=>'Accept-Language, Origin'")!==false,'Localized CORS responses must vary by language and origin.');
 $catalogController=file_get_contents($root.'/application/api/controller/v1/Catalog.php');
 deliveryAssert(strpos($catalogController,'cacheableResponse')!==false,'Catalog detail responses must use validators.');
 deliveryAssert(strpos($catalogController,'cacheableCollectionResponse')!==false,'Catalog collections must use validators.');
