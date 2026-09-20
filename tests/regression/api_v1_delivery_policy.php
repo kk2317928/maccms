@@ -74,6 +74,13 @@ deliveryAssert(ApiV1Etag::make(array('data'=>array('public_id'=>'ABC234','title'
 
 foreach(glob($dir.'/*')?:array() as $file) @unlink($file);
 @rmdir($dir);
+$deploymentPath=$root.'/docs/deployment/api-v1-delivery-policy.md';
+deliveryAssert(is_file($deploymentPath),'Missing API v1 delivery deployment guide.');
+$deployment=file_get_contents($deploymentPath);
+foreach(array('api_v1_cors_origins','api_v1_rate_limits','REMOTE_ADDR','X-Forwarded-For','no-cache') as $term) {
+ deliveryAssert(strpos($deployment,$term)!==false,'Delivery deployment guide missing '.$term);
+}
+
 $behaviorPath=$root.'/application/common/behavior/ApiV1DeliveryPolicy.php';
 deliveryAssert(is_file($behaviorPath),'Missing API v1 delivery behavior.');
 $behavior=file_get_contents($behaviorPath);
