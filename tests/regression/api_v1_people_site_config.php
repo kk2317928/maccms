@@ -16,22 +16,24 @@ use app\common\util\ApiV1SiteConfig;
 function peopleFail($message){fwrite(STDERR,"FAIL: ".$message.PHP_EOL);exit(1);}
 function peopleAssert($condition,$message){if(!$condition)peopleFail($message);}
 
-$person=['actor_name'=>'Jessica Jung','actor_alias'=>'鄭秀妍,郑秀妍','actor_pic'=>'/jessica.jpg','actor_content'=>'Biography','actor_status'=>1];
-$slug=ApiV1PeopleService::slug('Jessica Jung');
+$person=['actor_id'=>123,'actor_name'=>'Jessica Jung','actor_alias'=>'鄭秀妍,郑秀妍','actor_pic'=>'/jessica.jpg','actor_content'=>'Biography','actor_status'=>1];
+$slug=ApiV1PeopleService::slug(123);
 peopleAssert(strlen($slug)===6 && preg_match('/^[A-Z0-9]{6}$/',$slug)===1,'person slug must be six public characters');
-peopleAssert($slug===ApiV1PeopleService::slug(' Jessica  Jung '),'person slug must be stable after name normalization');
-peopleAssert(strpos($slug,'1')!==0,'person slug must not expose an incrementing ID');
+peopleAssert($slug===ApiV1PeopleService::slug(123) && $slug!==ApiV1PeopleService::slug(124),'person slug mapping must be stable and collision-free');
+peopleAssert($slug!=='00003V' && strpos($slug,'123')===false,'person slug must not expose an incrementing ID');
 
 $videos=[
  ['public_id'=>'PUB001','vod_name'=>'Published','vod_status'=>1,'workflow_status'=>'published','merged_into_vod_id'=>null,'vod_year'=>'2026','published_at'=>100],
  ['public_id'=>'DRAFT1','vod_name'=>'Draft','vod_status'=>0,'workflow_status'=>'manual_review','merged_into_vod_id'=>null],
  ['public_id'=>'MERGED','vod_name'=>'Merged','vod_status'=>1,'workflow_status'=>'published','merged_into_vod_id'=>9],
 ];
-$service=new ApiV1PeopleService(function()use($person){return [$person];},function($name)use($videos){return $videos;});
+$requestedActorId=0;$requestedName='';
+$service=new ApiV1PeopleService(function($actorId)use($person,&$requestedActorId){$requestedActorId=$actorId;return $actorId===123?$person:null;},function($name)use($videos,&$requestedName){$requestedName=$name;return $videos;});
 $result=$service->detail($slug,ApiV1Locale::fromCode('en'));
 peopleAssert($result['slug']===$slug && $result['name']==='Jessica Jung','person public identity mismatch');
 peopleAssert($result['aliases']===['鄭秀妍','郑秀妍'],'person aliases must be explicit');
 peopleAssert(count($result['videos'])===1 && $result['videos'][0]['public_id']==='PUB001','only published unmerged videos may be returned');
+peopleAssert($requestedActorId===123 && $requestedName==='Jessica Jung','person and video queries must be scoped to the resolved identity');
 peopleAssert($service->detail('ZZZZZZ',ApiV1Locale::fromCode('en'))===null,'unknown person must resolve to 404 boundary');
 foreach(['actor_id','vod_id','workflow_status','merged_into_vod_id'] as $internal)peopleAssert(strpos(json_encode($result),$internal)===false,'person DTO leaks '.$internal);
 
