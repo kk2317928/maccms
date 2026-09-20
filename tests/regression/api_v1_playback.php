@@ -74,5 +74,6 @@ playbackAssert(strpos($deploymentText,'trusted Next.js server')!==false,'Deploym
 playbackAssert(strpos($deploymentText,'Never expose')!==false,'Deployment contract must forbid exposing the signing secret.');
 $controller=file_get_contents($root.'/application/api/controller/v1/Playback.php');
 playbackAssert(strpos($controller,'server')===false && strpos($controller,'vod_id')===false,'Controller must not expose internal playback metadata.');
+playbackAssert(strpos($controller,"'Cache-Control'=>'private, no-store'")!==false,'Playback response must prevent shared caching.');
 
 fwrite(STDOUT,"API v1 playback delivery contract passed.".PHP_EOL);
