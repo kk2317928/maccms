@@ -22,17 +22,16 @@ class Events extends Base
             $userId=$claims===null?0:(int)$claims['sub'];
             $session=$claims===null?(string)$request->header('X-Session-ID'):(string)$claims['sid'];
             $actor=ApiV1EventContract::actorKey($userId,$session,(string)$request->header('X-Device-ID'));
-            $repo=new ApiV1EventRepository();$now=time();
-            if(!$policy->allowActorRate($repo->actorCountSince($actor,$now-60)))return $this->errorResponse('RATE_LIMITED','Too many requests.',429,$request);
-            $accepted=0;$duplicates=0;
+            $repo=new ApiV1EventRepository();$now=time();$normalized=[];
             foreach($items as $input){
                 if(!is_array($input))throw new InvalidArgumentException('event');
                 $event=ApiV1EventContract::normalize($input);
                 if(!$policy->acceptsOccurredAt($event['occurred_at'],$now))throw new InvalidArgumentException('occurred_at');
-                $result=$repo->insert($event,$actor,$userId,$now);
-                if(!empty($result['accepted']))$accepted++; elseif(!empty($result['duplicate']))$duplicates++;
+                $normalized[]=$event;
             }
-            return $this->successResponse(['accepted'=>$accepted,'duplicates'=>$duplicates],$request,[],202);
+            $result=$repo->ingestBatch($normalized,$actor,$userId,$now,$policy);
+            if(!empty($result['rate_limited']))return $this->errorResponse('RATE_LIMITED','Too many requests.',429,$request);
+            return $this->successResponse(['accepted'=>$result['accepted'],'duplicates'=>$result['duplicates']],$request,[],202);
         } catch(InvalidArgumentException $e){return $this->errorResponse('VALIDATION_ERROR','The request parameters are invalid.',422,$request,[$e->getMessage()=>'invalid']);}
         catch(Throwable $e){return $this->internalError($request);}
     }
