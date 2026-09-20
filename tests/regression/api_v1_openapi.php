@@ -84,7 +84,7 @@ $wrong=ApiV1Bootstrap::resolve(array('REQUEST_METHOD'=>'POST','REQUEST_URI'=>'/a
 openapiSame('/v1.index/methodNotAllowed',$wrong['path_info'],'OpenAPI route must reject POST.');
 
 $controller=file_get_contents($root.'/application/api/controller/v1/Docs.php');
-openapiAssert(strpos($controller,'cacheableResponse')!==false,'OpenAPI endpoint must support conditional GET.');
+openapiAssert(strpos($controller,'cacheableDocumentResponse')!==false,'OpenAPI endpoint must return a raw conditional document.');
 openapiAssert(strpos($controller,'ApiV1OpenApi::document')!==false,'OpenAPI controller must use the checked-in contract.');
 
 fwrite(STDOUT,"API v1 OpenAPI contract passed.".PHP_EOL);
