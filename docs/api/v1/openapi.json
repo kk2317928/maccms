@@ -2916,14 +2916,10 @@
       "VideoImportResult": {
         "type": "object",
         "required": [
-          "vod_id",
           "public_id",
           "workflow_status"
         ],
         "properties": {
-          "vod_id": {
-            "type": "integer"
-          },
           "public_id": {
             "type": "string"
           },

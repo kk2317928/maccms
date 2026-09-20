@@ -21,6 +21,7 @@ class Import extends Base
             $auth->authenticate('POST',$path,$body,$request->header('X-Import-Timestamp'),$request->header('X-Import-Nonce'),$request->header('X-Import-Signature'));
             $payload=json_decode($body,true);if(!is_array($payload))throw new InvalidArgumentException('Invalid JSON payload.');
             $result=(new ContentImportService())->import($payload,$request->header('Idempotency-Key'));
+            unset($result['vod_id']);
             return $this->successResponse($result,$request,[],201);
         } catch(InvalidArgumentException $e){return $this->errorResponse('IMPORT_REJECTED',$e->getMessage(),422,$request);}
         catch(RuntimeException $e){return $this->errorResponse('IMPORT_FAILED','The import could not be completed.',409,$request);}
