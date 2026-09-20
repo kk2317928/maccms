@@ -70,6 +70,11 @@ jobs:
           php -l tests/regression/api_v1_playback.php
           php -l tests/regression/api_v1_delivery_policy.php
           php -l tests/regression/api_v1_openapi.php
+          php -l tests/regression/api_v1_events.php
+          php -l tests/regression/api_v1_rankings.php
+          php -l tests/regression/api_v1_recommendations.php
+          php -l tests/regression/api_v1_event_policy.php
+          php -l tests/regression/api_v1_discovery.php
           php -l tests/regression/run_api_v1.php
           php -l tests/integration/mysql_foundation.php
           php -l tests/integration/native_vod_paths.php
@@ -97,6 +102,15 @@ jobs:
           php -l application/common/util/ApiV1CorsPolicy.php
           php -l application/common/util/ApiV1RateLimiter.php
           php -l application/common/util/ApiV1Etag.php
+          php -l application/common/util/ApiV1EventContract.php
+          php -l application/common/util/ApiV1EventDeduplicator.php
+          php -l application/common/util/ApiV1EventRepository.php
+          php -l application/common/util/VideoRankingWindows.php
+          php -l application/common/util/VideoRecommendationService.php
+          php -l application/common/util/VideoEventPolicy.php
+          php -l application/common/util/ApiV1DiscoveryRepository.php
+          php -l application/api/controller/v1/Events.php
+          php -l application/api/controller/v1/Discovery.php
           php -l application/common/util/ApiV1OpenApi.php
           php -l application/common/behavior/ApiV1DeliveryPolicy.php
           php -l application/common/util/ApiV1VideoDto.php
