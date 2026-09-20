@@ -43,7 +43,7 @@ class ExternalHttpPolicy
     public function redact(string $value): string
     {
         $value = (string) preg_replace('/(?im)^(authorization|proxy-authorization|x-api-key)\s*:\s*.*$/', '$1: [REDACTED]', $value);
-        return (string) preg_replace('/([?&](?:api[_-]?key|access[_-]?token|token|key)=)[^&\s]*/i', '$1[REDACTED]', $value);
+        return (string) preg_replace('/([?&](?:api[_-]?key|access[_-]?token|client[_-]?secret|password|signature|token|key)=)[^&\s]*/i', '$1[REDACTED]', $value);
     }
 
     private function resolve(string $host): array
