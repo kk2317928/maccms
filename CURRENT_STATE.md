@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-19
-State document version: 70
+State document version: 71
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -16,7 +16,7 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 **Starting commit:** T-073 final implementation commit `326515e67b85ac6e7f4509eb9dd4c3e2f99a5cea`.
 **Last completed task:** T-073 — access plus rotating hashed refresh sessions, implementation commit `326515e67b85ac6e7f4509eb9dd4c3e2f99a5cea`.
 **Last verification:** PHP `35468598811`, MySQL 5.7 `35468598872`, MySQL 8.0 `35468598851` and native video `35468598836` passed the T-073 session-security, database and native compatibility matrix.
-**Next action:** trigger the PHP regression workflow for the current T-074 head, resolve any failures, then record green evidence and mark T-074 complete.
+**Next action:** execute PHP regression for the reviewed T-074 head, resolve any failures, then record green evidence and mark T-074 complete.
 
 ## 1. Confirmed product direction
 
