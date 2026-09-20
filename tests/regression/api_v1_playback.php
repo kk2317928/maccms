@@ -48,6 +48,10 @@ playbackSame(1700000300,$signed['expires_at'],'Playback expiry mismatch.');
 playbackAssert($signer->verify('ABC234','s1','s1e2',$signed['expires_at'],$signed['signature'],1700000001),'Valid signature rejected.');
 playbackAssert(!$signer->verify('ABC234','s1','s1e3',$signed['expires_at'],$signed['signature'],1700000001),'Signature must bind episode.');
 playbackAssert(!$signer->verify('ABC234','s1','s1e2',$signed['expires_at'],$signed['signature'],1700000300),'Expired signature accepted.');
+$longSigner=new ApiV1PlaybackSigner(str_repeat('s',32),900);
+$longSigned=$longSigner->sign('ABC234','s1','s1e2',1700000000);
+$shortVerifier=new ApiV1PlaybackSigner(str_repeat('s',32),60);
+playbackAssert(!$shortVerifier->verify('ABC234','s1','s1e2',$longSigned['expires_at'],$longSigned['signature'],1700000001),'Signature beyond configured TTL accepted.');
 
 $dto=ApiV1PlaybackDto::make(array('public_id'=>'ABC234','source_id'=>'s1','episode_id'=>'s1e2','url'=>'https://cdn.example.com/v.m3u8','expires_at'=>1700000300))->toArray();
 playbackSame(array('public_id','source_id','episode_id','url','expires_at'),array_keys($dto),'Playback DTO allowlist mismatch.');
