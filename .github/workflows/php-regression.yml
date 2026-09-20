@@ -96,6 +96,7 @@ jobs:
           php -l application/common/util/ApiV1CorsPolicy.php
           php -l application/common/util/ApiV1RateLimiter.php
           php -l application/common/util/ApiV1Etag.php
+          php -l application/common/behavior/ApiV1DeliveryPolicy.php
           php -l application/common/util/ApiV1VideoDto.php
           php -l application/common/util/ApiV1EpisodeDto.php
           php -l application/common/util/ApiV1CatalogRepository.php
