@@ -1,0 +1,1613 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "MACCMS Headless API",
+    "version": "1.0.0",
+    "description": "Stable video-only API for the independent Next.js frontend."
+  },
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Meta"
+    },
+    {
+      "name": "Catalog"
+    },
+    {
+      "name": "Playback"
+    },
+    {
+      "name": "Authentication"
+    },
+    {
+      "name": "Activity"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "getApiVersion",
+        "summary": "Get API version",
+        "tags": [
+          "Meta"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/home": {
+      "get": {
+        "operationId": "getHome",
+        "summary": "Get home catalog",
+        "tags": [
+          "Catalog"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "parameters": [
+          {
+            "name": "locale",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "zh-TW",
+                "zh-CN",
+                "en"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "/videos": {
+      "get": {
+        "operationId": "listVideos",
+        "summary": "List published videos",
+        "tags": [
+          "Catalog"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type2",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "taxonomy_kind",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "taxonomy_slug",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "zh-TW",
+                "zh-CN",
+                "en"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "/videos/{public_id}": {
+      "get": {
+        "operationId": "getVideo",
+        "summary": "Get published canonical video",
+        "tags": [
+          "Catalog"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "parameters": [
+          {
+            "name": "public_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9]{6}$"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "zh-TW",
+                "zh-CN",
+                "en"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "/videos/{public_id}/episodes": {
+      "get": {
+        "operationId": "getVideoEpisodes",
+        "summary": "List safe episode identifiers",
+        "tags": [
+          "Catalog"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "parameters": [
+          {
+            "name": "public_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9]{6}$"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "zh-TW",
+                "zh-CN",
+                "en"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "/videos/{public_id}/playback/{source_id}/{episode_id}": {
+      "get": {
+        "operationId": "resolvePlayback",
+        "summary": "Resolve enabled playback delivery",
+        "tags": [
+          "Playback"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "parameters": [
+          {
+            "name": "public_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9]{6}$"
+            }
+          },
+          {
+            "name": "source_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^s[1-9][0-9]{0,2}$"
+            }
+          },
+          {
+            "name": "episode_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^s[1-9][0-9]{0,2}e[1-9][0-9]{0,4}$"
+            }
+          },
+          {
+            "name": "expires_at",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "signature",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/search": {
+      "get": {
+        "operationId": "searchVideos",
+        "summary": "Search published videos",
+        "tags": [
+          "Catalog"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "zh-TW",
+                "zh-CN",
+                "en"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "/taxonomies": {
+      "get": {
+        "operationId": "listTaxonomies",
+        "summary": "List public taxonomies",
+        "tags": [
+          "Catalog"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "parameters": [
+          {
+            "name": "locale",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "zh-TW",
+                "zh-CN",
+                "en"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "operationId": "login",
+        "summary": "Create access and refresh tokens",
+        "tags": [
+          "Authentication"
+        ],
+        "security": [],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "user_name",
+                  "user_pwd"
+                ],
+                "properties": {
+                  "user_name": {
+                    "type": "string"
+                  },
+                  "user_pwd": {
+                    "type": "string",
+                    "format": "password"
+                  },
+                  "verify": {
+                    "type": "string"
+                  },
+                  "device_name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "operationId": "refreshToken",
+        "summary": "Rotate refresh token",
+        "tags": [
+          "Authentication"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "refresh_token"
+                ],
+                "properties": {
+                  "refresh_token": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "operationId": "logout",
+        "summary": "Revoke current session family",
+        "tags": [
+          "Authentication"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/auth/sessions": {
+      "get": {
+        "operationId": "listSessions",
+        "summary": "List device sessions",
+        "tags": [
+          "Authentication"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/auth/sessions/{session_id}": {
+      "delete": {
+        "operationId": "revokeSession",
+        "summary": "Revoke selected device session",
+        "tags": [
+          "Authentication"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{32}$"
+            }
+          }
+        ]
+      }
+    },
+    "/me/favorites": {
+      "get": {
+        "operationId": "listFavorites",
+        "summary": "List favorites",
+        "tags": [
+          "Activity"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/me/favorites/{public_id}": {
+      "put": {
+        "operationId": "favoriteVideo",
+        "summary": "Add favorite",
+        "tags": [
+          "Activity"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "parameters": [
+          {
+            "name": "public_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9]{6}$"
+            }
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "unfavoriteVideo",
+        "summary": "Remove favorite",
+        "tags": [
+          "Activity"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "parameters": [
+          {
+            "name": "public_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9]{6}$"
+            }
+          }
+        ]
+      }
+    },
+    "/me/history": {
+      "get": {
+        "operationId": "listHistory",
+        "summary": "List recent watching",
+        "tags": [
+          "Activity"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/me/progress/{public_id}": {
+      "get": {
+        "operationId": "getProgress",
+        "summary": "Get playback progress",
+        "tags": [
+          "Activity"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "parameters": [
+          {
+            "name": "public_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9]{6}$"
+            }
+          }
+        ]
+      },
+      "put": {
+        "operationId": "saveProgress",
+        "summary": "Save playback progress",
+        "tags": [
+          "Activity"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "parameters": [
+          {
+            "name": "public_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9]{6}$"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "source_id",
+                  "episode_id",
+                  "position_seconds",
+                  "duration_seconds",
+                  "updated_at"
+                ],
+                "properties": {
+                  "source_id": {
+                    "type": "string"
+                  },
+                  "episode_id": {
+                    "type": "string"
+                  },
+                  "position_seconds": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "duration_seconds": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "updated_at": {
+                    "type": "integer",
+                    "format": "int64"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteProgress",
+        "summary": "Delete playback progress",
+        "tags": [
+          "Activity"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "parameters": [
+          {
+            "name": "public_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9]{6}$"
+            }
+          }
+        ]
+      }
+    },
+    "/me/activity/merge": {
+      "post": {
+        "operationId": "mergeAnonymousActivity",
+        "summary": "Merge anonymous activity",
+        "tags": [
+          "Activity"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "favorites": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "history": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "operationId": "getOpenApiDocument",
+        "summary": "Get this OpenAPI document",
+        "tags": [
+          "Meta"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Envelope": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {},
+          "meta": {
+            "type": "object",
+            "required": [
+              "request_id"
+            ],
+            "properties": {
+              "request_id": {
+                "type": "string",
+                "maxLength": 64
+              }
+            }
+          }
+        }
+      },
+      "ErrorEnvelope": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "error",
+          "meta"
+        ],
+        "properties": {
+          "error": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "code",
+              "message"
+            ],
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "details": {
+                "type": "object"
+              }
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "request_id"
+            ],
+            "properties": {
+              "request_id": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "VideoSummary": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "public_id",
+          "title",
+          "titles",
+          "poster",
+          "year",
+          "remarks",
+          "score",
+          "published_at"
+        ],
+        "properties": {
+          "public_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9]{6}$"
+          },
+          "title": {
+            "type": "string"
+          },
+          "titles": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "tw",
+              "cn",
+              "en",
+              "original"
+            ],
+            "properties": {
+              "tw": {
+                "type": "string"
+              },
+              "cn": {
+                "type": "string"
+              },
+              "en": {
+                "type": "string"
+              },
+              "original": {
+                "type": "string"
+              }
+            }
+          },
+          "poster": {
+            "type": "string"
+          },
+          "year": {
+            "type": "string"
+          },
+          "remarks": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number",
+            "format": "float"
+          },
+          "published_at": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "VideoDetail": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VideoSummary"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "synopsis",
+              "actors",
+              "directors",
+              "area",
+              "language",
+              "episode",
+              "trailer_url",
+              "preview_url",
+              "taxonomies"
+            ],
+            "properties": {
+              "synopsis": {
+                "type": "string"
+              },
+              "actors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "directors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "area": {
+                "type": "string"
+              },
+              "language": {
+                "type": "string"
+              },
+              "episode": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "current",
+                  "total",
+                  "complete"
+                ],
+                "properties": {
+                  "current": {
+                    "type": "integer"
+                  },
+                  "total": {
+                    "type": "integer"
+                  },
+                  "complete": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "trailer_url": {
+                "type": "string"
+              },
+              "preview_url": {
+                "type": "string"
+              },
+              "taxonomies": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Taxonomy"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Taxonomy": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "slug",
+          "name",
+          "names",
+          "sort"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "genre",
+              "region",
+              "tag"
+            ]
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "names": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "tw": {
+                "type": "string"
+              },
+              "cn": {
+                "type": "string"
+              },
+              "en": {
+                "type": "string"
+              }
+            }
+          },
+          "sort": {
+            "type": "integer"
+          }
+        }
+      },
+      "EpisodeCollection": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "public_id",
+          "sources"
+        ],
+        "properties": {
+          "public_id": {
+            "type": "string"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "source_id",
+                "name",
+                "position",
+                "episodes"
+              ],
+              "properties": {
+                "source_id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "position": {
+                  "type": "integer"
+                },
+                "episodes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "episode_id",
+                      "name",
+                      "position"
+                    ],
+                    "properties": {
+                      "episode_id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "position": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Playback": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "public_id",
+          "source_id",
+          "episode_id",
+          "url",
+          "expires_at"
+        ],
+        "properties": {
+          "public_id": {
+            "type": "string"
+          },
+          "source_id": {
+            "type": "string"
+          },
+          "episode_id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "expires_at": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "Favorite": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "public_id",
+          "title",
+          "poster",
+          "favorited_at"
+        ],
+        "properties": {
+          "public_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "poster": {
+            "type": "string"
+          },
+          "favorited_at": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "History": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "public_id",
+          "title",
+          "poster",
+          "source_id",
+          "episode_id",
+          "position_seconds",
+          "duration_seconds",
+          "updated_at"
+        ],
+        "properties": {
+          "public_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "poster": {
+            "type": "string"
+          },
+          "source_id": {
+            "type": "string"
+          },
+          "episode_id": {
+            "type": "string"
+          },
+          "position_seconds": {
+            "type": "integer"
+          },
+          "duration_seconds": {
+            "type": "integer"
+          },
+          "updated_at": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "Progress": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "public_id",
+          "source_id",
+          "episode_id",
+          "position_seconds",
+          "duration_seconds",
+          "updated_at"
+        ],
+        "properties": {
+          "public_id": {
+            "type": "string"
+          },
+          "source_id": {
+            "type": "string"
+          },
+          "episode_id": {
+            "type": "string"
+          },
+          "position_seconds": {
+            "type": "integer"
+          },
+          "duration_seconds": {
+            "type": "integer"
+          },
+          "updated_at": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "TokenResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "token_type",
+          "access_token",
+          "expires_in",
+          "refresh_token",
+          "refresh_expires_at",
+          "session_id"
+        ],
+        "properties": {
+          "token_type": {
+            "type": "string",
+            "enum": [
+              "Bearer"
+            ]
+          },
+          "access_token": {
+            "type": "string"
+          },
+          "expires_in": {
+            "type": "integer"
+          },
+          "refresh_token": {
+            "type": "string"
+          },
+          "refresh_expires_at": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "session_id": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{32}$"
+          }
+        }
+      }
+    },
+    "responses": {
+      "Error": {
+        "description": "Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorEnvelope"
+            },
+            "examples": {
+              "default": {
+                "$ref": "#/components/examples/ErrorResponse"
+              }
+            }
+          }
+        }
+      }
+    },
+    "examples": {
+      "VideoSummaryResponse": {
+        "summary": "Published video summary",
+        "value": {
+          "data": {
+            "public_id": "ABC234",
+            "title": "範例影片",
+            "titles": {
+              "tw": "範例影片",
+              "cn": "示例影片",
+              "en": "Example Video",
+              "original": "Example"
+            },
+            "poster": "https://cdn.example.com/poster.webp",
+            "year": "2026",
+            "remarks": "更新中",
+            "score": 8.5,
+            "published_at": 1790000000
+          },
+          "meta": {
+            "request_id": "req-example",
+            "locale": "zh-TW"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "summary": "Stable error envelope",
+        "value": {
+          "error": {
+            "code": "NOT_FOUND",
+            "message": "The requested resource was not found."
+          },
+          "meta": {
+            "request_id": "req-example"
+          }
+        }
+      },
+      "PlaybackResponse": {
+        "summary": "Short-lived playback delivery",
+        "value": {
+          "data": {
+            "public_id": "ABC234",
+            "source_id": "s1",
+            "episode_id": "s1e1",
+            "url": "https://cdn.example.com/video/1.m3u8",
+            "expires_at": 1790000300
+          },
+          "meta": {
+            "request_id": "req-example"
+          }
+        }
+      },
+      "TokenResponse": {
+        "summary": "Rotating session tokens",
+        "value": {
+          "data": {
+            "token_type": "Bearer",
+            "access_token": "eyJhbGciOiJIUzI1NiJ9.example.signature",
+            "expires_in": 900,
+            "refresh_token": "opaque-refresh-token",
+            "refresh_expires_at": 1792592000,
+            "session_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "meta": {
+            "request_id": "req-example"
+          }
+        }
+      },
+      "ProgressRequest": {
+        "summary": "Playback progress update",
+        "value": {
+          "source_id": "s1",
+          "episode_id": "s1e1",
+          "position_seconds": 120,
+          "duration_seconds": 1800,
+          "updated_at": 1790000000
+        }
+      }
+    }
+  }
+}
