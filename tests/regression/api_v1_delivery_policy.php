@@ -42,6 +42,13 @@ deliverySame('auth',ApiV1EndpointPolicy::resolve('POST',$prefixedPath)['bucket']
 $subdirPath=ApiV1Bootstrap::requestPath(array('REQUEST_URI'=>'/maccms/api/v1/auth/login','SCRIPT_NAME'=>'/maccms/api.php'));
 deliverySame('/api/v1/auth/login',$subdirPath,'Subdirectory API path normalization failed.');
 
+$eventsPolicy=ApiV1EndpointPolicy::resolve('POST','/api/v1/events');
+deliverySame('events',$eventsPolicy['bucket'],'Events bucket mismatch.');
+deliverySame(array('POST'),$eventsPolicy['methods'],'Events CORS methods must be route-exact.');
+$eventPreflight=(new ApiV1CorsPolicy(array('https://app.example.com')))->preflight('https://app.example.com','POST',$eventsPolicy['methods']);
+deliveryAssert(strpos($eventPreflight['Access-Control-Allow-Headers'],'X-Session-ID')!==false,'Anonymous session header must be allowed.');
+deliveryAssert(strpos($eventPreflight['Access-Control-Allow-Headers'],'X-Device-ID')!==false,'Anonymous device header must be allowed.');
+
 $playback=ApiV1EndpointPolicy::resolve('GET','/api/v1/videos/ABC234/playback/s1/s1e1');
 deliverySame('playback',$playback['bucket'],'Playback bucket mismatch.');
 deliverySame(30,$playback['limit'],'Playback limit mismatch.');
