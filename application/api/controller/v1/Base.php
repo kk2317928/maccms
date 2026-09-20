@@ -42,6 +42,21 @@ class Base extends \app\api\controller\Base
         return $this->cacheableJsonResponse(ApiV1Response::collection($items,$pagination,$totalItems,$requestId,$meta),$request,$requestId);
     }
 
+    protected function cacheableDocumentResponse(array $document,Request $request)
+    {
+        $requestId=$this->requestId($request);
+        $etag=ApiV1Etag::make($document);
+        $headers=array(
+            'Content-Type'=>'application/json; charset=utf-8',
+            'X-Request-ID'=>$requestId,
+            'ETag'=>$etag,
+            'Cache-Control'=>'public, no-cache, must-revalidate',
+            'Vary'=>'Origin',
+        );
+        if (ApiV1Etag::matches($request->header('If-None-Match'),$etag)) return response('',304,$headers);
+        return json($document,200,$headers);
+    }
+
     protected function errorResponse($code, $message, $status, Request $request = null, array $details = array())
     {
         $requestId = $this->requestId($request);
