@@ -1739,7 +1739,7 @@ https://www.baidu.com/123.jpg
   'admin/addon/cloud_tab' => '클라우드 마켓',
   'admin/addon/cloud_disabled' => '플러그인 클라우드 마켓이 비활성화되어 있습니다',
   'admin/addon/cloud_disabled_hint' => '클라우드 마켓이 꺼져 있습니다. addon_cloud.status=1로 설정하세요. UI 골격 확인은 mock=1(catalog.mock.json, 설치 금지). 실제 설치에는 RS256 서명 카탈로그와 공개 키가 필요합니다.',
-  'admin/addon/legacy_catalog_hint' => '로컬 목록은 이전 api.maccms.com의 읽기 전용 메타데이터를 병합할 수 있습니다. 설치는 클라우드 마켓 또는 로컬 zip을 사용하세요(legacy_catalog=0으로 비활성화).',
+  'admin/addon/legacy_catalog_hint' => '로컬 목록은 이전 legacy official catalog의 읽기 전용 메타데이터를 병합할 수 있습니다. 설치는 클라우드 마켓 또는 로컬 zip을 사용하세요(legacy_catalog=0으로 비활성화).',
   'admin/addon/cloud_mock_no_install' => '목 카탈로그 모드에서는 클라우드 설치가 금지됩니다',
   'admin/addon/cloud_mock_hint' => '목 카탈로그 모드(addon_cloud.mock=1): 목록만 표시하며 클라우드 설치는 불가합니다.',
   'admin/addon/cloud_use_catalog' => '서명 없는 원격 설치는 종료되었습니다. 서명된 클라우드 마켓 또는 로컬 zip을 사용하세요',
