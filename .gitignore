@@ -12,5 +12,6 @@ nohup*
 *.log
 .wepycache
 .well-known
-/upload
+/upload/*
+!/upload/.gitkeep
 node_modules/
