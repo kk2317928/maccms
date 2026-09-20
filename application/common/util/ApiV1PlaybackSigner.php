@@ -24,7 +24,7 @@ final class ApiV1PlaybackSigner
     public function verify($publicId,$sourceId,$episodeId,$expiresAt,$signature,$now=null)
     {
         $now=$now===null?time():(int)$now; $expiresAt=(int)$expiresAt;
-        if ($expiresAt<=$now || $expiresAt>$now+900 || !is_string($signature) || preg_match('/\A[a-f0-9]{64}\z/D',$signature)!==1) return false;
+        if ($expiresAt<=$now || $expiresAt>$now+$this->ttl || !is_string($signature) || preg_match('/\A[a-f0-9]{64}\z/D',$signature)!==1) return false;
         return hash_equals($this->digest($publicId,$sourceId,$episodeId,$expiresAt),$signature);
     }
 
