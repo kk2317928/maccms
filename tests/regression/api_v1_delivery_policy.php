@@ -77,7 +77,7 @@ $payload=array('data'=>array('public_id'=>'ABC234','title'=>'Example'),'meta'=>a
 $etag=ApiV1Etag::make($payload,7);
 deliveryAssert(preg_match('/\\AW\\/"[a-f0-9]{64}"\\z/D',$etag)===1,'Weak ETag format mismatch.');
 deliveryAssert(ApiV1Etag::matches($etag,$etag),'Exact If-None-Match rejected.');
-deliveryAssert(ApiV1Etag::matches('W/'.$etag.', "other"',$etag),'Weak/list If-None-Match rejected.');
+deliveryAssert(ApiV1Etag::matches($etag.', "other"',$etag),'Weak/list If-None-Match rejected.');
 deliveryAssert(!ApiV1Etag::matches('"other"',$etag),'Different ETag accepted.');
 deliveryAssert(ApiV1Etag::make($payload,8)!==$etag,'Publication generation must invalidate ETag.');
 deliveryAssert(ApiV1Etag::make(array('data'=>array('public_id'=>'ABC234','title'=>'Changed')),7)!==$etag,'Content change must invalidate ETag.');
