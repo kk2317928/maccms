@@ -1745,7 +1745,7 @@ https://www.baidu.com/123.jpg
   'admin/addon/cloud_tab' => 'Mercado na nuvem',
   'admin/addon/cloud_disabled' => 'O mercado na nuvem de plug-ins está desativado',
   'admin/addon/cloud_disabled_hint' => 'Mercado na nuvem desativado. Defina addon_cloud.status=1; para esqueleto de UI use mock=1 (catalog.mock.json, instalação bloqueada). Instalações reais exigem catálogo RS256 e chave pública.',
-  'admin/addon/legacy_catalog_hint' => 'A lista local pode fundir metadados só de leitura de api.maccms.com; instale pelo mercado na nuvem ou zip local (legacy_catalog=0 para desativar).',
+  'admin/addon/legacy_catalog_hint' => 'A lista local pode fundir metadados só de leitura de legacy official catalog; instale pelo mercado na nuvem ou zip local (legacy_catalog=0 para desativar).',
   'admin/addon/cloud_mock_no_install' => 'Modo catálogo mock: instalação na nuvem desativada',
   'admin/addon/cloud_mock_hint' => 'Modo catálogo mock (addon_cloud.mock=1): apenas listagem, instalação na nuvem desativada.',
   'admin/addon/cloud_use_catalog' => 'A instalação remota sem assinatura está fechada; use o mercado na nuvem assinado ou um zip local',
