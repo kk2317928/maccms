@@ -1734,7 +1734,7 @@ Hinweis: Wenn sowohl Blacklist als auch Whitelist ausgefüllt sind, werden beide
   'admin/addon/cloud_tab' => 'Cloud-Markt',
   'admin/addon/cloud_disabled' => 'Plugin-Cloud-Markt ist deaktiviert',
   'admin/addon/cloud_disabled_hint' => 'Cloud-Markt ist aus. Setzen Sie addon_cloud.status=1; für UI-Gerüst mock=1 (catalog.mock.json, Installation gesperrt). Echte Installation braucht RS256-Katalog und öffentlichen Schlüssel.',
-  'admin/addon/legacy_catalog_hint' => 'Die lokale Liste kann schreibgeschützte Metadaten von api.maccms.com einbinden; Installation über Cloud-Markt oder lokales Zip (legacy_catalog=0 zum Abschalten).',
+  'admin/addon/legacy_catalog_hint' => 'Die lokale Liste kann schreibgeschützte Metadaten von legacy official catalog einbinden; Installation über Cloud-Markt oder lokales Zip (legacy_catalog=0 zum Abschalten).',
   'admin/addon/cloud_mock_no_install' => 'Mock-Katalogmodus: Cloud-Installation ist deaktiviert',
   'admin/addon/cloud_mock_hint' => 'Mock-Katalogmodus (addon_cloud.mock=1): nur Anzeige, Cloud-Installation deaktiviert.',
   'admin/addon/cloud_use_catalog' => 'Unsignierte Ferninstallation ist geschlossen; nutzen Sie den signierten Cloud-Markt oder ein lokales Zip',
