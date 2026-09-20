@@ -5,6 +5,7 @@ use app\common\util\ApiV1Pagination;
 use app\common\util\ApiV1Locale;
 use app\common\util\ApiV1RequestId;
 use app\common\util\ApiV1Response;
+use app\common\util\ApiV1Etag;
 use InvalidArgumentException;
 use think\Request;
 use Throwable;
@@ -27,6 +28,18 @@ class Base extends \app\api\controller\Base
     {
         $requestId = $this->requestId($request);
         return $this->jsonResponse(ApiV1Response::collection($items, $pagination, $totalItems, $requestId, $meta), 200, $requestId);
+    }
+
+    protected function cacheableResponse($data, Request $request = null, array $meta = array())
+    {
+        $requestId=$this->requestId($request);
+        return $this->cacheableJsonResponse(ApiV1Response::success($data,$requestId,$meta),$request,$requestId);
+    }
+
+    protected function cacheableCollectionResponse(array $items,ApiV1Pagination $pagination,$totalItems,Request $request=null,array $meta=array())
+    {
+        $requestId=$this->requestId($request);
+        return $this->cacheableJsonResponse(ApiV1Response::collection($items,$pagination,$totalItems,$requestId,$meta),$request,$requestId);
     }
 
     protected function errorResponse($code, $message, $status, Request $request = null, array $details = array())
@@ -63,6 +76,23 @@ class Base extends \app\api\controller\Base
     protected function internalError(Request $request = null)
     {
         return $this->errorResponse('INTERNAL_ERROR', 'An internal error occurred.', 500, $request);
+    }
+
+    private function cacheableJsonResponse(array $payload,Request $request,$requestId)
+    {
+        $validator=$payload;
+        if (isset($validator['meta']['request_id'])) unset($validator['meta']['request_id']);
+        $etag=ApiV1Etag::make($validator);
+        $headers=array(
+            'Content-Type'=>'application/json; charset=utf-8',
+            'X-Request-ID'=>$requestId,
+            'ETag'=>$etag,
+            'Cache-Control'=>'public, max-age=60, stale-while-revalidate=300',
+        );
+        if ($request!==null && ApiV1Etag::matches($request->header('If-None-Match'),$etag)) {
+            return response('',304,$headers);
+        }
+        return json($payload,200,$headers);
     }
 
     private function jsonResponse(array $payload, $status, $requestId)
