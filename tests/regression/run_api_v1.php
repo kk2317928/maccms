@@ -13,6 +13,7 @@ $tests = array(
     __DIR__ . '/api_v1_events.php',
     __DIR__ . '/api_v1_rankings.php',
     __DIR__ . '/api_v1_recommendations.php',
+    __DIR__ . '/api_v1_event_policy.php',
 );
 
 foreach ($tests as $test) {
