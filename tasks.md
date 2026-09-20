@@ -663,12 +663,12 @@ Use `application/admin/view_new`; do not add a parallel obsolete `view/` tree.
 - GREEN evidence: PHP `35468598811`, MySQL 5.7 `35468598872`, MySQL 8.0 `35468598851`, native video `35468598836`.
 - Independent security review found and verified fixes for deterministic device state, secret preflight/isolation, keyed fingerprints, issuer validation, no-store headers, v1 exception handling, legacy-session isolation and CAPTCHA forwarding.
 
-### T-074 Favorites/history/progress DTO and anonymous merge — `IN_PROGRESS`
+### T-074 Favorites/history/progress DTO and anonymous merge — `DONE`
 
-- RED contract: `855936a557e6ccd393dd2f0c6925dff2cc08fb3d`; implementation and independent-review fixes currently through `66548ebd634d981ee7f509efdbfb729c78b197f8`.
+- RED contract: `855936a557e6ccd393dd2f0c6925dff2cc08fb3d`; implementation and independent-review fixes through `60a6e4bcbfa2f23560804e81b3ad7b917d4bafab`.
 - Added authenticated public-ID favorites/history/progress routes and allowlisted DTOs, canonical alias resolution, published-only access, deterministic anonymous merge, advisory locking for native MyISAM `ulog`, duration persistence, episode/range validation, and strict separation from paid type-4 entitlement rows.
-- Verification is pending because GitHub Actions did not enqueue for GitHub App content commits; do not mark DONE until the PHP workflow runs on the current head.
-### T-075 Playback source policy and optional signing — `TODO`
+- GREEN evidence: PHP regression `35498624705` passed syntax plus baseline, foundation, AI jobs, duplicate/TMDB, admin and API v1 suites. Independent review fixes covered MyISAM serialization, prevalidation, duration persistence, episode/range validation, idempotent favorites, legacy whole-video rows and paid-entitlement isolation.
+### T-075 Playback source policy and optional signing — `IN_PROGRESS`
 ### T-076 CORS, per-endpoint limits, ETag and invalidation — `TODO`
 ### T-077 OpenAPI v1 and contract tests — `TODO`
 
@@ -705,10 +705,10 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 
 ```text
 Checkpoint: CP-07
-Next task: T-074
+Next task: T-075
 Task status: IN_PROGRESS
-Required starting state: feature/headless-ai-v1 at T-074 review-fix commit `66548ebd634d981ee7f509efdbfb729c78b197f8`
-First verification: run the PHP regression workflow and resolve any syntax/contract failures
-Task commit: feat(api): complete T-074 member activity
+Required starting state: feature/headless-ai-v1 after T-074 final commit `60a6e4bcbfa2f23560804e81b3ad7b917d4bafab`
+First verification: define playback source allowlist, URL safety and optional signing contracts
+Task commit: test: define API v1 playback delivery contract
 Push required: yes, immediately after task verification
 ```
