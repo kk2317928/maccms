@@ -23,7 +23,7 @@ $required = [
     "php tests/integration/api_v1_analytics.php",
     "php tests/integration/native_vod_paths.php",
     "php tests/regression/outbound_inventory.php --enforce",
-    "done, applied=0, skipped=17",
+    "done, applied=0, skipped=18",
 ];
 foreach ($required as $needle) {
     if (strpos($source, $needle) === false) {
