@@ -52,7 +52,7 @@ The following are separate from official communication because their destination
 - playback, live, manga chapter and poster URLs stored as content;
 - redirecting payment, OAuth, upload and URL-submission adapters.
 
-Every retained server-side caller must use a centralized policy: permit only required schemes, resolve and reject loopback/private/link-local/metadata addresses, pin/revalidate DNS and redirects, cap response size/time, restrict methods, avoid credential forwarding, and redact secrets. Browser-only navigation still requires clear administrator control but is not a server-side SSRF request.
+Programme content providers (AI, TMDB, IMDb and Douban) use `ExternalHttpPolicy` plus `HardenedHttpClient`: HTTPS-only host allowlisting, public-address resolution, DNS pinning, redirect revalidation, bounded responses/timeouts, restricted methods and secret redaction. Protocol-specific S3, SMTP and SMS adapters remain disabled until explicitly configured and use their respective SDK transports; collection/resource legacy callers remain in the T-093 security-regression inventory. Browser-only navigation still requires clear administrator control but is not a server-side SSRF request.
 
 ## Dynamic execution and download findings
 
