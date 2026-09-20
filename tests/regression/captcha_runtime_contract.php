@@ -3,10 +3,19 @@
 declare(strict_types=1);
 
 $root = dirname(__DIR__, 2);
+$classFile = $root . '/extend/think/captcha/Captcha.php';
+$helperFile = $root . '/extend/think/captcha/helper.php';
+foreach ([$classFile, $helperFile] as $requiredFile) {
+    if (!is_file($requiredFile)) {
+        fwrite(STDERR, "FAIL: release checkout missing captcha runtime file: {$requiredFile}\n");
+        exit(1);
+    }
+}
+
 define('APP_PATH', $root . '/application/');
 define('ENTRANCE', 'command');
 require $root . '/thinkphp/base.php';
-require_once $root . '/extend/think/captcha/helper.php';
+require_once $helperFile;
 
 if (!class_exists('think\\captcha\\Captcha')) {
     fwrite(STDERR, "FAIL: think\\captcha\\Captcha is unavailable in a clean release checkout.\n");
