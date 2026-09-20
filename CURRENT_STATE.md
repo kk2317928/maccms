@@ -206,3 +206,11 @@ Verified release gap at `231e1900cf41f26c2b33bd6cb362e41af4ede7ac`:
 
 - Added root `使用說明.md` for Traditional Chinese installation, administration, Cron, API, recovery and RC acceptance.
 - The guide explicitly keeps `v1.0.3-rc1` test-only until the manual fresh Web-install/browser smoke checklist passes.
+
+## 12. Completion repair execution
+
+- Active plan: `docs/superpowers/plans/2026-09-20-headless-ai-completion-repair.md`.
+- Active task: T-101, centralized workflow coordination.
+- Starting commit: `d818cb3088593a84309ca256bfac68c3501b7960`.
+- Environment ruling: this execution image has no PHP binary and no authenticated Git checkout; RED was established as a missing coordinator class, while GREEN verification must run in GitHub Actions after an atomic connector commit.
+- Shared interfaces checked: T-101 produces AI start/completion, duplicate completion and TMDB completion boundaries consumed by T-102 through T-104.

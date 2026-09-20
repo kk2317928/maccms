@@ -765,10 +765,17 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 ## Current execution pointer
 
 ```text
-Checkpoint: CP-09 installation usability hotfix
-Next task: T-100
-Task status: DONE
-Starting commit: 231e1900cf41f26c2b33bd6cb362e41af4ede7ac
+Checkpoint: completion repair
+Next task: T-101 workflow coordinator
+Task status: IN_PROGRESS
+Starting commit: d818cb3088593a84309ca256bfac68c3501b7960
 Release status: headless-ai-v1.0.2 is retained for traceability but is not accepted for deployment
-Next action: use 使用說明.md to perform the manual fresh Web-install/browser smoke test before creating headless-ai-v1.0.3
+Next action: verify the workflow coordinator in GitHub Actions, then continue with native write hooks
 ```
+
+### T-101 Central content workflow coordinator — `IN_PROGRESS`
+
+- Added a transaction-bound coordinator for legal AI, duplicate, TMDB, failure and retry transitions.
+- Added deterministic AI/TMDB idempotency keys and post-commit downstream enqueue.
+- RED contract: `tests/regression/content_workflow_coordinator.php` (local runner unavailable because this execution image has no PHP binary).
+- Verification is delegated to the PHP 8.1 GitHub Actions gate before this task can be marked `DONE`.
