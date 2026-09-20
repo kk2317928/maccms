@@ -9,7 +9,12 @@ use Throwable;
 final class ContentImportService
 {
     const MAX_PAYLOAD_BYTES=262144;
-    private $lookup;$reserve;$complete;$nativeWrite;$loadExtension;$transaction;
+    private $lookup;
+    private $reserve;
+    private $complete;
+    private $nativeWrite;
+    private $loadExtension;
+    private $transaction;
 
     public function __construct(callable $lookup=null,callable $reserve=null,callable $complete=null,callable $nativeWrite=null,callable $loadExtension=null,callable $transaction=null)
     {
