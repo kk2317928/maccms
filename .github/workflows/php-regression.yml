@@ -97,6 +97,7 @@ jobs:
           php -l application/common/util/ApiV1CorsPolicy.php
           php -l application/common/util/ApiV1RateLimiter.php
           php -l application/common/util/ApiV1Etag.php
+          php -l application/common/util/ApiV1OpenApi.php
           php -l application/common/behavior/ApiV1DeliveryPolicy.php
           php -l application/common/util/ApiV1VideoDto.php
           php -l application/common/util/ApiV1EpisodeDto.php
@@ -111,6 +112,7 @@ jobs:
           php -l application/api/controller/v1/Auth.php
           php -l application/api/controller/v1/Activity.php
           php -l application/api/controller/v1/Playback.php
+          php -l application/api/controller/v1/Docs.php
           php -l application/common/util/SchemaMigrationService.php
           php -l application/common/util/AiProvider.php
           php -l application/common/util/PublicIdGenerator.php
