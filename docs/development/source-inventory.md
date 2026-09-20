@@ -20,7 +20,7 @@ This document is a compact navigation baseline for implementation sessions. The 
 
 | Inventory key | PHP files |
 |---|---:|
-| `admin_controllers` | 71 |
+| `admin_controllers` | 70 |
 | `api_controllers` | 39 |
 | `index_controllers` | 24 |
 | `common_models` | 68 |
