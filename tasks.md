@@ -767,7 +767,7 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 ```text
 Checkpoint: completion repair
 Next task: T-104 workflow stage handoff
-Task status: READY
+Task status: IN_PROGRESS
 Starting commit: d818cb3088593a84309ca256bfac68c3501b7960
 Release status: headless-ai-v1.0.2 is retained for traceability but is not accepted for deployment
 Next action: add idempotent AI enqueue hooks to native admin and collection writes
@@ -794,3 +794,8 @@ Next action: add idempotent AI enqueue hooks to native admin and collection writ
 - Enforces active existing-term matching, ambiguity/missing review, manual locks and reviewed-only canonical adoption.
 - Implementation range: `d0137b1dac52095c783606d4589d514f753ed3e7` through `e4a0c2de4d983c447cd0255d72729f73c66f2beb`.
 - GREEN evidence: PHP `35530726030`, MySQL 5.7 `35530726006`, MySQL 8.0 `35530726051`, release matrix `35530629907`, rollback rehearsal `35530629915`.
+
+### T-104 AI/duplicate/TMDB workflow handoff — `IN_PROGRESS`
+
+- Contract: `tests/regression/content_workflow_handoff.php`.
+- Coordinator calls occur after stage commits; merged secondary videos never receive downstream TMDB work.

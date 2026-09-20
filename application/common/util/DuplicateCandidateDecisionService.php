@@ -10,10 +10,12 @@ use Throwable;
 class DuplicateCandidateDecisionService
 {
     private $clock;
+    private $workflowCoordinator;
 
-    public function __construct(callable $clock = null)
+    public function __construct(callable $clock = null, $workflowCoordinator = null)
     {
         $this->clock = $clock ?: 'time';
+        $this->workflowCoordinator = $workflowCoordinator;
     }
 
     public function markDifferent(int $candidateId, int $reviewerId, callable $beforeCommit = null): bool
@@ -37,6 +39,11 @@ class DuplicateCandidateDecisionService
             if (!$updated) { throw new RuntimeException('Duplicate candidate decision changed.'); }
             if ($beforeCommit) { $beforeCommit(); }
             $this->commitTransaction();
+            if ($this->workflowCoordinator !== null) {
+                foreach ([(int)$candidate['vod_id_low'], (int)$candidate['vod_id_high']] as $vodId) {
+                    if (!$this->hasPendingForVod($vodId)) { $this->workflowCoordinator->completeDuplicateReview($vodId); }
+                }
+            }
             return true;
         } catch (Throwable $exception) {
             $this->rollbackTransaction();
@@ -97,6 +104,7 @@ class DuplicateCandidateDecisionService
     protected function beginTransaction(): void { Db::startTrans(); }
     protected function commitTransaction(): void { Db::commit(); }
     protected function rollbackTransaction(): void { Db::rollback(); }
+    protected function hasPendingForVod(int $vodId): bool { return Db::name('content_duplicate_candidate')->where('decision','pending')->where(function($q) use($vodId){$q->where('vod_id_low',$vodId)->whereOr('vod_id_high',$vodId);})->count()>0; }
 
     private function assertPositive(int $value, string $label): void
     {

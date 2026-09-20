@@ -22,8 +22,9 @@ class AiNormalizationPipeline
     private $clock;
     private $duplicateDetector;
     private $taxonomySuggestions;
+    private $workflowCoordinator;
 
-    public function __construct(callable $provider, $validator, $runs, $fields, array $config, callable $clock = null, $duplicateDetector = null, $taxonomySuggestions = false)
+    public function __construct(callable $provider, $validator, $runs, $fields, array $config, callable $clock = null, $duplicateDetector = null, $taxonomySuggestions = false, $workflowCoordinator = false)
     {
         foreach (['provider', 'model', 'prompt_version', 'daily_budget_micros'] as $key) {
             if (!array_key_exists($key, $config)) {
@@ -41,6 +42,7 @@ class AiNormalizationPipeline
         $this->clock = $clock ?: 'time';
         $this->duplicateDetector = $duplicateDetector;
         $this->taxonomySuggestions = $taxonomySuggestions === false ? new TaxonomySuggestionService() : $taxonomySuggestions;
+        $this->workflowCoordinator = $workflowCoordinator === false ? new ContentWorkflowCoordinator() : $workflowCoordinator;
     }
 
     public function handle(array $payload, array $job): array
@@ -133,6 +135,9 @@ class AiNormalizationPipeline
         $duplicateMetrics = ['candidates_recorded' => 0];
         if ($this->duplicateDetector !== null) {
             $duplicateMetrics = (array) $this->duplicateDetector->detect($vodId, $normalized);
+        }
+        if ($this->workflowCoordinator !== null) {
+            $this->workflowCoordinator->completeAi($vodId, $runId, (int) ($duplicateMetrics['candidates_recorded'] ?? 0) > 0);
         }
         return array_merge([
             'ai_run_id' => $runId,

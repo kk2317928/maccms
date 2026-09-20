@@ -10,10 +10,12 @@ use think\Db;
 class TmdbReviewWorkspace
 {
     private $clock;
+    private $workflowCoordinator;
 
-    public function __construct(callable $clock = null)
+    public function __construct(callable $clock = null, $workflowCoordinator = null)
     {
         $this->clock = $clock ?: 'time';
+        $this->workflowCoordinator = $workflowCoordinator;
     }
 
     public function queue(int $page = 1, int $perPage = 20): array
@@ -73,15 +75,18 @@ class TmdbReviewWorkspace
         if (!$this->persistDecision($reviewId, 'matched', $type, $tmdbId, $reviewerId, (int) call_user_func($this->clock))) {
             throw new RuntimeException('TMDB selection conflicted with another review.');
         }
+        if ($this->workflowCoordinator !== null) { $this->workflowCoordinator->completeTmdbReview((int)$review['vod_id'], $reviewId); }
         return ['status' => 'matched', 'tmdb_type' => $type, 'tmdb_id' => $tmdbId];
     }
 
     public function noMatch(int $reviewId, int $reviewerId): array
     {
         if ($reviewerId <= 0) { throw new InvalidArgumentException('Reviewer ID must be positive.'); }
-        if (!$this->persistDecision($reviewId, 'no_match', '', 0, $reviewerId, (int) call_user_func($this->clock))) {
+        $review = $this->loadReview($reviewId);
+        if (!$review || !$this->persistDecision($reviewId, 'no_match', '', 0, $reviewerId, (int) call_user_func($this->clock))) {
             throw new RuntimeException('TMDB no-match decision conflicted with another review.');
         }
+        if ($this->workflowCoordinator !== null) { $this->workflowCoordinator->completeTmdbReview((int)$review['vod_id'], $reviewId); }
         return ['status' => 'no_match'];
     }
 

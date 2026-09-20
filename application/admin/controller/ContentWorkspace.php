@@ -15,6 +15,7 @@ use app\common\util\DuplicateReviewWorkspace;
 use app\common\util\TmdbImportService;
 use app\common\util\TmdbReviewWorkspace;
 use app\common\util\TaxonomySuggestionService;
+use app\common\util\ContentWorkflowCoordinator;
 use app\common\util\FinalPublicationWorkspace;
 use app\common\util\FinalPublicationService;
 use think\Db;
@@ -89,6 +90,7 @@ class ContentWorkspace extends Base
     public function merge_restore()
     {
         $workspace = new DuplicateReviewWorkspace();
+        $workflowCoordinator = new ContentWorkflowCoordinator();
         if (request()->isPost()) {
             $param = input('post.');
             $token = (string) ($param['__token__'] ?? '');
@@ -109,7 +111,7 @@ class ContentWorkspace extends Base
                 if ($action === 'different') {
                     $candidateId = (int) ($param['candidate_id'] ?? 0);
                     $comparison = $workspace->compare($candidateId);
-                    (new DuplicateCandidateDecisionService())->markDifferent($candidateId, $actorId, function () use ($audit, $actorId, $actorName, $comparison, $candidateId) {
+                    (new DuplicateCandidateDecisionService(null, $workflowCoordinator))->markDifferent($candidateId, $actorId, function () use ($audit, $actorId, $actorName, $comparison, $candidateId) {
                         $audit->append($actorId, $actorName, 'content.duplicate.different', 'vod', (string) $comparison['left']['ext']['public_id'],
                             ['decision' => (string) $comparison['candidate']['decision']], ['decision' => 'different'],
                             ['duplicate_candidate_id' => $candidateId, 'other_public_id' => (string) $comparison['right']['ext']['public_id']]);
@@ -125,7 +127,7 @@ class ContentWorkspace extends Base
                     $secondaryId = $primaryId === $leftId ? $rightId : $leftId;
                     $primary = $primaryId === $leftId ? $comparison['left'] : $comparison['right'];
                     $secondary = $primaryId === $leftId ? $comparison['right'] : $comparison['left'];
-                    $snapshotId = (new DuplicateMergeService())->merge($candidateId, $primaryId, $secondaryId, $actorId, function () use ($audit, $actorId, $actorName, $primary, $secondary, $candidateId) {
+                    $snapshotId = (new DuplicateMergeService(null, $workflowCoordinator))->merge($candidateId, $primaryId, $secondaryId, $actorId, function () use ($audit, $actorId, $actorName, $primary, $secondary, $candidateId) {
                         $audit->append($actorId, $actorName, 'content.duplicate.merge', 'vod', (string) $primary['ext']['public_id'],
                             ['decision' => 'pending'], ['decision' => 'merged'],
                             ['duplicate_candidate_id' => $candidateId, 'secondary_public_id' => (string) $secondary['ext']['public_id']]);
@@ -185,6 +187,7 @@ class ContentWorkspace extends Base
                 if ($actorId === 1) { $grants = array_merge($grants, ['content_workspace/review', 'content_workspace/run_tmdb']); }
                 $policy = new ContentAdminPolicy();
                 $audit = new ContentAdminAudit();
+                $workflowCompletion = null;
                 Db::startTrans();
                 if ($action === 'select') {
                     $policy->assertAllowed('review', $grants);
@@ -204,6 +207,7 @@ class ContentWorkspace extends Base
                     $audit->append($actorId, $actorName, 'content.tmdb.select', 'vod', (string) $preview['review']['public_id'],
                         ['status' => 'candidate_review'], $result, ['approved_fields' => $approved, 'applied' => $applied]);
                     $result['fields'] = $applied;
+                    $workflowCompletion = [(int) $preview['review']['vod_id'], $reviewId];
                 } elseif ($action === 'no_match') {
                     $policy->assertAllowed('review', $grants);
                     $reviewId = (int) ($param['review_id'] ?? 0);
@@ -212,6 +216,7 @@ class ContentWorkspace extends Base
                     $result = $workspace->noMatch($reviewId, $actorId);
                     $audit->append($actorId, $actorName, 'content.tmdb.no_match', 'vod', (string) $preview['review']['public_id'],
                         ['status' => 'candidate_review'], $result, []);
+                    $workflowCompletion = [(int) $preview['review']['vod_id'], $reviewId];
                 } elseif ($action === 'manual') {
                     $policy->assertAllowed('run_tmdb', $grants);
                     $vodId = (int) ($param['vod_id'] ?? 0);
@@ -226,6 +231,7 @@ class ContentWorkspace extends Base
                     throw new \InvalidArgumentException('Unsupported TMDB review action.');
                 }
                 Db::commit();
+                if ($workflowCompletion !== null) { (new ContentWorkflowCoordinator())->completeTmdbReview($workflowCompletion[0], $workflowCompletion[1]); }
                 return json(['code' => 1, 'msg' => 'ok', 'data' => $result]);
             } catch (Throwable $exception) {
                 Db::rollback();

@@ -24,7 +24,7 @@ $valid = json_encode([
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 $calls = 0; $runs = new PipelineRuns(); $fields = new PipelineFields();
 $provider = static function (array $request) use (&$calls, $valid, $fields): array { $calls++; $fields->values['vod_name'] = 'Changed During Provider Call'; return ['raw_response' => $valid, 'input_tokens' => 100, 'output_tokens' => 50, 'estimated_cost_micros' => 750]; };
-$pipeline = new AiNormalizationPipeline($provider, new AiNormalizationValidator(), $runs, $fields, ['provider' => 'compatible', 'model' => 'model-x', 'prompt_version' => 'normalize-v1', 'daily_budget_micros' => 1000], static fn (): int => 1726704000, null, null);
+$pipeline = new AiNormalizationPipeline($provider, new AiNormalizationValidator(), $runs, $fields, ['provider' => 'compatible', 'model' => 'model-x', 'prompt_version' => 'normalize-v1', 'daily_budget_micros' => 1000], static fn (): int => 1726704000, null, null, null);
 $metrics = $pipeline->handle(['vod_id' => 42, 'title' => 'Example'], ['job_id' => 7]);
 if ($calls !== 1 || $metrics['ai_run_id'] !== 1 || $metrics['fields_proposed'] !== 10 || $fields->writes || $runs->rows[0]['decision_status'] !== 'pending') { fwrite(STDERR, "FAIL: valid AI output must remain a pending review candidate without field mutation.\n"); exit(1); }
 if (count($runs->staged) !== 10 || $runs->staged[0]['candidate'] !== 'Example' || $runs->staged[0]['baseline'] !== 'Before' || strlen($runs->staged[0]['baseline_hash']) !== 64) { fwrite(STDERR, "FAIL: valid output must stage canonical candidates with immutable baselines.\n"); exit(1); }
@@ -34,12 +34,12 @@ try { $pipeline->handle(['vod_id' => 42, 'title' => 'Example'], ['job_id' => 8])
 if ($calls !== 1) { fwrite(STDERR, "FAIL: exhausted budget must prevent the provider call.\n"); exit(1); }
 
 $unlimitedCalls = 0; $unlimitedRuns = new PipelineRuns(); $unlimitedRuns->budget = false;
-$unlimited = new AiNormalizationPipeline(static function () use (&$unlimitedCalls, $valid): array { $unlimitedCalls++; return ['raw_response' => $valid, 'input_tokens' => 1, 'output_tokens' => 1, 'estimated_cost_micros' => 1]; }, new AiNormalizationValidator(), $unlimitedRuns, new PipelineFields(), ['provider' => 'compatible', 'model' => 'model-x', 'prompt_version' => 'normalize-v1', 'daily_budget_micros' => 0], static fn (): int => 1726704000, null, null);
+$unlimited = new AiNormalizationPipeline(static function () use (&$unlimitedCalls, $valid): array { $unlimitedCalls++; return ['raw_response' => $valid, 'input_tokens' => 1, 'output_tokens' => 1, 'estimated_cost_micros' => 1]; }, new AiNormalizationValidator(), $unlimitedRuns, new PipelineFields(), ['provider' => 'compatible', 'model' => 'model-x', 'prompt_version' => 'normalize-v1', 'daily_budget_micros' => 0], static fn (): int => 1726704000, null, null, null);
 $unlimited->handle(['vod_id' => 42, 'title' => 'Example'], ['job_id' => 10]);
 if ($unlimitedCalls !== 1) { fwrite(STDERR, "FAIL: zero daily budget must allow the provider call without a budget gate.\n"); exit(1); }
 
 $badRuns = new PipelineRuns(); $badFields = new PipelineFields();
-$bad = new AiNormalizationPipeline(static fn (): array => ['raw_response' => '{}', 'input_tokens' => 1, 'output_tokens' => 1, 'estimated_cost_micros' => 1], new AiNormalizationValidator(), $badRuns, $badFields, ['provider' => 'compatible', 'model' => 'model-x', 'prompt_version' => 'normalize-v1', 'daily_budget_micros' => 1000], static fn (): int => 1726704000, null, null);
+$bad = new AiNormalizationPipeline(static fn (): array => ['raw_response' => '{}', 'input_tokens' => 1, 'output_tokens' => 1, 'estimated_cost_micros' => 1], new AiNormalizationValidator(), $badRuns, $badFields, ['provider' => 'compatible', 'model' => 'model-x', 'prompt_version' => 'normalize-v1', 'daily_budget_micros' => 1000], static fn (): int => 1726704000, null, null, null);
 try { $bad->handle(['vod_id' => 42, 'title' => 'Example'], ['job_id' => 9]); } catch (InvalidArgumentException $exception) {}
 if ($badFields->writes || count($badRuns->rows) !== 1 || $badRuns->rows[0]['validation_status'] !== 'invalid') { fwrite(STDERR, "FAIL: invalid output must be recorded without field mutation.\n"); exit(1); }
 

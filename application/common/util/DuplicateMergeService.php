@@ -11,10 +11,12 @@ use Throwable;
 class DuplicateMergeService
 {
     private $clock;
+    private $workflowCoordinator;
 
-    public function __construct(callable $clock = null)
+    public function __construct(callable $clock = null, $workflowCoordinator = null)
     {
         $this->clock = $clock ?: 'time';
+        $this->workflowCoordinator = $workflowCoordinator;
     }
 
     public function merge(int $candidateId, int $primaryVodId, int $secondaryVodId, int $reviewerId, callable $beforeCommit = null): int
@@ -87,6 +89,7 @@ class DuplicateMergeService
             $this->markCandidateMerged($candidateId, $reviewerId, $now);
             if ($beforeCommit) { $beforeCommit(); }
             $this->commitTransaction();
+            if ($this->workflowCoordinator !== null) { $this->workflowCoordinator->completeDuplicateReview($primaryVodId); }
             return $snapshotId;
         } catch (Throwable $exception) {
             $this->rollbackTransaction();
