@@ -2,6 +2,7 @@
 
 Status: ACCEPTED  
 Candidate branch: `feature/headless-ai-v1`  
+Candidate SHA: `ac0b9b58cfe655e6fc318ddfb68fb39ec6f6978e` (review-fix implementation exercised by rollback rehearsal; later report-only commits do not change runtime code)  
 Acceptance date: 2026-09-20  
 Release tag: not created; T-097 remains a separate operator-confirmed publication action.
 
@@ -12,12 +13,12 @@ Release tag: not created; T-097 remains a separate operator-confirmed publicatio
 | PHP regression | PASS | GitHub Actions run `35510268063` |
 | MySQL 5.7 | PASS | Release matrix run `35510268068`, job `MySQL 5.7` |
 | MySQL 8.0 | PASS | Release matrix run `35510268068`, job `MySQL 8.0` |
-| Native video | PASS | MySQL 5.7 release-matrix native admin/collection write and playback round-trip |
+| Native video | PASS | Release matrix executes native admin/collection write and playback round-trip on both MySQL 5.7 and 8.0 |
 | Prohibited outbound | PASS | `outbound_inventory.php --enforce` in the release matrix and rehearsal |
-| Database restore | PASS | RC rollback rehearsal run `35510613365`; dump restored into `maccms_ci_restore`, table counts matched, and `mac_vod` remained InnoDB |
-| Application rollback | PASS | RC rollback rehearsal run `35510613365`; immutable HEAD/HEAD-parent archives were checksummed and the active symlink switched current → previous → current |
+| Database restore | PASS | RC rollback rehearsal run `35510999172`; a pre-upgrade dump was restored into `maccms_ci_restore`, its marker row and absence of the candidate migration ledger were verified |
+| Application rollback | PASS | RC rollback rehearsal run `35510999172`; immutable candidate/previous archives were checksummed, both CLI applications booted, the previous application read the restored marker through its rebound database configuration, and the active symlink returned to current |
 | Migration idempotency | PASS | 18 migrations applied once and the second run applied 0 / skipped 18 on both supported MySQL families |
-| Security edge cases | PASS | Metadata/private IPv4 and IPv6, DNS rebinding, Host/header injection, request/response bounds and credential redaction |
+| Security edge cases | PASS | URL validation covers metadata/private IPv4 and IPv6, redirect revalidation, Host/header injection, request/response bounds and credential redaction; transport-bound DNS pinning remains a documented test limitation |
 | Operations documentation | PASS | Deployment, migration, Cron, backup, rollback, health-check and disaster-recovery runbook contract |
 
 ## Scope accepted
@@ -28,9 +29,9 @@ Official updater execution, announcement/catalog defaults, affiliate preload/buf
 
 ## Rollback rehearsal result
 
-The automated rehearsal created immutable current and previous application trees using `git archive`, verified their version-file checksums, switched the active symlink to the previous tree, and switched it back to the candidate.
+The automated rehearsal created immutable candidate and previous application trees using `git archive`, verified their version-file checksums, and booted each archived CLI application. It switched the active symlink to the previous tree, rebound that release to the restored database, verified a representative marker through the application database layer, and switched back to the candidate.
 
-A disposable MySQL 5.7 native installation was migrated and exercised through native video paths. The database was exported with a transaction-consistent dump, restored into a separately named database, and compared for table count and the required InnoDB video engine. No production system or credential was used.
+A disposable MySQL 5.7 native installation was backed up before candidate migrations, then migrated and exercised through native video paths. The transaction-consistent pre-upgrade dump was restored into a separately named database; its representative marker and pre-upgrade migration state were verified before the previous application booted against it. No production system or credential was used.
 
 ## Known limitations
 
@@ -38,7 +39,7 @@ A disposable MySQL 5.7 native installation was migrated and exercised through na
 - SMTP, SMS, payment, S3 and push integrations were not contacted; they remain disabled until explicitly configured and require provider-specific acceptance.
 - Large existing `mac_vod` tables may require an extended maintenance window for the InnoDB conversion.
 - The legacy broad API remains available alongside `/api/v1`; no deprecation date is declared in this candidate.
-- Network-capture evidence depends on the deployment environment. Source-level prohibited-endpoint enforcement is automated, but the operator must still review firewall/proxy logs during rollout.
+- Network-capture evidence depends on the deployment environment. Source-level prohibited-endpoint enforcement is automated, but transport-bound DNS pinning does not yet have an integration assertion; the operator must review firewall/proxy logs during rollout.
 
 ## Release decision
 
