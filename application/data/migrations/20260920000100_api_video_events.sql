@@ -10,9 +10,11 @@ CREATE TABLE IF NOT EXISTS `__PREFIX__api_video_event` (
   `duration_seconds` int unsigned NOT NULL DEFAULT 0,
   `occurred_at` int unsigned NOT NULL,
   `received_at` int unsigned NOT NULL,
+  `aggregated_at` int unsigned DEFAULT NULL,
   PRIMARY KEY (`event_id`),
   UNIQUE KEY `uk_api_video_event_dedupe` (`dedupe_hash`),
   KEY `idx_api_video_event_vod_time` (`vod_id`,`occurred_at`),
   KEY `idx_api_video_event_actor_time` (`actor_key`,`occurred_at`),
-  KEY `idx_api_video_event_received` (`received_at`)
+  KEY `idx_api_video_event_received` (`received_at`),
+  KEY `idx_api_video_event_aggregate` (`aggregated_at`,`occurred_at`,`event_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
