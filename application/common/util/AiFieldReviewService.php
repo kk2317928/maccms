@@ -13,6 +13,7 @@ class AiFieldReviewService
         'normalized_title' => 'vod_name', 'original_title' => 'original_title',
         'title_tw' => 'title_tw', 'title_cn' => 'title_cn', 'title_en' => 'title_en',
         'year' => 'vod_year', 'media_type' => 'type2',
+        'taxonomy.regions' => 'vod_area', 'taxonomy.genres' => 'vod_class', 'taxonomy.tags' => 'vod_tag',
     ];
 
     protected $governance;
@@ -40,11 +41,12 @@ class AiFieldReviewService
         if (!is_array($payload)) { throw new RuntimeException('AI run response is not reviewable.'); }
         $fields = [];
         foreach (self::FIELD_MAP as $candidateKey => $field) {
-            if (!array_key_exists($candidateKey, $payload)) { continue; }
+            $candidate = $this->candidateFromPayload($payload, $candidateKey);
+            if ($candidate === null) { continue; }
             $current = $this->governance->inspect((int) $run['vod_id'], $field);
             $state = is_array($current['state'] ?? null) ? $current['state'] : [];
             $stored = $this->loadDecision($runId, $field);
-            $candidate = $stored ? $this->decode((string) $stored['candidate_value_json']) : $payload[$candidateKey];
+            $candidate = $stored ? $this->decode((string) $stored['candidate_value_json']) : $candidate;
             $baselineHash = (string) ($stored['baseline_hash'] ?? '');
             $fields[$field] = [
                 'current' => $current['value'] ?? null, 'candidate' => $candidate,
@@ -171,6 +173,16 @@ class AiFieldReviewService
         if ($length > 255) { throw new InvalidArgumentException('Edited title is too long after canonicalization.'); }
         return $value;
     }
+    private function candidateFromPayload(array $payload, string $key)
+    {
+        if (strpos($key, 'taxonomy.') !== 0) {
+            return array_key_exists($key, $payload) ? $payload[$key] : null;
+        }
+        $part = substr($key, strlen('taxonomy.'));
+        $values = $payload['taxonomy'][$part] ?? null;
+        return is_array($values) ? implode(',', $values) : null;
+    }
+
     private function tablePrefix(): string
     {
         $prefix = (string) config('database.prefix');
