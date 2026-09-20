@@ -38,6 +38,7 @@ if ($suiteDir !== null) {
         __DIR__ . '/rc_acceptance_contract.php',
         __DIR__ . '/install_distribution_contract.php',
         __DIR__ . '/installed_feature_contract.php',
+        __DIR__ . '/vod_extension_admin_service_contract.php',
         __DIR__ . '/distribution_dependency_contract.php',
         __DIR__ . '/captcha_runtime_contract.php',
         __DIR__ . '/user_register_validate.php',

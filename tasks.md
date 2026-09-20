@@ -757,11 +757,11 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 
 ## Current execution pointer
 
-\`\`\`text
+```text
 Checkpoint: CP-09 installation usability hotfix
 Next task: T-099
 Task status: IN_PROGRESS
 Starting commit: 231e1900cf41f26c2b33bd6cb362e41af4ede7ac
 Release status: headless-ai-v1.0.2 is retained for traceability but is not accepted for deployment
-Next action: run the RED installed-feature contract, then implement installer, menu and native video form integration
-\`\`\`
+Next action: verify installer, menu, native video extension persistence and the complete regression matrix
+```

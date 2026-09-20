@@ -11,6 +11,7 @@
             <ul class="layui-tab-title ">
                 <li class="layui-this">{:lang('base_info')}</a></li>
                 <li>{:lang('other_info')}</li>
+                <li>多語言／進階資料</li>
             </ul>
             <div class="layui-tab-content">
 
@@ -706,6 +707,74 @@
                     </div>
 
                     </div>
+
+                <div class="layui-tab-item">
+                    <fieldset class="layui-elem-field layui-field-title">
+                        <legend>多語言片名</legend>
+                    </fieldset>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">繁體中文</label>
+                        <div class="layui-input-inline w500"><input type="text" class="layui-input" name="vod_ext[title_tw]" value="{$vod_ext.title_tw|htmlspecialchars}"></div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">簡體中文</label>
+                        <div class="layui-input-inline w500"><input type="text" class="layui-input" name="vod_ext[title_cn]" value="{$vod_ext.title_cn|htmlspecialchars}"></div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">英文片名</label>
+                        <div class="layui-input-inline w500"><input type="text" class="layui-input" name="vod_ext[title_en]" value="{$vod_ext.title_en|htmlspecialchars}"></div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">原始片名</label>
+                        <div class="layui-input-inline w500"><input type="text" class="layui-input" name="vod_ext[original_title]" value="{$vod_ext.original_title|htmlspecialchars}"></div>
+                    </div>
+                    <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label">曾用片名（每行一個）</label>
+                        <div class="layui-input-block"><textarea class="layui-textarea" name="vod_ext[old_titles]">{$vod_ext.old_titles|htmlspecialchars}</textarea></div>
+                    </div>
+
+                    <fieldset class="layui-elem-field layui-field-title">
+                        <legend>分類與 TMDB</legend>
+                    </fieldset>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">第二分類</label>
+                        <div class="layui-input-inline w300"><input type="text" class="layui-input" name="vod_ext[type2]" value="{$vod_ext.type2|htmlspecialchars}" placeholder="例如 kr-drama、jp-drama、tw-drama"></div>
+                        <label class="layui-form-label">TMDB 類型</label>
+                        <div class="layui-input-inline w150">
+                            <select name="vod_ext[tmdb_type]">
+                                <option value="">未設定</option>
+                                <option value="movie" {if condition="$vod_ext.tmdb_type eq 'movie'"}selected{/if}>Movie</option>
+                                <option value="tv" {if condition="$vod_ext.tmdb_type eq 'tv'"}selected{/if}>TV</option>
+                            </select>
+                        </div>
+                        <label class="layui-form-label">TMDB ID</label>
+                        <div class="layui-input-inline w150"><input type="number" min="0" class="layui-input" name="vod_ext[tmdb_id]" value="{$vod_ext.tmdb_id}"></div>
+                    </div>
+
+                    <fieldset class="layui-elem-field layui-field-title">
+                        <legend>預告與海報</legend>
+                    </fieldset>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">預告片 URL</label>
+                        <div class="layui-input-block"><input type="text" class="layui-input" name="vod_ext[trailer_url]" value="{$vod_ext.trailer_url|htmlspecialchars}"></div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">預覽 URL</label>
+                        <div class="layui-input-block"><input type="text" class="layui-input" name="vod_ext[preview_url]" value="{$vod_ext.preview_url|htmlspecialchars}"></div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">舊海報</label>
+                        <div class="layui-input-block"><input type="text" class="layui-input" name="vod_ext[old_poster]" value="{$vod_ext.old_poster|htmlspecialchars}"></div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">舊海報 S3</label>
+                        <div class="layui-input-block"><input type="text" class="layui-input" name="vod_ext[old_poster_s3]" value="{$vod_ext.old_poster_s3|htmlspecialchars}"></div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">海報 S3</label>
+                        <div class="layui-input-block"><input type="text" class="layui-input" name="vod_ext[poster_s3]" value="{$vod_ext.poster_s3|htmlspecialchars}"></div>
+                    </div>
+                </div>
 
             </div>
         </div>

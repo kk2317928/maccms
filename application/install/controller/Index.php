@@ -1,5 +1,6 @@
 <?php
 namespace app\install\controller;
+use app\common\util\SchemaMigrationService;
 use think\Controller;
 use think\Db;
 use think\Lang;
@@ -546,6 +547,16 @@ class Index extends Controller
                     }
                 }
             }
+        }
+
+        // Apply every ordered/checksummed programme migration before the installation
+        // lock is written. A successful Web install must be equivalent to running
+        // php think maccms:migrate on the same empty native schema.
+        try {
+            $migrationService = new SchemaMigrationService(APP_PATH . 'data/migrations', (string) $config['prefix']);
+            $migrationService->migrate();
+        } catch (\Throwable $e) {
+            return $this->error(lang('install/sql_err') . $e->getMessage());
         }
 
         // 注册管理员账号

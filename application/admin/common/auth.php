@@ -933,6 +933,13 @@ return array (
         'controller' => 'voddowner',
         'action' => 'field',
       ),
+      439 => 
+      array (
+        'show' => 1,
+        'name' => '智能內容工作區',
+        'controller' => 'ContentWorkspace',
+        'action' => 'index',
+      ),
       44 => 
       array (
         'show' => 1,

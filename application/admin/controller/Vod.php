@@ -2,6 +2,7 @@
 namespace app\admin\controller;
 use app\common\util\VodAuditService;
 use app\common\util\VodPublishService;
+use app\common\util\VodExtensionAdminService;
 use think\Cache;
 use think\Db;
 
@@ -553,11 +554,25 @@ class Vod extends Base
             }
             $contentLang = $param['content_lang'] ?? [];
             unset($param['content_lang']);
+            $vodExt = $param['vod_ext'] ?? [];
+            unset($param['vod_ext']);
+            try {
+                $vodExt = VodExtensionAdminService::normalize(is_array($vodExt) ? $vodExt : []);
+            } catch (\InvalidArgumentException $e) {
+                return $this->error($e->getMessage());
+            }
             $res = model('Vod')->saveData($param);
             if($res['code']>1){
                 return $this->error($res['msg']);
             }
             $vodId = (int)($res['vod_id'] ?? 0);
+            if ($vodId > 0) {
+                try {
+                    VodExtensionAdminService::save($vodId, $vodExt);
+                } catch (\Throwable $e) {
+                    return $this->error($e->getMessage());
+                }
+            }
             if ($vodId > 0 && is_array($contentLang)) {
                 //默认语言以原始行为准，只写非默认语言的译文（见 mac_content_lang_overlay 注释）
                 $defaultLang = mac_content_lang_default();
@@ -580,6 +595,17 @@ class Vod extends Base
 
         $info = $res['info'];
         $this->assign('info',$info);
+        $vodExt = [];
+        if (!empty($info['vod_id'])) {
+            try {
+                $vodExt = VodExtensionAdminService::load((int) $info['vod_id']);
+            } catch (\Throwable $e) {
+                $vodExt = VodExtensionAdminService::defaults();
+            }
+        } else {
+            $vodExt = VodExtensionAdminService::defaults();
+        }
+        $this->assign('vod_ext', $vodExt);
         $seoAiStatus = 0;
         if (!empty($info['vod_id'])) {
             $seoAi = model('SeoAiResult')->getByObject(1, intval($info['vod_id']));
