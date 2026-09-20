@@ -46,12 +46,15 @@ class MaccmsJobs extends Command
                 [
                     'provider' => (string) $aiConfig['provider'],
                     'model' => (string) $aiConfig['model'],
-                    'prompt_version' => 'normalize-v1',
+                    'prompt_version' => (string) $aiConfig['prompt_version'],
                     'daily_budget_micros' => (int) $aiConfig['daily_budget_micros'],
                     'auto_adopt_empty' => !empty($aiConfig['auto_adopt_empty']),
                 ],
                 null,
-                new DuplicateCandidateDetector()
+                new DuplicateCandidateDetector(
+                    null, null, (int) $aiConfig['duplicate_threshold'], null,
+                    (int) $aiConfig['duplicate_candidate_limit'], (int) $aiConfig['duplicate_fallback_limit']
+                )
             );
             $handlers['ai.normalize'] = new AiNormalizationJobHandler($pipeline);
         }

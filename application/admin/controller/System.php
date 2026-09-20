@@ -1,6 +1,7 @@
 <?php
 namespace app\admin\controller;
 use app\common\util\ExternalSyncRunner;
+use app\common\util\AiProvider;
 use app\common\util\JwtService;
 use app\common\util\PublishPage;
 use app\common\util\SensitiveDataCrypto;
@@ -1958,6 +1959,7 @@ class System extends Base
                 'daily_budget_micros' => (string)max(0, intval(isset($ai['daily_budget_micros']) ? $ai['daily_budget_micros'] : 0)),
                 'auto_adopt_empty' => isset($ai['auto_adopt_empty']) && (string)$ai['auto_adopt_empty'] === '1' ? '1' : '0',
             ];
+            $row = array_merge($row, AiProvider::normalizeContentConfig($ai));
 
             // 金钥留空 = 保留旧值。从最新的配置文件读，避免配置缓存过期把 key 弄丢。
             $newKey = isset($ai['api_key']) ? trim((string)$ai['api_key']) : '';
@@ -1987,6 +1989,7 @@ class System extends Base
         if (!isset($config['ai_content']) || !is_array($config['ai_content'])) {
             $config['ai_content'] = [];
         }
+        $config['ai_content'] = array_merge($config['ai_content'], AiProvider::normalizeContentConfig($config['ai_content']));
         $config['ai_content']['daily_budget_micros'] = (string)max(0, intval(isset($config['ai_content']['daily_budget_micros']) ? $config['ai_content']['daily_budget_micros'] : 0));
         $this->assign('config', $config);
         $this->assign('title', lang('admin/system/configaicontent'));

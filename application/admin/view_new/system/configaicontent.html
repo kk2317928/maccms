@@ -77,6 +77,15 @@
             </div>
         </div>
 
+        <div class="layui-form-item"><label class="layui-form-label">Prompt 版本：</label><div class="layui-input-block"><input type="text" name="ai_content[prompt_version]" value="{$config.ai_content.prompt_version}" class="layui-input"></div></div>
+        <div class="layui-form-item"><label class="layui-form-label">重試次數：</label><div class="layui-input-block"><input type="number" min="0" max="5" name="ai_content[retry_count]" value="{$config.ai_content.retry_count}" class="layui-input"></div></div>
+        <div class="layui-form-item"><label class="layui-form-label">重試延遲（毫秒）：</label><div class="layui-input-block"><input type="number" min="0" max="10000" name="ai_content[retry_delay_ms]" value="{$config.ai_content.retry_delay_ms}" class="layui-input"></div></div>
+        <div class="layui-form-item"><label class="layui-form-label">重複判定門檻：</label><div class="layui-input-block"><input type="number" min="0" max="1000" name="ai_content[duplicate_threshold]" value="{$config.ai_content.duplicate_threshold}" class="layui-input"></div></div>
+        <div class="layui-form-item"><label class="layui-form-label">候選上限：</label><div class="layui-input-block"><input type="number" min="1" max="2000" name="ai_content[duplicate_candidate_limit]" value="{$config.ai_content.duplicate_candidate_limit}" class="layui-input"></div></div>
+        <div class="layui-form-item"><label class="layui-form-label">回退掃描上限：</label><div class="layui-input-block"><input type="number" min="0" max="500" name="ai_content[duplicate_fallback_limit]" value="{$config.ai_content.duplicate_fallback_limit}" class="layui-input"></div></div>
+        <div class="layui-form-item"><label class="layui-form-label">輸入價格（微單位／百萬 token）：</label><div class="layui-input-block"><input type="number" min="0" name="ai_content[input_price_micros_per_million]" value="{$config.ai_content.input_price_micros_per_million}" class="layui-input"></div></div>
+        <div class="layui-form-item"><label class="layui-form-label">輸出價格（微單位／百萬 token）：</label><div class="layui-input-block"><input type="number" min="0" name="ai_content[output_price_micros_per_million]" value="{$config.ai_content.output_price_micros_per_million}" class="layui-input"></div></div>
+
         <div class="layui-form-item">
             <label class="layui-form-label">每日預算（微單位）：</label>
             <div class="layui-input-block">

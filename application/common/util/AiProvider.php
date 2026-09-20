@@ -30,6 +30,14 @@ class AiProvider
             'batch_size' => max(1, min(100, intval(isset($ai['batch_size']) ? $ai['batch_size'] : 20))),
             'daily_budget_micros' => self::dailyBudgetMicros($cfg),
             'auto_adopt_empty' => (string)(isset($ai['auto_adopt_empty']) ? $ai['auto_adopt_empty'] : '0') === '1',
+            'prompt_version' => self::cleanPromptVersion(isset($ai['prompt_version']) ? $ai['prompt_version'] : 'normalize-v1'),
+            'retry_count' => max(0, min(5, intval(isset($ai['retry_count']) ? $ai['retry_count'] : 2))),
+            'retry_delay_ms' => max(0, min(10000, intval(isset($ai['retry_delay_ms']) ? $ai['retry_delay_ms'] : 500))),
+            'duplicate_threshold' => max(0, min(1000, intval(isset($ai['duplicate_threshold']) ? $ai['duplicate_threshold'] : 650))),
+            'duplicate_candidate_limit' => max(1, min(2000, intval(isset($ai['duplicate_candidate_limit']) ? $ai['duplicate_candidate_limit'] : 500))),
+            'duplicate_fallback_limit' => max(0, min(500, intval(isset($ai['duplicate_fallback_limit']) ? $ai['duplicate_fallback_limit'] : 100))),
+            'input_price_micros_per_million' => max(0, intval(isset($ai['input_price_micros_per_million']) ? $ai['input_price_micros_per_million'] : 150000)),
+            'output_price_micros_per_million' => max(0, intval(isset($ai['output_price_micros_per_million']) ? $ai['output_price_micros_per_million'] : 600000)),
         ];
 
         // 继承 ai_search 的金钥（照搬 AdminAssistantService 的既有做法），
@@ -55,6 +63,52 @@ class AiProvider
     {
         $ai = isset($config['ai_content']) && is_array($config['ai_content']) ? $config['ai_content'] : [];
         return max(0, intval(isset($ai['daily_budget_micros']) ? $ai['daily_budget_micros'] : 0));
+    }
+
+    public static function normalizeContentConfig(array $ai)
+    {
+        return [
+            'prompt_version' => self::cleanPromptVersion(isset($ai['prompt_version']) ? $ai['prompt_version'] : 'normalize-v1'),
+            'retry_count' => max(0, min(5, intval(isset($ai['retry_count']) ? $ai['retry_count'] : 2))),
+            'retry_delay_ms' => max(0, min(10000, intval(isset($ai['retry_delay_ms']) ? $ai['retry_delay_ms'] : 500))),
+            'duplicate_threshold' => max(0, min(1000, intval(isset($ai['duplicate_threshold']) ? $ai['duplicate_threshold'] : 650))),
+            'duplicate_candidate_limit' => max(1, min(2000, intval(isset($ai['duplicate_candidate_limit']) ? $ai['duplicate_candidate_limit'] : 500))),
+            'duplicate_fallback_limit' => max(0, min(500, intval(isset($ai['duplicate_fallback_limit']) ? $ai['duplicate_fallback_limit'] : 100))),
+            'input_price_micros_per_million' => max(0, intval(isset($ai['input_price_micros_per_million']) ? $ai['input_price_micros_per_million'] : 150000)),
+            'output_price_micros_per_million' => max(0, intval(isset($ai['output_price_micros_per_million']) ? $ai['output_price_micros_per_million'] : 600000)),
+        ];
+    }
+
+    private static function cleanPromptVersion($value)
+    {
+        $value = trim((string) preg_replace('/[\\x00-\\x20\\x7F]+/', '', (string) $value));
+        return preg_match('/^[A-Za-z0-9][A-Za-z0-9_.:-]{0,63}$/', $value) ? $value : 'normalize-v1';
+    }
+
+    public static function extractUsage($cfg, $respBody)
+    {
+        $json = json_decode((string) $respBody, true);
+        if (!is_array($json)) { return null; }
+        $provider = strtolower((string) (isset($cfg['provider']) ? $cfg['provider'] : 'openai'));
+        if ($provider === 'claude') {
+            $input = isset($json['usage']['input_tokens']) ? $json['usage']['input_tokens'] : null;
+            $output = isset($json['usage']['output_tokens']) ? $json['usage']['output_tokens'] : null;
+        } elseif ($provider === 'gemini') {
+            $input = isset($json['usageMetadata']['promptTokenCount']) ? $json['usageMetadata']['promptTokenCount'] : null;
+            $output = isset($json['usageMetadata']['candidatesTokenCount']) ? $json['usageMetadata']['candidatesTokenCount'] : null;
+        } else {
+            $input = isset($json['usage']['prompt_tokens']) ? $json['usage']['prompt_tokens'] : null;
+            $output = isset($json['usage']['completion_tokens']) ? $json['usage']['completion_tokens'] : null;
+        }
+        if (!is_numeric($input) || !is_numeric($output) || (int) $input < 0 || (int) $output < 0) { return null; }
+        return ['input_tokens' => (int) $input, 'output_tokens' => (int) $output];
+    }
+
+    public static function estimateCostMicros($inputTokens, $outputTokens, array $cfg)
+    {
+        $inputPrice = max(0, intval(isset($cfg['input_price_micros_per_million']) ? $cfg['input_price_micros_per_million'] : 0));
+        $outputPrice = max(0, intval(isset($cfg['output_price_micros_per_million']) ? $cfg['output_price_micros_per_million'] : 0));
+        return (int) ceil((max(0, intval($inputTokens)) * $inputPrice + max(0, intval($outputTokens)) * $outputPrice) / 1000000);
     }
 
     private static function defaultBase($provider)
@@ -201,18 +255,28 @@ class AiProvider
         if ($host === '') {
             return ['code' => 0, 'msg' => 'invalid ai endpoint', 'text' => ''];
         }
-        try {
-            $client = new HardenedHttpClient(new ExternalHttpPolicy());
-            $response = $client->post($url, $body, [
-                'allowed_hosts' => [$host],
-                'headers' => self::headers($cfg),
-                'timeout' => intval($cfg['timeout']),
-                'max_bytes' => 4194304,
-                'max_redirects' => 0,
-            ]);
-        } catch (\Exception $exception) {
-            return ['code' => 0, 'msg' => 'ai request failed', 'text' => ''];
+        $response = null;
+        $attempts = 1 + max(0, min(5, intval(isset($cfg['retry_count']) ? $cfg['retry_count'] : 0)));
+        for ($attempt = 1; $attempt <= $attempts; $attempt++) {
+            try {
+                $client = new HardenedHttpClient(new ExternalHttpPolicy());
+                $response = $client->post($url, $body, [
+                    'allowed_hosts' => [$host],
+                    'headers' => self::headers($cfg),
+                    'timeout' => intval($cfg['timeout']),
+                    'max_bytes' => 4194304,
+                    'max_redirects' => 0,
+                ]);
+                if ((int) $response['status'] < 500 && (int) $response['status'] !== 429) { break; }
+            } catch (\Exception $exception) {
+                $response = null;
+            }
+            if ($attempt < $attempts) {
+                $delay = max(0, min(10000, intval(isset($cfg['retry_delay_ms']) ? $cfg['retry_delay_ms'] : 0)));
+                if ($delay > 0) { usleep($delay * 1000); }
+            }
         }
+        if (!is_array($response)) { return ['code' => 0, 'msg' => 'ai request failed', 'text' => '']; }
         if ((int)$response['status'] === 429) {
             throw new ContentJobFailure('rate_limit', 'External provider rate limit reached.');
         }
@@ -224,6 +288,6 @@ class AiProvider
         if ($text === '') {
             return ['code' => 0, 'msg' => 'invalid ai response', 'text' => ''];
         }
-        return ['code' => 1, 'msg' => '', 'text' => $text];
+        return ['code' => 1, 'msg' => '', 'text' => $text, 'usage' => self::extractUsage($cfg, $resp)];
     }
 }
