@@ -48,7 +48,7 @@ class DuplicateReviewWorkspace
         }
         try { $payload = json_decode($json, true, 512, JSON_THROW_ON_ERROR); }
         catch (JsonException $exception) { throw new RuntimeException('Merge snapshot is invalid.', 0, $exception); }
-        if (($payload['version'] ?? null) !== 1 || !is_array($payload['primary'] ?? null) || !is_array($payload['secondary'] ?? null)) {
+        if (!in_array((int) ($payload['version'] ?? 0), [1, 2], true) || !is_array($payload['primary'] ?? null) || !is_array($payload['secondary'] ?? null)) {
             throw new RuntimeException('Merge snapshot format is unsupported.');
         }
         $this->assertPublicId((string) ($payload['primary']['ext']['public_id'] ?? ''));

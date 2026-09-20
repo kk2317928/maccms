@@ -49,7 +49,8 @@ class DuplicateRestoreService
             } catch (JsonException $exception) {
                 throw new RuntimeException('Merge snapshot is not valid JSON.', 0, $exception);
             }
-            if (($payload['version'] ?? null) !== 1 || !is_array($payload['primary'] ?? null) || !is_array($payload['secondary'] ?? null)) {
+            $version = (int) ($payload['version'] ?? 0);
+            if (!in_array($version, [1, 2], true) || !is_array($payload['primary'] ?? null) || !is_array($payload['secondary'] ?? null)) {
                 throw new RuntimeException('Merge snapshot format is unsupported.');
             }
 
@@ -61,7 +62,16 @@ class DuplicateRestoreService
                 throw new RuntimeException('Restoration conflict: duplicate decision changed after merge.');
             }
 
-            [$expectedPrimary, $expectedSecondary] = $this->expectedMergedBundles($payload, $snapshot);
+            if ($version === 2) {
+                $projection = $payload['merged_projection'] ?? null;
+                if (!is_array($projection) || !is_array($projection['primary'] ?? null) || !is_array($projection['secondary'] ?? null)) {
+                    throw new RuntimeException('Merge snapshot projection is missing.');
+                }
+                $expectedPrimary = $projection['primary'];
+                $expectedSecondary = $projection['secondary'];
+            } else {
+                [$expectedPrimary, $expectedSecondary] = $this->expectedMergedBundles($payload, $snapshot);
+            }
             if (!$this->bundlesEqual($this->loadBundle($primaryVodId), $expectedPrimary)
                 || !$this->bundlesEqual($this->loadBundle($secondaryVodId), $expectedSecondary)) {
                 throw new RuntimeException('Restoration conflict: video data changed after merge.');
@@ -69,6 +79,9 @@ class DuplicateRestoreService
 
             $this->restoreBundle($primaryVodId, $payload['primary']);
             $this->restoreBundle($secondaryVodId, $payload['secondary']);
+            if ($version === 2) {
+                $this->restoreRelations($primaryVodId, $secondaryVodId, $payload['primary'], $payload['secondary']);
+            }
             $now = (int) call_user_func($this->clock);
             $this->reopenCandidate($candidateId, $now);
             $this->markSnapshotRestored($snapshotId, $reviewerId, $now);
@@ -173,6 +186,25 @@ class DuplicateRestoreService
         if (Db::name('vod')->where('vod_id', $vodId)->update($bundle['vod']) === false
             || Db::name('vod_ext')->where('vod_id', $vodId)->update($bundle['ext']) === false) {
             throw new RuntimeException('Snapshotted video rows could not be restored.');
+        }
+    }
+
+    protected function restoreRelations(int $primaryVodId, int $secondaryVodId, array $primary, array $secondary): void
+    {
+        $definitions = [
+            ['vod_meta_term', 'vod_id', 'meta_terms'],
+            ['vod_field_state', 'vod_id', 'field_states'],
+            ['content_lang', 'content_id', 'content_lang'],
+            ['ext_source_map', 'cms_id', 'external_maps'],
+        ];
+        foreach ($definitions as [$table, $owner, $bundleKey]) {
+            $query = Db::name($table)->where($owner, 'in', [$primaryVodId, $secondaryVodId]);
+            if ($table === 'content_lang') { $query->where('content_type', 'vod'); }
+            if ($table === 'ext_source_map') { $query->where('cms_mid', 1); }
+            $query->delete();
+            foreach (array_merge($primary[$bundleKey] ?? [], $secondary[$bundleKey] ?? []) as $row) {
+                if (Db::name($table)->insert($row) < 1) { throw new RuntimeException('Snapshotted relationships could not be restored.'); }
+            }
         }
     }
 

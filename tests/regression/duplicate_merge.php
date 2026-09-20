@@ -30,6 +30,25 @@ final class MemoryDuplicateMergeService extends DuplicateMergeService
     protected function loadBundle(int $vodId): array { return $this->bundles[$vodId]; }
     protected function insertSnapshot(array $row): int { $row['merge_snapshot_id'] = count($this->snapshots) + 1; $this->snapshots[] = $row; return $row['merge_snapshot_id']; }
     protected function updatePrimaryPlayback(int $vodId, array $playback): void { $this->bundles[$vodId]['vod'] = array_merge($this->bundles[$vodId]['vod'], $playback); if ($this->failAfterPrimary) throw new RuntimeException('injected failure'); }
+    protected function mergeRelatedData(int $primaryVodId, int $secondaryVodId, array $primary, array $secondary): void
+    {
+        foreach ([['meta_terms', 'term_id'], ['field_states', 'field_name'], ['content_lang', 'lang_code']] as [$group, $key]) {
+            $known = array_column($this->bundles[$primaryVodId][$group], $key);
+            foreach ($this->bundles[$secondaryVodId][$group] as $row) {
+                if (!in_array($row[$key], $known, true)) { $this->bundles[$primaryVodId][$group][] = $row; }
+            }
+            $this->bundles[$secondaryVodId][$group] = [];
+        }
+        $known = array_column($this->bundles[$primaryVodId]['external_maps'], 'provider_code');
+        foreach ($this->bundles[$secondaryVodId]['external_maps'] as $offset => $row) {
+            if (!in_array($row['provider_code'], $known, true)) {
+                $this->bundles[$primaryVodId]['external_maps'][] = $row;
+                unset($this->bundles[$secondaryVodId]['external_maps'][$offset]);
+            }
+        }
+        $this->bundles[$secondaryVodId]['external_maps'] = array_values($this->bundles[$secondaryVodId]['external_maps']);
+        $this->bundles[$primaryVodId]['ext']['old_titles_json'] = json_encode([$secondary['vod']['vod_name'] ?? ''], JSON_UNESCAPED_UNICODE);
+    }
     protected function markSecondaryMerged(int $secondaryVodId, int $primaryVodId, int $now): void { $this->bundles[$secondaryVodId]['ext']['workflow_status'] = 'merged'; $this->bundles[$secondaryVodId]['ext']['merged_into_vod_id'] = $primaryVodId; }
     protected function markCandidateMerged(int $candidateId, int $reviewerId, int $now): void { $this->candidate['decision'] = 'merged'; $this->candidate['reviewed_by'] = $reviewerId; $this->candidate['reviewed_at'] = $now; }
 }
@@ -47,6 +66,8 @@ if ($snapshot['primary'] !== $bundles[7] || $snapshot['secondary'] !== $bundles[
 $mergedVod = $service->bundles[7]['vod'];
 if ($mergedVod['vod_play_from'] !== 'main$$$backup' || $mergedVod['vod_play_url'] !== '第1集$https://video.test/1#第2集$https://video.test/2#第3集$https://video.test/3$$$正片$https://backup.test/movie') { fwrite(STDERR, "FAIL: playback merge must retain primary order and deduplicate normalized URLs.\n"); exit(1); }
 if ($service->bundles[42]['ext']['workflow_status'] !== 'merged' || $service->bundles[42]['ext']['merged_into_vod_id'] !== 7) { fwrite(STDERR, "FAIL: secondary video was not marked merged into the primary.\n"); exit(1); }
+if ($snapshot['version'] !== 2 || $snapshot['merged_projection'] !== ['primary' => $service->bundles[7], 'secondary' => $service->bundles[42]]) { fwrite(STDERR, "FAIL: v2 snapshot must retain the exact merged projection.\n"); exit(1); }
+if (array_column($service->bundles[7]['meta_terms'], 'term_id') !== [1, 2] || $service->bundles[42]['meta_terms'] !== []) { fwrite(STDERR, "FAIL: related taxonomy rows were not moved to the primary.\n"); exit(1); }
 
 $failing = new MemoryDuplicateMergeService($candidate, $bundles, static fn (): int => 1726704200);
 $failing->failAfterPrimary = true;

@@ -46,25 +46,7 @@ class DuplicateMergeService
 
             $primary = $this->loadBundle($primaryVodId);
             $secondary = $this->loadBundle($secondaryVodId);
-            $snapshotPayload = ['version' => 1, 'primary' => $primary, 'secondary' => $secondary];
-            try {
-                $snapshotJson = json_encode($snapshotPayload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION | JSON_THROW_ON_ERROR);
-            } catch (JsonException $exception) {
-                throw new RuntimeException('Merge snapshot is not JSON encodable.', 0, $exception);
-            }
             $now = (int) call_user_func($this->clock);
-            $snapshotId = $this->insertSnapshot([
-                'duplicate_candidate_id' => $candidateId,
-                'primary_vod_id' => $primaryVodId,
-                'secondary_vod_id' => $secondaryVodId,
-                'snapshot_json' => $snapshotJson,
-                'snapshot_hash' => hash('sha256', $snapshotJson),
-                'status' => 'active',
-                'merged_by' => $reviewerId,
-                'merged_at' => $now,
-                'restored_by' => 0,
-                'restored_at' => 0,
-            ]);
 
             $primaryPlayback = VodPlaybackCodec::decode(
                 (string) ($primary['vod']['vod_play_from'] ?? ''),
@@ -85,7 +67,34 @@ class DuplicateMergeService
                 'vod_play_server' => $encoded['server'],
                 'vod_play_note' => $encoded['note'],
             ]);
+            $this->mergeRelatedData($primaryVodId, $secondaryVodId, $primary, $secondary);
             $this->markSecondaryMerged($secondaryVodId, $primaryVodId, $now);
+            $snapshotPayload = [
+                'version' => 2,
+                'primary' => $primary,
+                'secondary' => $secondary,
+                'merged_projection' => [
+                    'primary' => $this->loadBundle($primaryVodId),
+                    'secondary' => $this->loadBundle($secondaryVodId),
+                ],
+            ];
+            try {
+                $snapshotJson = json_encode($snapshotPayload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION | JSON_THROW_ON_ERROR);
+            } catch (JsonException $exception) {
+                throw new RuntimeException('Merge snapshot is not JSON encodable.', 0, $exception);
+            }
+            $snapshotId = $this->insertSnapshot([
+                'duplicate_candidate_id' => $candidateId,
+                'primary_vod_id' => $primaryVodId,
+                'secondary_vod_id' => $secondaryVodId,
+                'snapshot_json' => $snapshotJson,
+                'snapshot_hash' => hash('sha256', $snapshotJson),
+                'status' => 'active',
+                'merged_by' => $reviewerId,
+                'merged_at' => $now,
+                'restored_by' => 0,
+                'restored_at' => 0,
+            ]);
             $this->markCandidateMerged($candidateId, $reviewerId, $now);
             if ($beforeCommit) { $beforeCommit(); }
             $this->commitTransaction();
@@ -134,6 +143,44 @@ class DuplicateMergeService
     {
         if (Db::name('vod')->where('vod_id', $vodId)->update($playback) === false) {
             throw new RuntimeException('Primary playback could not be updated.');
+        }
+    }
+
+    protected function mergeRelatedData(int $primaryVodId, int $secondaryVodId, array $primary, array $secondary): void
+    {
+        $aliases = [];
+        foreach ([$primary['ext']['old_titles_json'] ?? '', $secondary['ext']['old_titles_json'] ?? ''] as $json) {
+            $decoded = json_decode((string) $json, true);
+            if (is_array($decoded)) { $aliases = array_merge($aliases, $decoded); }
+        }
+        foreach (['vod_name', 'vod_en'] as $field) { $aliases[] = $secondary['vod'][$field] ?? ''; }
+        foreach (['title_tw', 'title_cn', 'title_en', 'original_title'] as $field) { $aliases[] = $secondary['ext'][$field] ?? ''; }
+        $aliases = array_values(array_unique(array_filter(array_map('trim', $aliases), static function ($value) { return $value !== ''; })));
+        if (Db::name('vod_ext')->where('vod_id', $primaryVodId)->update([
+            'old_titles_json' => json_encode($aliases, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
+        ]) === false) { throw new RuntimeException('Primary title aliases could not be merged.'); }
+
+        $this->mergeRows('vod_meta_term', 'term_id', 'vod_id', $primaryVodId, $secondaryVodId, $primary['meta_terms'], $secondary['meta_terms'], false);
+        $this->mergeRows('vod_field_state', 'field_name', 'vod_id', $primaryVodId, $secondaryVodId, $primary['field_states'], $secondary['field_states'], false);
+        $this->mergeRows('content_lang', 'lang_code', 'content_id', $primaryVodId, $secondaryVodId, $primary['content_lang'], $secondary['content_lang'], false, ['content_type' => 'vod']);
+        // Provider identity conflicts stay attached to the secondary record for manual review.
+        $this->mergeRows('ext_source_map', 'provider_code', 'cms_id', $primaryVodId, $secondaryVodId, $primary['external_maps'], $secondary['external_maps'], true, ['cms_mid' => 1]);
+    }
+
+    private function mergeRows(string $table, string $identity, string $owner, int $primaryId, int $secondaryId, array $primaryRows, array $secondaryRows, bool $keepConflicts, array $scope = []): void
+    {
+        $known = [];
+        foreach ($primaryRows as $row) { $known[(string) ($row[$identity] ?? '')] = true; }
+        foreach ($secondaryRows as $row) {
+            $key = (string) ($row[$identity] ?? '');
+            if ($key === '' || isset($known[$key])) {
+                if (!$keepConflicts) { Db::name($table)->where($scope)->where($owner, $secondaryId)->where($identity, $row[$identity] ?? '')->delete(); }
+                continue;
+            }
+            if (Db::name($table)->where($scope)->where($owner, $secondaryId)->where($identity, $row[$identity])->update([$owner => $primaryId]) === false) {
+                throw new RuntimeException('Related duplicate data could not be merged.');
+            }
+            $known[$key] = true;
         }
     }
 

@@ -33,6 +33,7 @@ final class MemoryDuplicateRestoreService extends DuplicateRestoreService
     protected function loadCandidate(int $candidateId): ?array { return $candidateId === $this->candidate['duplicate_candidate_id'] ? $this->candidate : null; }
     protected function loadBundle(int $vodId): array { return $this->bundles[$vodId]; }
     protected function restoreBundle(int $vodId, array $bundle): void { $this->bundles[$vodId] = $bundle; }
+    protected function restoreRelations(int $primaryVodId, int $secondaryVodId, array $primary, array $secondary): void {}
     protected function reopenCandidate(int $candidateId, int $now): void { $this->candidate = array_merge($this->candidate, ['decision' => 'pending', 'reviewed_by' => 0, 'reviewed_at' => 0, 'updated_at' => $now]); }
     protected function markSnapshotRestored(int $snapshotId, int $reviewerId, int $now): void { $this->snapshot = array_merge($this->snapshot, ['status' => 'restored', 'restored_by' => $reviewerId, 'restored_at' => $now]); }
 }
@@ -68,6 +69,13 @@ foreach ([[54, true], [55, false]] as [$reviewerId, $confirmed]) {
     try { $denied->restore(8, $reviewerId, $confirmed, $authorized); } catch (RuntimeException $exception) { continue; }
     restore_assert(false, 'restore must require exact authorization and explicit confirmation.');
 }
+
+$v2Payload = ['version' => 2, 'primary' => $primaryBefore, 'secondary' => $secondaryBefore, 'merged_projection' => ['primary' => $primaryAfter, 'secondary' => $secondaryAfter]];
+$v2Json = json_encode($v2Payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION | JSON_THROW_ON_ERROR);
+$v2Snapshot = array_merge($snapshot, ['snapshot_json' => $v2Json, 'snapshot_hash' => hash('sha256', $v2Json)]);
+$v2 = new MemoryDuplicateRestoreService($v2Snapshot, $candidate, [7 => $primaryAfter, 42 => $secondaryAfter], static fn (): int => 300);
+$v2->restore(8, 55, true, $authorized);
+restore_assert($v2->bundles[7] === $primaryBefore && $v2->bundles[42] === $secondaryBefore, 'v2 projection restore must be byte-equivalent to both pre-merge bundles.');
 
 $conflicting = new MemoryDuplicateRestoreService($snapshot, $candidate, [7 => $primaryAfter, 42 => $secondaryAfter], static fn (): int => 300);
 $conflicting->bundles[7]['vod']['vod_name'] = 'edited after merge';
