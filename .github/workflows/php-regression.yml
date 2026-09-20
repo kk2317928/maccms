@@ -47,6 +47,7 @@ jobs:
           php -l tests/regression/vod_workflow.php
           php -l application/common/util/ContentWorkflowCoordinator.php
           php -l tests/regression/content_workflow_coordinator.php
+          php -l tests/regression/taxonomy_suggestions.php
           php -l tests/regression/vod_playback_codec.php
           php -l tests/regression/vod_extension_contract.php
           php -l tests/regression/vod_extension_hook.php

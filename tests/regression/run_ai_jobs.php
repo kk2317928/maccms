@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 $tests = [
     'content_workflow_coordinator.php',
+    'taxonomy_suggestions.php',
     'content_job_contract.php',
     'content_job_lifecycle.php',
     'content_job_worker.php',

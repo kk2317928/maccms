@@ -767,7 +767,7 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 ```text
 Checkpoint: completion repair
 Next task: T-103 reviewed taxonomy suggestions
-Task status: READY
+Task status: IN_PROGRESS
 Starting commit: d818cb3088593a84309ca256bfac68c3501b7960
 Release status: headless-ai-v1.0.2 is retained for traceability but is not accepted for deployment
 Next action: add idempotent AI enqueue hooks to native admin and collection writes
@@ -787,3 +787,8 @@ Next action: add idempotent AI enqueue hooks to native admin and collection writ
 - Covers admin create, collection insert/update, deterministic fingerprints, repeated equivalent writes and playback-only updates.
 - Implementation: `290eef71b520c2544a0b7de682ec3618057a3fce`; CI environment repair: `0586c2f003700f2d862734a5f95c323ef8a8e04d`.
 - GREEN evidence: PHP `35529934949`, native MySQL 5.7 `35529934957`, release matrix MySQL 5.7/8.0 `35529839406`, rollback rehearsal `35529839402`.
+
+### T-103 Reviewed taxonomy suggestions — `IN_PROGRESS`
+
+- RED contract: `tests/regression/taxonomy_suggestions.php`.
+- Enforces active existing-term matching, ambiguity/missing review, manual locks and reviewed-only canonical adoption.
