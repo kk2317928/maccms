@@ -868,4 +868,15 @@ Next task: T-107 intelligent-content admin operations
 - Independent-review fixes: `616b0fa093b43cbe7ef65e5cf1aef73d25ec0600` through `56c62db42d62a8d65b0ae2e5fabb4fab899c069b`.
 - GREEN evidence: PHP `35537228886`, MySQL 5.7 `35537228865`, MySQL 8.0 `35537228822`, release matrix `35537228874`, rollback `35537228823`.
 
-Next task: T-111 end-to-end lifecycle, documentation and release candidate
+### T-111 End-to-end lifecycle, documentation and release candidate — `DONE`
+
+- Added `tests/integration/content_lifecycle_mysql.php`, exercising native creation, the production worker registry, AI persistence, reviewed taxonomy, duplicate decision, TMDB worker handoff, manual review, publication and API v1 delivery.
+- The same gate verifies idempotent job/taxonomy replay plus version-2 merge/restore for playback, locales, taxonomy and external mappings.
+- Independent review found three Important wiring defects: coordinator job names were absent from the worker registry, terminal replay was tested through an illegal transition, and merge snapshots did not include the post-commit workflow handoff projection.
+- RED evidence: MySQL 5.7 `35572049151`, MySQL 8.0 `35572049080`, release matrix `35572049132` failed at the missing production `handlerMap`.
+- Fixed in `1e340cf10798349bd0cfe98d7ecac4bcf93f05ec` and `6b602fae8a6cf4f807d4df9202956fa24bb4d5e6`; replay verification now exercises idempotent persistence without violating the published terminal state.
+- Added Traditional Chinese workflow/repair/import/people/site-config/merge troubleshooting documentation, an operations guide, and the manual lifecycle smoke section.
+- GREEN evidence at `5bc9257b884c5d75f5a738170f458054d452f62d`: PHP `35572763658`, MySQL 5.7 `35572763659`, MySQL 8.0 `35572763735`, release matrix `35572763646`, rollback `35572763663`.
+- Automated RC gates are complete. Fresh Web/browser smoke remains `NOT_RUN`; therefore `headless-ai-v1.0.3` remains blocked and only `headless-ai-v1.0.3-rc1` may be tagged.
+
+Next task: execute and record the fresh Web/browser smoke checklist before final `headless-ai-v1.0.3`.
