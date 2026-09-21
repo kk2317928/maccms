@@ -98,12 +98,44 @@ class DuplicateMergeService
             $this->markCandidateMerged($candidateId, $reviewerId, $now);
             if ($beforeCommit) { $beforeCommit(); }
             $this->commitTransaction();
-            if ($this->workflowCoordinator !== null) { $this->workflowCoordinator->completeDuplicateReview($primaryVodId); }
+            if ($this->workflowCoordinator !== null) {
+                $this->workflowCoordinator->completeDuplicateReview($primaryVodId);
+                $this->refreshMergedProjection($snapshotId, $primaryVodId, $secondaryVodId);
+            }
             return $snapshotId;
         } catch (Throwable $exception) {
             $this->rollbackTransaction();
             throw $exception;
         }
+    }
+
+    protected function refreshMergedProjection(int $snapshotId, int $primaryVodId, int $secondaryVodId): void
+    {
+        Db::transaction(function () use ($snapshotId, $primaryVodId, $secondaryVodId): void {
+            $snapshot = Db::name('content_merge_snapshot')->where('merge_snapshot_id', $snapshotId)->lock(true)->find();
+            if (!$snapshot || (string) ($snapshot['status'] ?? '') !== 'active') {
+                throw new RuntimeException('Active merge snapshot was not found after workflow handoff.');
+            }
+            try {
+                $payload = json_decode((string) $snapshot['snapshot_json'], true, 512, JSON_THROW_ON_ERROR);
+                if (!is_array($payload) || (int) ($payload['version'] ?? 0) !== 2) {
+                    throw new RuntimeException('Merge snapshot projection cannot be refreshed.');
+                }
+                $payload['merged_projection'] = [
+                    'primary' => $this->loadBundle($primaryVodId),
+                    'secondary' => $this->loadBundle($secondaryVodId),
+                ];
+                $json = json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION | JSON_THROW_ON_ERROR);
+            } catch (JsonException $exception) {
+                throw new RuntimeException('Merge snapshot projection is invalid.', 0, $exception);
+            }
+            if (Db::name('content_merge_snapshot')->where(['merge_snapshot_id' => $snapshotId, 'status' => 'active'])->update([
+                'snapshot_json' => $json,
+                'snapshot_hash' => hash('sha256', $json),
+            ]) !== 1) {
+                throw new RuntimeException('Merge snapshot projection could not be refreshed.');
+            }
+        });
     }
 
     protected function beginTransaction(): void { Db::startTrans(); }
