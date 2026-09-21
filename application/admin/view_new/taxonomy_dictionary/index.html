@@ -1,0 +1,18 @@
+{include file="../../../application/admin/view_new/public/head" /}
+<div class="page-container p10">
+    <h2>內容分類詞典</h2>
+    <form class="layui-form" method="get">
+        <div class="layui-form-item">
+            <div class="layui-input-inline"><select name="kind"><option value="">全部種類</option><option value="region">地區 region</option><option value="genre">類型 genre</option><option value="tag">標籤 tag</option></select></div>
+            <div class="layui-input-inline"><select name="status"><option value="">全部狀態</option><option value="1">啟用</option><option value="0">停用</option></select></div>
+            <div class="layui-input-inline w300"><input class="layui-input" name="q" value="{$filters.q|htmlspecialchars}" placeholder="搜尋 slug、名稱或 synonyms"></div>
+            <button class="layui-btn" type="submit">搜尋</button>
+            <a class="layui-btn layui-btn-normal" href="{:url('taxonomy_dictionary/info')}">建立詞典項目</a>
+        </div>
+    </form>
+    <table class="layui-table"><thead><tr><th>ID</th><th>kind</th><th>slug</th><th>name_tw</th><th>name_cn</th><th>name_en</th><th>synonyms</th><th>status</th><th>排序</th><th>操作</th></tr></thead><tbody>
+    {volist name="list" id="row"}<tr><td>{$row.term_id}</td><td>{$row.kind|htmlentities}</td><td>{$row.slug|htmlentities}</td><td>{$row.name_tw|htmlentities}</td><td>{$row.name_cn|htmlentities}</td><td>{$row.name_en|htmlentities}</td><td>{$row.synonyms_json|htmlentities}</td><td>{if condition="$row.status eq 1"}啟用{else/}停用{/if}</td><td>{$row.sort}</td><td><a class="layui-btn layui-btn-xs" href="{:url('taxonomy_dictionary/info',['id'=>$row['term_id']])}">編輯</a></td></tr>{/volist}
+    {empty name="list"}<tr><td colspan="10">尚無詞典項目</td></tr>{/empty}
+    </tbody></table>
+</div>
+{include file="../../../application/admin/view_new/public/foot" /}
