@@ -28,6 +28,7 @@ on:
       - 'tests/regression/admin_permission_compatibility.php'
       - 'application/data/migrations/**'
       - 'tests/integration/native_vod_paths.php'
+      - 'tests/integration/content_workflow_dispatch_mysql.php'
       - 'think'
   workflow_dispatch:
 
@@ -64,7 +65,9 @@ jobs:
       - name: Configure disposable database
         run: sed -i "s/'database'        => 'maccms10'/'database'        => 'maccms_ci_native'/" application/database.php
       - name: PHP syntax
-        run: php -l tests/integration/native_vod_paths.php
+        run: |
+          php -l tests/integration/native_vod_paths.php
+          php -l tests/integration/content_workflow_dispatch_mysql.php
       - name: Install native schema
         run: mysql --protocol=tcp --host=127.0.0.1 --port=3306 --user=root --database=maccms_ci_native < application/install/sql/install.sql
       - name: Apply foundation migration
@@ -74,9 +77,9 @@ jobs:
       - name: Verify native video paths
         run: |
           set +e
-          output=$(php tests/integration/native_vod_paths.php 2>&1)
+          output=$(php tests/integration/content_workflow_dispatch_mysql.php 2>&1)
           status=$?
           set -e
           echo "$output"
           test "$status" -eq 0
-          grep -q '^OK: native admin/collection writes and playback round trips passed' <<< "$output"
+          grep -q '^OK: automatic workflow dispatch and production aliases passed' <<< "$output"
