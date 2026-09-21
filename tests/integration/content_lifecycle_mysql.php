@@ -84,7 +84,8 @@ $worker=new \app\common\util\ContentJobWorker(
     static fn():int=>$now
 );
 $workerResult=$worker->run('lifecycle-ai',1,10,120);
-lifecycle_assert($workerResult['succeeded']===1&&$workerResult['failed']===0,'production worker did not dispatch the AI job');
+$aiJobAfter=(new \app\common\util\ContentJobRepository())->find((int)$jobs[0]['job_id']);
+lifecycle_assert($workerResult['succeeded']===1&&$workerResult['failed']===0,'production worker did not dispatch the AI job: '.json_encode(['result'=>$workerResult,'job'=>$aiJobAfter],JSON_UNESCAPED_SLASHES));
 $runId=(int)\think\Db::name('content_ai_run')->where('vod_id',$vodId)->order('ai_run_id desc')->value('ai_run_id');
 lifecycle_assert($runId>0,'AI run was not persisted through the worker');
 lifecycle_assert(\think\Db::name('content_duplicate_candidate')->where(function($q)use($vodId){$q->where('vod_id_low',$vodId)->whereOr('vod_id_high',$vodId);})->count()===1,'AI completion did not create the duplicate branch');
@@ -119,7 +120,8 @@ $tmdbWorker=new \app\common\util\ContentJobWorker(
     static fn():int=>$now
 );
 $tmdbResult=$tmdbWorker->run('lifecycle-tmdb',1,10,120);
-lifecycle_assert($tmdbResult['succeeded']===1&&$tmdbResult['failed']===0,'production worker did not dispatch the TMDB job');
+$tmdbJobsAfter=\think\Db::name('content_job')->where('job_type','tmdb_review')->order('job_id asc')->select();
+lifecycle_assert($tmdbResult['succeeded']===1&&$tmdbResult['failed']===0,'production worker did not dispatch the TMDB job: '.json_encode(['result'=>$tmdbResult,'jobs'=>$tmdbJobsAfter],JSON_UNESCAPED_SLASHES));
 $reviewId=(int)\think\Db::name('content_tmdb_review')->where('vod_id',$vodId)->order('tmdb_review_id desc')->value('tmdb_review_id');
 lifecycle_assert($reviewId>0,'TMDB worker did not persist a review');
 $tmdb->select($reviewId,'movie',900001,101);
