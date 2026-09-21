@@ -25,6 +25,8 @@ on:
       - 'application/command/MaccmsRepairContent.php'
       - 'tests/integration/content_repair_mysql.php'
       - 'tests/integration/content_lifecycle_mysql.php'
+      - 'application/common/util/TaxonomyDictionaryService.php'
+      - 'tests/integration/taxonomy_dictionary_mysql.php'
       - 'application/common/util/ContentImport*.php'
       - 'tests/integration/api_v1_import_mysql.php'
       - 'application/common/util/ContentAdminRoutePolicy.php'
@@ -81,6 +83,8 @@ jobs:
           php -l tests/integration/api_v1_import_mysql.php
           php -l tests/integration/content_repair_mysql.php
           php -l tests/integration/content_lifecycle_mysql.php
+          php -l application/common/util/TaxonomyDictionaryService.php
+          php -l tests/integration/taxonomy_dictionary_mysql.php
       - name: Install native schema
         run: mysql --protocol=tcp --host=127.0.0.1 --port=3306 --user=root --password=root --database=maccms_ci_57 < application/install/sql/install.sql
       - name: First migration run
@@ -111,5 +115,7 @@ jobs:
         run: php tests/integration/api_v1_import_mysql.php
       - name: Verify safe content repair
         run: php tests/integration/content_repair_mysql.php
+      - name: Verify taxonomy dictionary
+        run: php tests/integration/taxonomy_dictionary_mysql.php
       - name: Verify complete content lifecycle
         run: php tests/integration/content_lifecycle_mysql.php
