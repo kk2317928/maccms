@@ -151,10 +151,21 @@ $adminReplay = [
 ];
 $adminReplayResult = model('Vod')->saveData($adminReplay);
 native_assert($adminReplayResult['code'] === 1, 'Vod::saveData unchanged replay failed.');
+$adminJobs = \think\Db::name('content_job')->where('job_type', 'ai_normalize')
+    ->where('idempotency_key', 'like', 'video:' . $adminId . ':ai:%')->select();
+$storedAiInput = (array) \think\Db::name('vod')->where('vod_id', $adminId)
+    ->field(implode(',', \app\common\util\VodExtensionService::AI_INPUT_FIELDS))->find();
+$replayAiInput = array_merge($storedAiInput, array_intersect_key(
+    $adminReplay,
+    array_flip(\app\common\util\VodExtensionService::AI_INPUT_FIELDS)
+));
 native_assert(
-    (int) \think\Db::name('content_job')->where('job_type', 'ai_normalize')
-        ->where('idempotency_key', 'like', 'video:' . $adminId . ':ai:%')->count() === 1,
-    'Unchanged native save duplicated AI work.'
+    count($adminJobs) === 1,
+    'Unchanged native save duplicated AI work: ' . json_encode([
+        'before_fingerprint' => \app\common\util\VodExtensionService::contentFingerprint($storedAiInput),
+        'replay_fingerprint' => \app\common\util\VodExtensionService::contentFingerprint($replayAiInput),
+        'keys' => array_column($adminJobs, 'idempotency_key'),
+    ], JSON_UNESCAPED_SLASHES)
 );
 
 $collectRow = [
