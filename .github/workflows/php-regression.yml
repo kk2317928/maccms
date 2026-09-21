@@ -214,6 +214,12 @@ jobs:
           php -l application/common/util/ContentRepairService.php
           php -l tests/regression/content_repair_command.php
           php -l tests/integration/content_repair_mysql.php
+          php -l application/common/util/TaxonomyDictionaryService.php
+          php -l application/common/util/VodTaxonomyPanel.php
+          php -l application/admin/controller/TaxonomyDictionary.php
+          php -l tests/regression/taxonomy_dictionary.php
+          php -l tests/regression/taxonomy_admin_ui.php
+          php -l tests/integration/taxonomy_dictionary_mysql.php
       - name: Baseline runner contract
         run: php tests/regression/baseline_runner_contract.php
       - name: Outbound inventory contract
