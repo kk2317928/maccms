@@ -3,6 +3,7 @@ namespace app\admin\controller;
 use app\common\util\VodAuditService;
 use app\common\util\VodPublishService;
 use app\common\util\VodExtensionAdminService;
+use app\common\util\VodTaxonomyPanel;
 use think\Cache;
 use think\Db;
 
@@ -612,6 +613,15 @@ class Vod extends Base
             $vodExt = VodExtensionAdminService::defaults();
         }
         $this->assign('vod_ext', $vodExt);
+        $taxonomyPanel = ['accepted' => ['region' => [], 'genre' => [], 'tag' => []], 'pending' => [], 'locks' => [], 'workflow' => []];
+        if (!empty($info['vod_id'])) {
+            try {
+                $taxonomyPanel = (new VodTaxonomyPanel())->forVideo((int) $info['vod_id']);
+            } catch (\Throwable $exception) {
+                \think\Log::error('Vod taxonomy panel failed vod_id=' . (int) $info['vod_id'] . ' class=' . get_class($exception));
+            }
+        }
+        $this->assign('taxonomy_panel', $taxonomyPanel);
         $seoAiStatus = 0;
         if (!empty($info['vod_id'])) {
             $seoAi = model('SeoAiResult')->getByObject(1, intval($info['vod_id']));
