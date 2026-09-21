@@ -110,6 +110,6 @@ tmdbUiAssert(strpos($workspaceSource, 'lockForUpdate') !== false && strpos($work
 $routePolicy = @file_get_contents($root . '/application/common/util/ContentAdminRoutePolicy.php') ?: '';
 tmdbUiAssert(strpos($routePolicy, "'tmdb_review'") !== false && strpos($routePolicy, 'content_workspace/review') !== false && strpos($routePolicy, 'content_workspace/run_tmdb') !== false, 'native route authorization must admit exact TMDB review permissions for non-superadmins.');
 $command = @file_get_contents($root . '/application/command/MaccmsJobs.php') ?: '';
-tmdbUiAssert(strpos($command, "\$handlers['tmdb_match']") !== false && strpos($command, "\$handlers['tmdb_manual_match']") !== false, 'Cron worker must register both TMDB review job handlers.');
+tmdbUiAssert(strpos($command, "'tmdb_match'") !== false && strpos($command, "'tmdb_review'") !== false && strpos($command, "'tmdb_manual_match'") !== false, 'Cron worker must register legacy and coordinated TMDB review job handlers.');
 
 fwrite(STDOUT, "OK: TMDB candidate, manual match, no-match, rematch and field-difference UI contract passed.\n");
