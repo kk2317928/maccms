@@ -44,7 +44,7 @@ The figures use newline counts equivalent to `wc -l`.
 | File | Lines | Reason for caution |
 |---|---:|---|
 | `application/common/model/Collect.php` | 3192 | Independent collection insert/update/merge flows |
-| `application/common/model/Vod.php` | 1034 | Core video query and persistence behavior |
+| `application/common/model/Vod.php` | 1033 | Core video query and persistence behavior |
 | `application/common/util/OpenApiSpec.php` | 1158 | Large legacy API specification surface |
 | `application/data/update/database.php` | 1520 | Monolithic historical schema/config upgrade path |
 
