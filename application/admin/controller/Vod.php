@@ -4,6 +4,8 @@ use app\common\util\VodAuditService;
 use app\common\util\VodPublishService;
 use app\common\util\VodExtensionAdminService;
 use app\common\util\VodTaxonomyPanel;
+use app\common\util\ContentWorkflowStatus;
+use app\common\util\ContentAdminAudit;
 use think\Cache;
 use think\Db;
 
@@ -622,6 +624,20 @@ class Vod extends Base
             }
         }
         $this->assign('taxonomy_panel', $taxonomyPanel);
+        $workflowStatus = [
+            'public_id' => '', 'workflow_status' => '尚未執行',
+            'ai_completed_at' => 0, 'duplicate_checked_at' => 0, 'tmdb_completed_at' => 0,
+            'updated_at' => 0, 'latest_job' => [], 'safe_failure_class' => '',
+            'can_rerun_ai' => false, 'can_rerun_tmdb' => false,
+        ];
+        if (!empty($info['vod_id'])) {
+            try {
+                $workflowStatus = (new ContentWorkflowStatus())->forVideo((int) $info['vod_id']);
+            } catch (\Throwable $exception) {
+                \think\Log::error('Vod workflow status failed vod_id=' . (int) $info['vod_id'] . ' class=' . get_class($exception));
+            }
+        }
+        $this->assign('workflow_status', $workflowStatus);
         $seoAiStatus = 0;
         if (!empty($info['vod_id'])) {
             $seoAi = model('SeoAiResult')->getByObject(1, intval($info['vod_id']));
@@ -678,6 +694,48 @@ class Vod extends Base
     /**
      * 调用已安装的翻译插件（若有）翻译单个字段；没有插件注册时返回空字符串，前端据此禁用按钮。
      */
+    public function workflowRerun()
+    {
+        if (!Request()->isPost()) {
+            return json(['code' => 0, 'msg' => '請使用 POST 操作', 'data' => []]);
+        }
+        $param = input('post.');
+        $validate = \think\Loader::validate('Token');
+        if (!$validate->check($param)) {
+            return json(['code' => 0, 'msg' => $validate->getError(), 'data' => [], '__token__' => mac_admin_csrf_token()]);
+        }
+        $vodId = (int) ($param['vod_id'] ?? 0);
+        $action = (string) ($param['workflow_action'] ?? '');
+        if ($vodId <= 0 || !in_array($action, ['ai', 'tmdb'], true)) {
+            return json(['code' => 0, 'msg' => lang('param_err'), 'data' => [], '__token__' => mac_admin_csrf_token()]);
+        }
+        $vod = model('Vod')->infoData(['vod_id' => $vodId, '_recycle' => 'all']);
+        if (empty($vod['info']['vod_id'])) {
+            return json(['code' => 0, 'msg' => '影片不存在', 'data' => [], '__token__' => mac_admin_csrf_token()]);
+        }
+
+        $service = new ContentWorkflowStatus();
+        $actorId = (int) ($this->_admin['admin_id'] ?? 0);
+        $actorName = (string) ($this->_admin['admin_name'] ?? ('admin-' . $actorId));
+        try {
+            $before = $service->forVideo($vodId);
+            $result = $action === 'ai'
+                ? $service->rerunAi($vodId, $actorId)
+                : $service->rerunTmdb($vodId, $actorId);
+            (new ContentAdminAudit())->append(
+                $actorId, $actorName, 'content.workflow.rerun_' . $action, 'vod',
+                (string) ($before['public_id'] ?? ''),
+                ['workflow_status' => (string) ($before['workflow_status'] ?? '')],
+                ['requested_action' => $action],
+                ['vod_id' => $vodId, 'job_id' => (int) ($result['job_id'] ?? 0)]
+            );
+            return json(['code' => 1, 'msg' => '工作已排入佇列', 'data' => $result, '__token__' => mac_admin_csrf_token()]);
+        } catch (\Throwable $exception) {
+            \think\Log::error('Vod workflow rerun failed vod_id=' . $vodId . ' action=' . $action . ' class=' . get_class($exception));
+            return json(['code' => 0, 'msg' => $exception->getMessage(), 'data' => [], '__token__' => mac_admin_csrf_token()]);
+        }
+    }
+
     public function contentLangTranslate()
     {
         $text = (string)input('post.text', '');
