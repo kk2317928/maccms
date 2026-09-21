@@ -127,6 +127,12 @@ $adminResult = model('Vod')->saveData([
 ]);
 native_assert($adminResult['code'] === 1 && (int) $adminResult['vod_id'] > 0, 'Vod::saveData admin path failed.');
 $adminId = (int) $adminResult['vod_id'];
+$jobsAfterCreate = \think\Db::name('content_job')->where('job_type', 'ai_normalize')
+    ->where('idempotency_key', 'like', 'video:' . $adminId . ':ai:%')->select();
+native_assert(
+    count($jobsAfterCreate) === 1,
+    'Native create did not enqueue exactly once: ' . json_encode(array_column($jobsAfterCreate, 'idempotency_key'))
+);
 
 $adminReplay = [
     'vod_id' => $adminId,
