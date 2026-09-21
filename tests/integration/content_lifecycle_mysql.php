@@ -50,7 +50,7 @@ lifecycle_assert(count($jobs)===1,'native creation must enqueue one AI job');
 lifecycle_assert(\think\Db::name('content_job')->where('job_type','ai_normalize')->where('idempotency_key','like','video:'.$vodId.':ai:%')->count()===1,'repeated AI start duplicated work');
 
 $duplicateId=(int)\think\Db::name('vod')->insertGetId(['type_id'=>1,'vod_name'=>$title,'vod_en'=>'lifecycle-duplicate','vod_year'=>'2026','vod_status'=>0,'vod_recycle_time'=>0,'vod_content'=>'','vod_play_url'=>'','vod_down_url'=>'','vod_plot_name'=>'','vod_plot_detail'=>'']);
-\think\Db::name('vod_ext')->insert(['vod_id'=>$duplicateId,'public_id'=>'LCD234','workflow_status'=>'duplicate_review','merged_into_vod_id'=>0,'created_at'=>$now,'updated_at'=>$now]);
+\think\Db::name('vod_ext')->insert(['vod_id'=>$duplicateId,'public_id'=>'LCD234','title_tw'=>$title,'title_cn'=>$title,'title_en'=>'Lifecycle CI','original_title'=>$title,'type2'=>'movie','workflow_status'=>'duplicate_review','merged_into_vod_id'=>0,'created_at'=>$now,'updated_at'=>$now]);
 $regionId=(int)\think\Db::name('meta_term')->insertGetId(['kind'=>'region','slug'=>'lifecycle-region-'.$vodId,'name_tw'=>'生命週期地區','name_cn'=>'生命周期地区','name_en'=>'Lifecycle Region','status'=>1,'sort'=>1,'created_at'=>$now,'updated_at'=>$now]);
 $genreId=(int)\think\Db::name('meta_term')->insertGetId(['kind'=>'genre','slug'=>'lifecycle-genre-'.$vodId,'name_tw'=>'生命週期分類','name_cn'=>'生命周期分类','name_en'=>'Lifecycle Genre','status'=>1,'sort'=>1,'created_at'=>$now,'updated_at'=>$now]);
 
