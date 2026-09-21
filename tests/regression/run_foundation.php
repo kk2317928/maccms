@@ -15,6 +15,7 @@ $tests = [
     'vod_extension_hook.php',
     'content_workflow_hooks.php',
     'content_repair_command.php',
+    'taxonomy_dictionary.php',
 ];
 
 foreach ($tests as $test) {
