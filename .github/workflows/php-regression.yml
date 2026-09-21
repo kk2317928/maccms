@@ -222,6 +222,7 @@ jobs:
           php -l tests/regression/taxonomy_admin_ui.php
           php -l tests/regression/content_workflow_admin.php
           php -l tests/integration/taxonomy_dictionary_mysql.php
+          php -l tests/integration/content_workflow_dispatch_mysql.php
       - name: Baseline runner contract
         run: php tests/regression/baseline_runner_contract.php
       - name: Outbound inventory contract
