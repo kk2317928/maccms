@@ -61,6 +61,17 @@ final class VodExtensionService
             return null;
         }
         $after = array_merge($before, $written);
+        // Production fingerprints must use the canonical row after database
+        // defaults and validators have run. Injected coordinators keep this
+        // method deterministic for the focused contract test.
+        if ($coordinatorFactory === null) {
+            $persisted = Db::name('vod')->where('vod_id', $vodId)
+                ->field(implode(',', self::AI_INPUT_FIELDS))->find();
+            if (!$persisted) {
+                throw new RuntimeException('Video was not found after write.');
+            }
+            $after = (array) $persisted;
+        }
         if ($before && self::contentFingerprint($before) === self::contentFingerprint($after)) {
             return null;
         }
