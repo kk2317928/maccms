@@ -734,6 +734,47 @@
                     </div>
 
                     <fieldset class="layui-elem-field layui-field-title">
+                        <legend>自動分類／詞典</legend>
+                    </fieldset>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">工作流狀態</label>
+                        <div class="layui-input-block">
+                            <span class="layui-badge layui-bg-blue">{$taxonomy_panel.workflow.workflow_status|default='尚未執行'|htmlentities}</span>
+                            {if condition="!empty($taxonomy_panel.workflow.public_id)"}<span class="layui-word-aux">Public ID：{$taxonomy_panel.workflow.public_id|htmlentities}</span>{/if}
+                            <a class="layui-btn layui-btn-xs layui-btn-primary" href="{:url('taxonomy_dictionary/index')}">管理分類詞典</a>
+                            {if condition="$info.vod_id gt 0"}<a class="layui-btn layui-btn-xs layui-btn-normal taxonomy-rerun" href="{:url('content_workspace/jobs',['vod_id'=>$info['vod_id']])}">重新分類</a>{/if}
+                        </div>
+                    </div>
+                    {foreach name="taxonomy_panel.accepted" item="acceptedRows" key="kind"}
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">已採用 {$kind|htmlentities}</label>
+                        <div class="layui-input-block">
+                            {volist name="acceptedRows" id="term"}<span class="layui-badge layui-bg-green">{$term.name_tw|default=$term.name_en|htmlentities}</span> {/volist}
+                            {empty name="acceptedRows"}<span class="layui-word-aux">尚未採用</span>{/empty}
+                            {if condition="!empty($taxonomy_panel.locks[$kind])"}<span class="layui-badge layui-bg-red">人工鎖定</span>{/if}
+                        </div>
+                    </div>
+                    {/foreach}
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">待審建議</label>
+                        <div class="layui-input-block">
+                            {volist name="taxonomy_panel.pending" id="suggestion"}
+                            <div class="taxonomy-suggestion" data-suggestion="{$suggestion.suggestion_id}" style="margin-bottom:8px;">
+                                <span class="layui-badge">{$suggestion.kind|htmlentities}</span>
+                                {$suggestion.proposed_value|htmlentities}
+                                → {$suggestion.matched_name_tw|default=$suggestion.matched_name_en|default='未匹配詞典'|htmlentities}
+                                <span class="layui-word-aux">來源 {$suggestion.source|htmlentities}／{$suggestion.match_status|htmlentities}</span>
+                                {if condition="$suggestion.match_status eq 'matched'"}
+                                <button type="button" class="layui-btn layui-btn-xs j-taxonomy-review" data-action="accept_taxonomy" data-id="{$suggestion.suggestion_id}">接受</button>
+                                {/if}
+                                <button type="button" class="layui-btn layui-btn-xs layui-btn-danger j-taxonomy-review" data-action="reject_taxonomy" data-id="{$suggestion.suggestion_id}">拒絕</button>
+                            </div>
+                            {/volist}
+                            {empty name="taxonomy_panel.pending"}<span class="layui-word-aux">目前沒有待審分類建議</span>{/empty}
+                        </div>
+                    </div>
+
+                    <fieldset class="layui-elem-field layui-field-title">
                         <legend>分類與 TMDB</legend>
                     </fieldset>
                     <div class="layui-form-item">
@@ -790,6 +831,23 @@
     </form>
 
 </div>
+
+<script>
+(function(){
+    var token = '{:mac_admin_csrf_token()}';
+    $('.j-taxonomy-review').on('click', function(){
+        var button = $(this);
+        $.post('{:url("content_workspace/review")}', {
+            __token__: token,
+            review_action: button.data('action'),
+            suggestion_id: button.data('id')
+        }, function(res){
+            if (res && res.code === 1) { location.reload(); return; }
+            layer.msg((res && res.msg) ? res.msg : '分類審核失敗');
+        }, 'json').fail(function(){ layer.msg('分類審核請求失敗'); });
+    });
+})();
+</script>
 {include file="../../../application/admin/view_new/public/foot" /}
 
 <script type="text/javascript" src="__STATIC__/js/ai_seo.js"></script>
