@@ -110,6 +110,26 @@ php think maccms:analytics
 
 Prevent overlapping workers with the platform scheduler or a non-blocking lock. Alert on nonzero exit status, stale worker heartbeat, growing queue age, repeated retries, analytics lag, or log write failure. Cron must use the same code SHA and configuration as the web application.
 
+## Existing-content repair and workflow recovery
+
+After migrations, inspect existing rows without mutation:
+
+```bash
+php think maccms:repair-content --limit=100
+```
+
+Only an approved maintenance operator may apply a batch:
+
+```bash
+php think maccms:repair-content --apply --confirm=REPAIR --limit=100
+```
+
+Repeat until no eligible rows remain. Preserve command output in the deployment record. The command skips published, merged, manual-review and manually locked rows; investigate skips rather than bypassing them with SQL.
+
+Configure `MACCMS_CONTENT_IMPORT_SECRET` separately from member/JWT secrets. Verify the protected import with a disposable signed request and confirm that a replay returns the same result without creating a second video or AI job. Verify `/api/v1/people/{slug}` and `/api/v1/site-config` do not expose native IDs or private settings.
+
+Detailed workflow recovery, merge restoration and stuck-state diagnosis are documented in [content-workflow.md](content-workflow.md).
+
 ## Health check and acceptance
 
 A health check must verify more than an HTTP 200:
