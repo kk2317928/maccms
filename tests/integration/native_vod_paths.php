@@ -128,6 +128,35 @@ $adminResult = model('Vod')->saveData([
 native_assert($adminResult['code'] === 1 && (int) $adminResult['vod_id'] > 0, 'Vod::saveData admin path failed.');
 $adminId = (int) $adminResult['vod_id'];
 
+$adminReplay = [
+    'vod_id' => $adminId,
+    'type_id' => 1,
+    'vod_name' => 'CI Admin Draft',
+    'vod_en' => 'ci-admin-draft',
+    'vod_letter' => 'C',
+    'vod_status' => 3,
+    'vod_content' => 'Admin native path fixture',
+    'vod_blurb' => 'Admin native path fixture',
+    'vod_play_from' => $adminPlayback['from'],
+    'vod_play_url' => $adminPlayback['url'],
+    'vod_play_server' => $adminPlayback['server'],
+    'vod_play_note' => $adminPlayback['note'],
+    'vod_down_from' => [],
+    'vod_down_url' => [],
+    'vod_down_server' => [],
+    'vod_down_note' => [],
+    'vod_pic_screenshot' => '',
+    'uptime' => 0,
+    'uptag' => 0,
+];
+$adminReplayResult = model('Vod')->saveData($adminReplay);
+native_assert($adminReplayResult['code'] === 1, 'Vod::saveData unchanged replay failed.');
+native_assert(
+    (int) \think\Db::name('content_job')->where('job_type', 'ai_normalize')
+        ->where('idempotency_key', 'like', 'video:' . $adminId . ':ai:%')->count() === 1,
+    'Unchanged native save duplicated AI work.'
+);
+
 $collectRow = [
     'type_id' => 1,
     'type_name' => 'CI Video',
