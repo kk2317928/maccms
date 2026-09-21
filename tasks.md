@@ -765,12 +765,12 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 ## Current execution pointer
 
 ```text
-Checkpoint: completion repair
-Next task: T-105 relational duplicate merge/restore
+Checkpoint: content automation and administrator repair
+Active task: T-112 taxonomy dictionary and video-editor integration
 Task status: IN_PROGRESS
-Starting commit: d818cb3088593a84309ca256bfac68c3501b7960
-Release status: headless-ai-v1.0.2 is retained for traceability but is not accepted for deployment
-Next action: add idempotent AI enqueue hooks to native admin and collection writes
+Starting commit: 67439ebfabf52c17fa94248e274ceac85a92a737
+Release status: prior RC is superseded by the T-112 through T-117 repair programme
+Next action: add the failing taxonomy dictionary contract before production code
 ```
 
 ### T-101 Central content workflow coordinator — `DONE`
@@ -880,3 +880,11 @@ Next task: T-107 intelligent-content admin operations
 - Automated RC gates are complete. Fresh Web/browser smoke remains `NOT_RUN`; therefore `headless-ai-v1.0.3` remains blocked and only `headless-ai-v1.0.3-rc1` may be tagged.
 
 Next task: execute and record the fresh Web/browser smoke checklist before final `headless-ai-v1.0.3`.
+
+
+### T-112 Taxonomy dictionary and video-editor integration — `IN_PROGRESS`
+
+- Approved spec: `docs/superpowers/specs/2026-09-21-content-automation-admin-repair-design.md`.
+- Approved plan: `docs/superpowers/plans/2026-09-21-content-automation-admin-repair.md`.
+- Starting commit: `67439ebfabf52c17fa94248e274ceac85a92a737`.
+- Current step: write and run the failing taxonomy dictionary regression before implementation.
