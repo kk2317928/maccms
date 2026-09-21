@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
 Last updated: 2026-09-21
-State document version: 84
+State document version: 85
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -11,12 +11,12 @@ Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
 Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to the approved upstream while the programme is implemented incrementally on the integration branch.
 
 **Last completed checkpoint:** CP-09 — official communication removal and release hardening.
-**Active checkpoint:** release-candidate manual acceptance.
-**Active task:** Fresh Web/browser smoke checklist (`READY`, manual).
-**Starting commit:** T-111 verified implementation head `5bc9257b884c5d75f5a738170f458054d452f62d`.
-**Last completed task:** T-111 — end-to-end lifecycle, documentation and release candidate.
+**Active checkpoint:** content automation and administrator repair.
+**Active task:** T-112 — taxonomy dictionary and video-editor integration (`IN_PROGRESS`).
+**Starting commit:** approved repair plan `67439ebfabf52c17fa94248e274ceac85a92a737`.
+**Last completed task:** T-111 — end-to-end lifecycle, documentation and release candidate; the earlier RC is superseded by the approved T-112–T-117 repair programme.
 **Last verification:** PHP `35572763658`, MySQL 5.7 `35572763659`, MySQL 8.0 `35572763735`, release matrix `35572763646`, and rollback `35572763663` passed.
-**Next action:** create the test-only `headless-ai-v1.0.3-rc1` tag, then execute and record the fresh Web/browser smoke checklist.
+**Next action:** establish the T-112 taxonomy dictionary RED contract, then implement the service and administrator integration.
 
 ## 1. Confirmed product direction
 
