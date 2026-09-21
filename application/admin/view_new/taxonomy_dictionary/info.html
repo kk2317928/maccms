@@ -1,0 +1,17 @@
+{include file="../../../application/admin/view_new/public/head" /}
+<div class="page-container p10">
+<form class="layui-form layui-form-pane" method="post">
+<input type="hidden" name="__token__" value="{$Request.token}">
+<input type="hidden" name="term_id" value="{$info.term_id}">
+<div class="layui-form-item"><label class="layui-form-label">kind</label><div class="layui-input-block"><select name="kind"><option value="region" {if condition="$info.kind eq 'region'"}selected{/if}>地區 region</option><option value="genre" {if condition="$info.kind eq 'genre'"}selected{/if}>類型 genre</option><option value="tag" {if condition="$info.kind eq 'tag'"}selected{/if}>標籤 tag</option></select></div></div>
+<div class="layui-form-item"><label class="layui-form-label">slug</label><div class="layui-input-block"><input class="layui-input" name="slug" value="{$info.slug|htmlspecialchars}" required></div></div>
+<div class="layui-form-item"><label class="layui-form-label">name_tw</label><div class="layui-input-block"><input class="layui-input" name="name_tw" value="{$info.name_tw|htmlspecialchars}"></div></div>
+<div class="layui-form-item"><label class="layui-form-label">name_cn</label><div class="layui-input-block"><input class="layui-input" name="name_cn" value="{$info.name_cn|htmlspecialchars}"></div></div>
+<div class="layui-form-item"><label class="layui-form-label">name_en</label><div class="layui-input-block"><input class="layui-input" name="name_en" value="{$info.name_en|htmlspecialchars}"></div></div>
+<div class="layui-form-item layui-form-text"><label class="layui-form-label">synonyms</label><div class="layui-input-block"><textarea class="layui-textarea" name="synonyms" placeholder="每行一個別名">{$info.synonyms|htmlspecialchars}</textarea></div></div>
+<div class="layui-form-item"><label class="layui-form-label">status</label><div class="layui-input-block"><input type="radio" name="status" value="1" title="啟用" {if condition="$info.status eq 1"}checked{/if}><input type="radio" name="status" value="0" title="停用" {if condition="$info.status neq 1"}checked{/if}></div></div>
+<div class="layui-form-item"><label class="layui-form-label">排序</label><div class="layui-input-block"><input class="layui-input" type="number" min="0" name="sort" value="{$info.sort}"></div></div>
+<div class="layui-form-item"><div class="layui-input-block"><button class="layui-btn" type="submit">儲存詞典項目</button><a class="layui-btn layui-btn-primary" href="{:url('taxonomy_dictionary/index')}">返回</a></div></div>
+</form>
+</div>
+{include file="../../../application/admin/view_new/public/foot" /}
