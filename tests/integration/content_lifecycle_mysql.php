@@ -16,7 +16,10 @@ require $root.'/thinkphp/base.php';
 
 function lifecycle_assert($condition,string $message):void{if(!$condition){fwrite(STDERR,"FAIL: {$message}\n");exit(1);}}
 
-$now=1770000000;
+$run=static function() use($database):void{
+$now=time();
+\think\Db::name('content_job_run')->delete();
+\think\Db::name('content_job')->delete();
 $type=\think\Db::name('type')->where('type_id',1)->find();
 if(!$type){
     \think\Db::name('type')->insert(['type_id'=>1,'type_name'=>'Lifecycle CI','type_en'=>'lifecycle-ci','type_sort'=>1,'type_mid'=>1,'type_pid'=>0,'type_status'=>1,'type_extend'=>'{}']);
@@ -46,7 +49,7 @@ lifecycle_assert(count($jobs)===1,'native creation must enqueue one AI job');
 (new \app\common\util\ContentWorkflowCoordinator())->beginAi($vodId,(string)json_decode($jobs[0]['payload_json'],true)['content_fingerprint']);
 lifecycle_assert(\think\Db::name('content_job')->where('job_type','ai_normalize')->where('idempotency_key','like','video:'.$vodId.':ai:%')->count()===1,'repeated AI start duplicated work');
 
-$duplicateId=(int)\think\Db::name('vod')->insertGetId(['type_id'=>1,'vod_name'=>$title,'vod_en'=>'lifecycle-duplicate','vod_year'=>'2026','vod_status'=>0,'vod_recycle_time'=>0]);
+$duplicateId=(int)\think\Db::name('vod')->insertGetId(['type_id'=>1,'vod_name'=>$title,'vod_en'=>'lifecycle-duplicate','vod_year'=>'2026','vod_status'=>0,'vod_recycle_time'=>0,'vod_content'=>'','vod_play_url'=>'','vod_down_url'=>'','vod_plot_name'=>'','vod_plot_detail'=>'']);
 \think\Db::name('vod_ext')->insert(['vod_id'=>$duplicateId,'public_id'=>'LCD234','workflow_status'=>'duplicate_review','merged_into_vod_id'=>0,'created_at'=>$now,'updated_at'=>$now]);
 $regionId=(int)\think\Db::name('meta_term')->insertGetId(['kind'=>'region','slug'=>'lifecycle-region-'.$vodId,'name_tw'=>'生命週期地區','name_cn'=>'生命周期地区','name_en'=>'Lifecycle Region','status'=>1,'sort'=>1,'created_at'=>$now,'updated_at'=>$now]);
 $genreId=(int)\think\Db::name('meta_term')->insertGetId(['kind'=>'genre','slug'=>'lifecycle-genre-'.$vodId,'name_tw'=>'生命週期分類','name_cn'=>'生命周期分类','name_en'=>'Lifecycle Genre','status'=>1,'sort'=>1,'created_at'=>$now,'updated_at'=>$now]);
@@ -69,9 +72,22 @@ $pipeline=new \app\common\util\AiNormalizationPipeline(
     new \app\common\util\TaxonomySuggestionService(static fn():int=>$now),
     new \app\common\util\ContentWorkflowCoordinator(null,null,null,null,static fn():int=>$now)
 );
-$ai=$pipeline->handle(['vod_id'=>$vodId,'title'=>$title],$jobs[0]);
-$runId=(int)$ai['ai_run_id'];
-lifecycle_assert((int)$ai['candidates_recorded']===1,'AI completion did not create the duplicate branch');
+$fixtureTmdb=new \app\common\util\TmdbReviewJobHandler(
+    new \app\common\util\TmdbReviewWorkspace(static fn():int=>$now),
+    null,
+    static fn(array $video):array=>['status'=>'candidate_review','candidates'=>[['id'=>900001,'media_type'=>'movie','title'=>'Lifecycle CI']],'preselected_id'=>900001],
+    static fn(string $type,int $id):array=>['status'=>'candidate_review','candidates'=>[['id'=>$id,'media_type'=>$type,'title'=>'Lifecycle CI']],'preselected_id'=>$id]
+);
+$worker=new \app\common\util\ContentJobWorker(
+    new \app\common\util\ContentJobRepository(static fn():int=>$now),
+    \app\command\MaccmsJobs::handlerMap(new \app\common\util\AiNormalizationJobHandler($pipeline),$fixtureTmdb),
+    static fn():int=>$now
+);
+$workerResult=$worker->run('lifecycle-ai',1,10,120);
+lifecycle_assert($workerResult['succeeded']===1&&$workerResult['failed']===0,'production worker did not dispatch the AI job');
+$runId=(int)\think\Db::name('content_ai_run')->where('vod_id',$vodId)->order('ai_run_id desc')->value('ai_run_id');
+lifecycle_assert($runId>0,'AI run was not persisted through the worker');
+lifecycle_assert(\think\Db::name('content_duplicate_candidate')->where(function($q)use($vodId){$q->where('vod_id_low',$vodId)->whereOr('vod_id_high',$vodId);})->count()===1,'AI completion did not create the duplicate branch');
 lifecycle_assert(\think\Db::name('vod_ext')->where('vod_id',$vodId)->value('workflow_status')==='duplicate_review','AI completion did not enter duplicate review');
 
 $taxonomy=new \app\common\util\TaxonomySuggestionService(static fn():int=>$now);
@@ -92,8 +108,21 @@ lifecycle_assert(\think\Db::name('vod_ext')->where('vod_id',$vodId)->value('work
 lifecycle_assert(\think\Db::name('content_job')->where(['job_type'=>'tmdb_review','idempotency_key'=>'video:'.$vodId.':tmdb'])->count()===1,'TMDB work was not enqueued exactly once');
 
 $tmdb=new \app\common\util\TmdbReviewWorkspace(static fn():int=>$now,new \app\common\util\ContentWorkflowCoordinator(null,null,null,null,static fn():int=>$now));
-$stored=$tmdb->recordResult($vodId,['status'=>'candidate_review','candidates'=>[['id'=>900001,'media_type'=>'movie','title'=>'Lifecycle CI']],'preselected_id'=>900001]);
-$tmdb->select((int)$stored['review_id'],'movie',900001,101);
+$tmdbHandler=new \app\common\util\TmdbReviewJobHandler(
+    $tmdb,null,
+    static fn(array $video):array=>['status'=>'candidate_review','candidates'=>[['id'=>900001,'media_type'=>'movie','title'=>'Lifecycle CI']],'preselected_id'=>900001],
+    static fn(string $type,int $id):array=>['status'=>'candidate_review','candidates'=>[['id'=>$id,'media_type'=>$type,'title'=>'Lifecycle CI']],'preselected_id'=>$id]
+);
+$tmdbWorker=new \app\common\util\ContentJobWorker(
+    new \app\common\util\ContentJobRepository(static fn():int=>$now),
+    \app\command\MaccmsJobs::handlerMap(new \app\common\util\AiNormalizationJobHandler($pipeline),$tmdbHandler),
+    static fn():int=>$now
+);
+$tmdbResult=$tmdbWorker->run('lifecycle-tmdb',1,10,120);
+lifecycle_assert($tmdbResult['succeeded']===1&&$tmdbResult['failed']===0,'production worker did not dispatch the TMDB job');
+$reviewId=(int)\think\Db::name('content_tmdb_review')->where('vod_id',$vodId)->order('tmdb_review_id desc')->value('tmdb_review_id');
+lifecycle_assert($reviewId>0,'TMDB worker did not persist a review');
+$tmdb->select($reviewId,'movie',900001,101);
 lifecycle_assert(\think\Db::name('vod_ext')->where('vod_id',$vodId)->value('workflow_status')==='manual_review','TMDB review did not enter manual review');
 
 $workspace=new \app\common\util\FinalPublicationWorkspace(null,null,null,null,null,['media.example.com']);
@@ -107,12 +136,14 @@ lifecycle_assert($detail!==null&&$detail->toArray()['public_id']===$published['p
 
 $jobCount=(int)\think\Db::name('content_job')->where('idempotency_key','like','video:'.$vodId.':%')->count();
 $relationCount=(int)\think\Db::name('vod_meta_term')->where('vod_id',$vodId)->count();
-(new \app\common\util\ContentWorkflowCoordinator())->beginAi($vodId,(string)json_decode($jobs[0]['payload_json'],true)['content_fingerprint']);
+$jobPayload=json_decode($jobs[0]['payload_json'],true);
+(new \app\common\util\ContentJobRepository(static fn():int=>$now))->enqueue('ai_normalize',$jobPayload,(string)$jobs[0]['idempotency_key']);
+$taxonomy->stage($vodId,'ai','ai_run:'.$runId,$normalized['taxonomy']);
 lifecycle_assert((int)\think\Db::name('content_job')->where('idempotency_key','like','video:'.$vodId.':%')->count()===$jobCount,'lifecycle replay duplicated jobs');
 lifecycle_assert((int)\think\Db::name('vod_meta_term')->where('vod_id',$vodId)->count()===$relationCount,'lifecycle replay duplicated taxonomy relations');
 
-$primaryId=(int)\think\Db::name('vod')->insertGetId(['type_id'=>1,'vod_name'=>'Lifecycle Merge Primary','vod_play_from'=>'dplayer','vod_play_url'=>'1$https://media.example.com/p.m3u8']);
-$secondaryId=(int)\think\Db::name('vod')->insertGetId(['type_id'=>1,'vod_name'=>'Lifecycle Merge Secondary','vod_play_from'=>'dplayer','vod_play_url'=>'2$https://media.example.com/s.m3u8']);
+$primaryId=(int)\think\Db::name('vod')->insertGetId(['type_id'=>1,'vod_name'=>'Lifecycle Merge Primary','vod_play_from'=>'dplayer','vod_play_url'=>'1$https://media.example.com/p.m3u8','vod_content'=>'','vod_down_url'=>'','vod_plot_name'=>'','vod_plot_detail'=>'']);
+$secondaryId=(int)\think\Db::name('vod')->insertGetId(['type_id'=>1,'vod_name'=>'Lifecycle Merge Secondary','vod_play_from'=>'dplayer','vod_play_url'=>'2$https://media.example.com/s.m3u8','vod_content'=>'','vod_down_url'=>'','vod_plot_name'=>'','vod_plot_detail'=>'']);
 \think\Db::name('vod_ext')->insert(['vod_id'=>$primaryId,'public_id'=>'LCM234','old_titles_json'=>'["Primary Old"]','workflow_status'=>'duplicate_review','created_at'=>$now,'updated_at'=>$now]);
 \think\Db::name('vod_ext')->insert(['vod_id'=>$secondaryId,'public_id'=>'LCS234','old_titles_json'=>'["Secondary Old"]','workflow_status'=>'duplicate_review','created_at'=>$now,'updated_at'=>$now]);
 \think\Db::name('vod_meta_term')->insertAll([['vod_id'=>$primaryId,'term_id'=>$regionId,'created_at'=>$now],['vod_id'=>$secondaryId,'term_id'=>$genreId,'created_at'=>$now]]);
@@ -134,7 +165,7 @@ $before=[
  'primary_lang'=>(int)\think\Db::name('content_lang')->where(['content_type'=>'vod','content_id'=>$primaryId])->count(),
  'secondary_lang'=>(int)\think\Db::name('content_lang')->where(['content_type'=>'vod','content_id'=>$secondaryId])->count(),
 ];
-$snapshotId=(new \app\common\util\DuplicateMergeService(static fn():int=>$now+20))->merge($mergeCandidate,$primaryId,$secondaryId,101);
+$snapshotId=(new \app\common\util\DuplicateMergeService(static fn():int=>$now+20,new \app\common\util\ContentWorkflowCoordinator(null,null,null,null,static fn():int=>$now+20)))->merge($mergeCandidate,$primaryId,$secondaryId,101);
 lifecycle_assert((int)\think\Db::name('vod_meta_term')->where('vod_id',$primaryId)->count()===2,'merge did not union taxonomy');
 lifecycle_assert((int)\think\Db::name('content_lang')->where(['content_type'=>'vod','content_id'=>$primaryId])->count()===2,'merge did not preserve locales');
 (new \app\common\util\DuplicateRestoreService(static fn():int=>$now+30))->restore($snapshotId,101,true,static fn(int $reviewerId,string $permission):bool=>$reviewerId===101&&$permission==='content_duplicate_restore');
@@ -150,3 +181,5 @@ lifecycle_assert($after===$before,'merge restoration did not return relations an
 lifecycle_assert(\think\Db::name('content_merge_snapshot')->where('merge_snapshot_id',$snapshotId)->value('status')==='restored','merge snapshot was not marked restored');
 
 fwrite(STDOUT,"OK: complete content lifecycle and reversible merge passed on {$database}\n");
+};
+try{$run();}catch(\Throwable $exception){fwrite(STDERR,'FAIL: uncaught lifecycle exception: '.get_class($exception).': '.$exception->getMessage().PHP_EOL);exit(1);}
