@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
-Last updated: 2026-09-20
-State document version: 83
+Last updated: 2026-09-21
+State document version: 84
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -11,12 +11,12 @@ Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
 Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to the approved upstream while the programme is implemented incrementally on the integration branch.
 
 **Last completed checkpoint:** CP-09 — official communication removal and release hardening.
-**Active checkpoint:** completion repair.
-**Active task:** T-111 — end-to-end lifecycle, documentation and release candidate (`READY`).
-**Starting commit:** T-110 verified head `56c62db42d62a8d65b0ae2e5fabb4fab899c069b`.
-**Last completed task:** T-110 — safe repair command for existing installations.
-**Last verification:** PHP `35537228886`, MySQL 5.7 `35537228865`, MySQL 8.0 `35537228822`, release matrix `35537228874`, and rollback `35537228823` passed.
-**Next action:** execute T-111 end-to-end lifecycle verification, documentation and release-candidate gates.
+**Active checkpoint:** release-candidate manual acceptance.
+**Active task:** Fresh Web/browser smoke checklist (`READY`, manual).
+**Starting commit:** T-111 verified implementation head `5bc9257b884c5d75f5a738170f458054d452f62d`.
+**Last completed task:** T-111 — end-to-end lifecycle, documentation and release candidate.
+**Last verification:** PHP `35572763658`, MySQL 5.7 `35572763659`, MySQL 8.0 `35572763735`, release matrix `35572763646`, and rollback `35572763663` passed.
+**Next action:** create the test-only `headless-ai-v1.0.3-rc1` tag, then execute and record the fresh Web/browser smoke checklist.
 
 ## 1. Confirmed product direction
 
@@ -235,3 +235,15 @@ Verified release gap at `231e1900cf41f26c2b33bd6cb362e41af4ede7ac`:
 - Independent review found and resolved batch starvation and transaction-time safety races; no Critical or remaining Important findings were reported.
 - Verified at `56c62db42d62a8d65b0ae2e5fabb4fab899c069b`: PHP `35537228886`, MySQL 5.7 `35537228865`, MySQL 8.0 `35537228822`, release matrix `35537228874`, rollback `35537228823`.
 - Next task: T-111 end-to-end lifecycle, documentation and release candidate.
+
+
+## 14. T-111 end-to-end lifecycle and RC gate
+
+- Added a real MySQL lifecycle covering native persistence and production worker dispatch through AI, taxonomy, duplicate review, TMDB, manual publication and API v1.
+- Added a separate production-wired version-2 merge/restore fixture and exact relation/projection restoration checks.
+- Independent review identified and the implementation fixed all three Important findings: missing coordinated worker aliases, an invalid terminal replay assertion, and stale post-handoff merge projections.
+- Worker registry accepts both historical dotted job names and coordinated underscore job names so already queued jobs remain compatible.
+- Merge snapshots refresh their integrity hash and merged projection after the post-commit workflow handoff, preventing false restore conflicts.
+- Documentation now covers automatic workflow, protected import, people/site-config DTOs, safe repair, merge restoration and failure diagnosis.
+- Verified implementation head `5bc9257b884c5d75f5a738170f458054d452f62d`: PHP `35572763658`, MySQL 5.7 `35572763659`, MySQL 8.0 `35572763735`, release matrix `35572763646`, rollback `35572763663`.
+- Automated acceptance permits only `headless-ai-v1.0.3-rc1`. Final `headless-ai-v1.0.3` remains blocked until every manual smoke case has recorded evidence.
