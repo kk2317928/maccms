@@ -30,6 +30,18 @@ class MaccmsJobs extends Command
             ->addOption('worker', null, Option::VALUE_OPTIONAL, 'Stable worker identifier', 'cron-default');
     }
 
+    public static function handlerMap(callable $aiHandler, TmdbReviewJobHandler $tmdbHandler): array
+    {
+        return [
+            // Dotted names remain for jobs created before workflow coordination was introduced.
+            'ai.normalize' => $aiHandler,
+            'ai_normalize' => $aiHandler,
+            'tmdb_match' => [$tmdbHandler, 'match'],
+            'tmdb_review' => [$tmdbHandler, 'match'],
+            'tmdb_manual_match' => [$tmdbHandler, 'manual'],
+        ];
+    }
+
     protected function execute(Input $input, Output $output)
     {
         $handlers = [];
@@ -59,8 +71,7 @@ class MaccmsJobs extends Command
             $handlers['ai.normalize'] = new AiNormalizationJobHandler($pipeline);
         }
         $tmdbHandler = new TmdbReviewJobHandler();
-        $handlers['tmdb_match'] = [$tmdbHandler, 'match'];
-        $handlers['tmdb_manual_match'] = [$tmdbHandler, 'manual'];
+        $handlers = self::handlerMap($handlers['ai.normalize'], $tmdbHandler);
         $worker = new ContentJobWorker(new ContentJobRepository(), $handlers);
         $result = $worker->run(
             (string) $input->getOption('worker'),
