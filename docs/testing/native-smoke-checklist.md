@@ -141,6 +141,23 @@ During installation, login, dashboard load, video save, collection, playback and
 
 Until CP-09 removal, discovery of the known official request is an expected security failure, not a passing result.
 
+## J. Headless AI lifecycle and administrator review
+
+**Status: UNVERIFIED**
+
+1. Create one uniquely marked video through the native administrator form and confirm the multilingual/advanced fields persist after reopening.
+2. Confirm exactly one AI job appears; run the worker against controlled AI/TMDB stubs and confirm taxonomy suggestions and a duplicate-review state appear.
+3. Accept one uniquely matched region and genre; confirm native taxonomy projection updates only after review.
+4. Create a duplicate fixture, open the duplicate workspace, merge it into the primary, and verify playback, aliases, locales, taxonomy and external mappings are preserved.
+5. Restore that merge and confirm both records and their relations match the pre-merge evidence.
+6. Resolve the duplicate branch as different works, select a TMDB candidate or record no match, close all AI/taxonomy decisions, and reach manual review.
+7. Preview and publish with explicit confirmation; verify API v1 detail is available by public ID while internal IDs and secrets remain absent.
+8. Run a signed disposable import twice with the same idempotency key/body and confirm the same result, one video and one AI job.
+9. Run `maccms:repair-content` in dry-run mode and confirm no database change; do not apply repair to the smoke fixture unless separately approved.
+10. Confirm `GET /api/v1/people/{slug}` returns only published related videos and `GET /api/v1/site-config` returns only public allowlisted keys.
+
+Evidence: screenshots for each workspace stage, sanitized request/response bodies, job/candidate/review identifiers, before/after relation counts, audit events and API responses.
+
 ## Result table
 
 | Case | Status | Evidence reference | Failure/observation |
@@ -154,6 +171,7 @@ Until CP-09 removal, discovery of the known official request is an expected secu
 | G API video list/detail | NOT_RUN | — | No disposable environment recorded |
 | H Ulog progress | NOT_RUN | — | No disposable environment recorded |
 | I Outbound observation | NOT_RUN | — | No disposable environment recorded |
+| J Headless AI lifecycle | NOT_RUN | — | No disposable environment recorded |
 
 ## Cleanup
 
