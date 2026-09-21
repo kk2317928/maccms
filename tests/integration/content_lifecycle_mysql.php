@@ -79,9 +79,8 @@ $fixtureTmdb=new \app\common\util\TmdbReviewJobHandler(
     static fn(string $type,int $id):array=>['status'=>'candidate_review','candidates'=>[['id'=>$id,'media_type'=>$type,'title'=>'Lifecycle CI']],'preselected_id'=>$id]
 );
 $worker=new \app\common\util\ContentJobWorker(
-    new \app\common\util\ContentJobRepository(static fn():int=>$now),
-    \app\command\MaccmsJobs::handlerMap(new \app\common\util\AiNormalizationJobHandler($pipeline),$fixtureTmdb),
-    static fn():int=>$now
+    new \app\common\util\ContentJobRepository(),
+    \app\command\MaccmsJobs::handlerMap(new \app\common\util\AiNormalizationJobHandler($pipeline),$fixtureTmdb)
 );
 $workerResult=$worker->run('lifecycle-ai',1,10,120);
 $aiJobAfter=(new \app\common\util\ContentJobRepository())->find((int)$jobs[0]['job_id']);
@@ -115,9 +114,8 @@ $tmdbHandler=new \app\common\util\TmdbReviewJobHandler(
     static fn(string $type,int $id):array=>['status'=>'candidate_review','candidates'=>[['id'=>$id,'media_type'=>$type,'title'=>'Lifecycle CI']],'preselected_id'=>$id]
 );
 $tmdbWorker=new \app\common\util\ContentJobWorker(
-    new \app\common\util\ContentJobRepository(static fn():int=>$now),
-    \app\command\MaccmsJobs::handlerMap(new \app\common\util\AiNormalizationJobHandler($pipeline),$tmdbHandler),
-    static fn():int=>$now
+    new \app\common\util\ContentJobRepository(),
+    \app\command\MaccmsJobs::handlerMap(new \app\common\util\AiNormalizationJobHandler($pipeline),$tmdbHandler)
 );
 $tmdbResult=$tmdbWorker->run('lifecycle-tmdb',1,10,120);
 $tmdbJobsAfter=\think\Db::name('content_job')->where('job_type','tmdb_review')->order('job_id asc')->select();
