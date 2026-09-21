@@ -766,11 +766,11 @@ Release is blocked until prohibited outbound tests pass and both MySQL verificat
 
 ```text
 Checkpoint: content automation and administrator repair
-Active task: T-112 taxonomy dictionary and video-editor integration
+Active task: T-113 automatic AI/TMDB workflow and per-video controls
 Task status: IN_PROGRESS
-Starting commit: 67439ebfabf52c17fa94248e274ceac85a92a737
+Starting commit: 4f86c863cdee833df2d7f3e070b2c68a80acdaf9
 Release status: prior RC is superseded by the T-112 through T-117 repair programme
-Next action: add the failing taxonomy dictionary contract before production code
+Next action: add the failing per-video workflow status and rerun contract before production code
 ```
 
 ### T-101 Central content workflow coordinator — `DONE`
@@ -882,9 +882,17 @@ Next task: T-107 intelligent-content admin operations
 Next task: execute and record the fresh Web/browser smoke checklist before final `headless-ai-v1.0.3`.
 
 
-### T-112 Taxonomy dictionary and video-editor integration — `IN_PROGRESS`
+### T-112 Taxonomy dictionary and video-editor integration — `DONE`
 
 - Approved spec: `docs/superpowers/specs/2026-09-21-content-automation-admin-repair-design.md`.
 - Approved plan: `docs/superpowers/plans/2026-09-21-content-automation-admin-repair.md`.
 - Starting commit: `67439ebfabf52c17fa94248e274ceac85a92a737`.
-- Current step: write and run the failing taxonomy dictionary regression before implementation.
+- RED: PHP run `35652781106` failed because `TaxonomyDictionaryService` did not exist; UI run `35653760570` failed because the taxonomy controller/template artifacts did not exist.
+- Added validated dictionary CRUD, synonym collision prevention, referenced-term deactivation, MySQL coverage, administrator pages, and the video-editor automatic taxonomy panel.
+- GREEN: PHP `35654580118`, MySQL 5.7 `35653415952`, MySQL 8.0 `35653440038`, release matrix `35654400795`, rollback `35654400761`.
+- Final implementation head: `4f86c863cdee833df2d7f3e070b2c68a80acdaf9`.
+
+### T-113 Automatic AI/TMDB workflow and per-video controls — `IN_PROGRESS`
+
+- Starting commit: `4f86c863cdee833df2d7f3e070b2c68a80acdaf9`.
+- Current step: write the failing workflow-status and per-video rerun contract.
