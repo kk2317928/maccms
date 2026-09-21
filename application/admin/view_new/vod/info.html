@@ -734,6 +734,31 @@
                     </div>
 
                     <fieldset class="layui-elem-field layui-field-title">
+                        <legend>內容自動化狀態</legend>
+                    </fieldset>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">目前狀態</label>
+                        <div class="layui-input-block">
+                            <span class="layui-badge layui-bg-blue">{$workflow_status.workflow_status|default='尚未執行'|htmlentities}</span>
+                            {if condition="!empty($workflow_status.public_id)"}<span class="layui-word-aux">Public ID：{$workflow_status.public_id|htmlentities}</span>{/if}
+                            {if condition="!empty($workflow_status.latest_job)"}
+                            <span class="layui-word-aux">latest_job：{$workflow_status.latest_job.job_type|default=''|htmlentities}／{$workflow_status.latest_job.status|default=''|htmlentities}</span>
+                            {/if}
+                            {if condition="!empty($workflow_status.safe_failure_class)"}
+                            <span class="layui-badge layui-bg-red">safe_failure_class：{$workflow_status.safe_failure_class|htmlentities}</span>
+                            {/if}
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">自動化操作</label>
+                        <div class="layui-input-block">
+                            <button type="button" class="layui-btn layui-btn-sm workflow-rerun" data-action="ai" {if condition="empty($workflow_status.can_rerun_ai)"}disabled{/if}>立即執行 AI／分類</button>
+                            <button type="button" class="layui-btn layui-btn-sm layui-btn-normal workflow-rerun" data-action="tmdb" {if condition="empty($workflow_status.can_rerun_tmdb)"}disabled{/if}>重新執行 TMDB 配對</button>
+                            {if condition="empty($info.vod_id)"}<span class="layui-word-aux">請先儲存影片後再執行。</span>{/if}
+                        </div>
+                    </div>
+
+                    <fieldset class="layui-elem-field layui-field-title">
                         <legend>自動分類／詞典</legend>
                     </fieldset>
                     <div class="layui-form-item">
@@ -845,6 +870,29 @@
             if (res && res.code === 1) { location.reload(); return; }
             layer.msg((res && res.msg) ? res.msg : '分類審核失敗');
         }, 'json').fail(function(){ layer.msg('分類審核請求失敗'); });
+    });
+    $('.workflow-rerun').on('click', function(){
+        var button = $(this);
+        var vodId = $('input[name="vod_id"]').val();
+        if (!vodId || button.prop('disabled')) { return; }
+        button.prop('disabled', true);
+        $.post('{:url("vod/workflowRerun")}', {
+            __token__: token,
+            vod_id: vodId,
+            workflow_action: button.data('action')
+        }, function(res){
+            if (res && res.__token__) { token = res.__token__; }
+            if (res && res.code === 1) {
+                layer.msg(res.msg || '工作已排入佇列');
+                setTimeout(function(){ location.reload(); }, 600);
+                return;
+            }
+            button.prop('disabled', false);
+            layer.msg((res && res.msg) ? res.msg : '自動化工作啟動失敗');
+        }, 'json').fail(function(){
+            button.prop('disabled', false);
+            layer.msg('自動化工作請求失敗');
+        });
     });
 })();
 </script>
