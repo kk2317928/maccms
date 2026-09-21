@@ -18,8 +18,8 @@ function lifecycle_assert($condition,string $message):void{if(!$condition){fwrit
 
 $run=static function() use($database):void{
 $now=time();
-\think\Db::name('content_job_run')->delete();
-\think\Db::name('content_job')->delete();
+\think\Db::execute('DELETE FROM `'.config('database.prefix').'content_job_run`');
+\think\Db::execute('DELETE FROM `'.config('database.prefix').'content_job`');
 $type=\think\Db::name('type')->where('type_id',1)->find();
 if(!$type){
     \think\Db::name('type')->insert(['type_id'=>1,'type_name'=>'Lifecycle CI','type_en'=>'lifecycle-ci','type_sort'=>1,'type_mid'=>1,'type_pid'=>0,'type_status'=>1,'type_extend'=>'{}']);
