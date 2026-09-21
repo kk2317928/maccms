@@ -31,8 +31,8 @@ foreach ([
 }
 $report = (string) file_get_contents($reportPath);
 foreach ([
-    'Status: ACCEPTED',
-    'Candidate SHA:',
+    'Status: AUTOMATED ACCEPTED / MANUAL SMOKE PENDING',
+    'Verified implementation SHA:',
     'PHP regression',
     'MySQL 5.7',
     'MySQL 8.0',
@@ -42,14 +42,26 @@ foreach ([
     'Application rollback',
     'Known limitations',
     'T-097',
+    'headless-ai-v1.0.3-rc1',
+    'headless-ai-v1.0.3',
 ] as $needle) {
     if (strpos($report, $needle) === false) {
         fwrite(STDERR, "FAIL: RC report missing: {$needle}\n");
         exit(1);
     }
 }
-if (preg_match('/\b(?:PENDING|NOT_RUN|UNVERIFIED)\b/', $report)) {
-    fwrite(STDERR, "FAIL: RC report retains unresolved acceptance state.\n");
+
+$permittedPending = [
+    'Status: AUTOMATED ACCEPTED / MANUAL SMOKE PENDING',
+    '| Fresh Web/browser smoke | NOT_RUN |',
+];
+$unresolvedReport = str_replace($permittedPending, '', $report);
+if (preg_match('/\b(?:PENDING|NOT_RUN|UNVERIFIED)\b/', $unresolvedReport)) {
+    fwrite(STDERR, "FAIL: RC report retains an unresolved state outside the explicit manual smoke gate.\n");
+    exit(1);
+}
+if (strpos($report, 'Final tag: `headless-ai-v1.0.3` is blocked') === false) {
+    fwrite(STDERR, "FAIL: RC report must keep the final release tag blocked.\n");
     exit(1);
 }
 fwrite(STDOUT, "OK: RC acceptance and rollback evidence contract passed.\n");
