@@ -1,5 +1,7 @@
 name: Release regression matrix
 
+# T-111 final candidate gate: includes production-worker lifecycle and reversible merge/restore.
+
 on:
   push:
     branches:
