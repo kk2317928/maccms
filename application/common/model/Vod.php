@@ -830,9 +830,8 @@ class Vod extends Base {
 
             $where=[];
             $where['vod_id'] = ['eq',$data['vod_id']];
-            $workflowBeforeRow = $this->where($where)
+            $workflowBefore = (array) Db::name('vod')->where('vod_id', (int) $data['vod_id'])
                 ->field(implode(',', VodExtensionService::AI_INPUT_FIELDS))->find();
-            $workflowBefore = $workflowBeforeRow ? $workflowBeforeRow->toArray() : [];
             $res = $this->allowField(true)->where($where)->update($data);
             //编辑 先获取到之前的name
             $old_name = $this->where('vod_id',$data['vod_id'])->value('vod_name');
