@@ -29,8 +29,8 @@ class ContentWorkflowStatus
             'updated_at' => (int) ($extension['updated_at'] ?? 0),
             'latest_job' => $job,
             'safe_failure_class' => $failure,
-            'can_rerun_ai' => in_array($state, [VodWorkflow::IMPORTED, VodWorkflow::AI_PROCESSING, VodWorkflow::FAILED], true),
-            'can_rerun_tmdb' => in_array($state, [VodWorkflow::TMDB_MATCHING, VodWorkflow::MANUAL_REVIEW, VodWorkflow::FAILED], true),
+            'can_rerun_ai' => in_array($state, ['imported', 'ai_processing', 'failed'], true),
+            'can_rerun_tmdb' => in_array($state, ['tmdb_matching', 'manual_review', 'failed'], true),
         ];
     }
 
