@@ -24,6 +24,10 @@ if (strpos($s3, 'return $file_path;') !== false && strpos($s3, 'RuntimeException
 }
 
 
+require_once $root . '/application/common/util/ExternalHttpPolicy.php';
+require_once $root . '/application/common/util/HardenedHttpClient.php';
+require_once $servicePath;
+
 $png=base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=');
 $tmp=sys_get_temp_dir().'/maccms-poster-'.bin2hex(random_bytes(4)); @mkdir($tmp,0755,true);
 $http=new class($png) extends \app\common\util\HardenedHttpClient {
