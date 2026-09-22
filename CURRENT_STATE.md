@@ -257,3 +257,11 @@ Verified release gap at `231e1900cf41f26c2b33bd6cb362e41af4ede7ac`:
 - Clean merge/restore round-trip is also verified.
 - Verification: PHP 35711957325; release matrix 35711957178; rollback 35711957240; MySQL 5.7 35711938755; MySQL 8.0 35711945249.
 - T-115 status: DONE.
+
+
+## 16. T-113 / T-114 checkpoint reconciliation
+
+- T-113 is DONE: persisted-field AI dispatch, per-video AI/TMDB controls and searchable batch selection are implemented and verified.
+- T-114 is DONE: reviewed TMDB poster ingestion is asynchronous, hardened against unsafe image fetches, and persists remote S3 URLs with failure atomicity.
+- T-114 verification: PHP 35708975936; MySQL 5.7 35708975982; MySQL 8.0 35708975920; release matrix 35708975924; rollback 35708975901.
+- T-112 through T-115 are now reconciled as completed in the task ledger.
