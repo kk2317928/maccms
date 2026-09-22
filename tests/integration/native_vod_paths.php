@@ -133,6 +133,9 @@ native_assert(
     count($jobsAfterCreate) === 1,
     'Native create did not enqueue exactly once: ' . json_encode(array_column($jobsAfterCreate, 'idempotency_key'))
 );
+$storedBeforeReplay = (array) \think\Db::name('vod')->where('vod_id', $adminId)
+    ->field(implode(',', \app\common\util\VodExtensionService::AI_INPUT_FIELDS))->find();
+$storedFingerprintBeforeReplay = \app\common\util\VodExtensionService::contentFingerprint($storedBeforeReplay);
 
 $adminReplay = [
     'vod_id' => $adminId,
@@ -168,6 +171,7 @@ $replayAiInput = array_merge($storedAiInput, array_intersect_key(
 native_assert(
     count($adminJobs) === 1,
     'Unchanged native save duplicated AI work: ' . json_encode([
+        'stored_before_replay' => $storedFingerprintBeforeReplay,
         'before_fingerprint' => \app\common\util\VodExtensionService::contentFingerprint($storedAiInput),
         'replay_fingerprint' => \app\common\util\VodExtensionService::contentFingerprint($replayAiInput),
         'keys' => array_column($adminJobs, 'idempotency_key'),
