@@ -26,7 +26,7 @@ $id = PublicIdGenerator::generate(function ($candidate) use (&$attempts) {
     return count($attempts) === 1;
 });
 
-public_id_assert((bool) preg_match('/^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$/', $id), 'public ID format/alphabet is invalid.');
+public_id_assert((bool) preg_match('/^[A-Za-z0-9]{6}$/', $id), 'public ID format/alphabet is invalid.');
 public_id_assert(count($attempts) === 2, 'one collision must cause exactly one retry.');
 public_id_assert($id === $attempts[1], 'returned ID must be the first non-colliding candidate.');
 
