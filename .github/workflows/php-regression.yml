@@ -229,6 +229,29 @@ jobs:
         run: php tests/regression/outbound_inventory_contract.php
       - name: Baseline regression suite
         run: php tests/regression/run_baseline.php
+      - name: Foundation regression - migration contracts
+        run: |
+          php tests/regression/migration_cli_contract.php
+          php tests/regression/migration_mysql_ddl.php
+          php tests/regression/migration_discovery.php
+          php tests/regression/migration_contract.php
+      - name: Foundation regression - public identity
+        run: |
+          php tests/regression/public_id_generator.php
+          php tests/regression/vod_ext_public_id.php
+          php tests/regression/public_id_mixed_case.php
+      - name: Foundation regression - video extension
+        run: |
+          php tests/regression/vod_workflow.php
+          php tests/regression/vod_playback_codec.php
+          php tests/regression/vod_extension_contract.php
+          php tests/regression/vod_extension_hook.php
+          php tests/regression/content_workflow_hooks.php
+      - name: Foundation regression - repair and taxonomy
+        run: |
+          php tests/regression/content_repair_command.php
+          php tests/regression/vod_repeat_repair.php
+          php tests/regression/taxonomy_dictionary.php
       - name: Foundation regression suite
         run: php tests/regression/run_foundation.php
       - name: AI jobs regression suite
