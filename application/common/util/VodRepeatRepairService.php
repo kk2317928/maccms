@@ -1,0 +1,10 @@
+<?php
+namespace app\common\util;
+use InvalidArgumentException; use think\Cache; use think\Db;
+class VodRepeatRepairService {
+ private $prefix;
+ public function __construct(string $prefix=''){ $this->prefix=$prefix!==''?$prefix:(string)config('database.prefix'); if(!preg_match('/^[A-Za-z0-9_]*$/',$this->prefix)){throw new InvalidArgumentException('Invalid database table prefix.');}}
+ public function refreshName(string $name):array{$name=trim($name);if($name===''){return ['name'=>'','duplicate'=>false,'rows'=>0];}$table=$this->prefix.'vod_repeat';$vod=$this->prefix.'vod';return Db::transaction(function()use($name,$table,$vod){Db::execute("DELETE FROM `".$table."` WHERE name1 = ?",[$name]);$count=(int)Db::name('vod')->where(['vod_name'=>$name,'vod_recycle_time'=>0])->count();if($count>1){Db::execute("INSERT INTO `".$table."` (id1,name1) SELECT MIN(vod_id),vod_name FROM `".$vod."` WHERE vod_name=? AND vod_recycle_time=0 GROUP BY vod_name HAVING COUNT(*)>1",[$name]);}Cache::set('vod_repeat_table_created_time',time());return ['name'=>$name,'duplicate'=>$count>1,'rows'=>$count>1?1:0,'videos'=>$count];});}
+ public function inspect():array{$groups=Db::name('vod')->where('vod_recycle_time',0)->field('vod_name,COUNT(*) AS total,MIN(vod_id) AS id1')->group('vod_name')->having('COUNT(*)>1')->select()?:[];$cached=(int)Db::name('vod_repeat')->count();return ['duplicate_groups'=>count($groups),'cached_rows'=>$cached,'would_change'=>$cached!==count($groups)];}
+ public function rebuild(bool $confirmed):array{$report=$this->inspect();if(!$confirmed){$report['applied']=false;return $report;}$table=$this->prefix.'vod_repeat';$vod=$this->prefix.'vod';Db::transaction(function()use($table,$vod){Db::execute("DELETE FROM `".$table."`");Db::execute("INSERT INTO `".$table."` (id1,name1) SELECT MIN(vod_id),vod_name FROM `".$vod."` WHERE vod_recycle_time=0 GROUP BY vod_name HAVING COUNT(*)>1");});Cache::set('vod_repeat_table_created_time',time());$after=$this->inspect();$after['applied']=true;return $after;}
+}
