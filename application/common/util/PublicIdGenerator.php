@@ -6,7 +6,7 @@ use RuntimeException;
 
 final class PublicIdGenerator
 {
-    private const ALPHABET = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+    private const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     private const LENGTH = 6;
     private const MAX_ATTEMPTS = 32;
 
