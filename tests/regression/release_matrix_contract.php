@@ -24,7 +24,7 @@ $required = [
     "php tests/integration/taxonomy_review_mysql.php",
     "php tests/integration/native_vod_paths.php",
     "php tests/regression/outbound_inventory.php --enforce",
-    "done, applied=0, skipped=21",
+    "done, applied=0, skipped=22",
 ];
 foreach ($required as $needle) {
     if (strpos($source, $needle) === false) {
