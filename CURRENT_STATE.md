@@ -265,3 +265,12 @@ Verified release gap at `231e1900cf41f26c2b33bd6cb362e41af4ede7ac`:
 - T-114 is DONE: reviewed TMDB poster ingestion is asynchronous, hardened against unsafe image fetches, and persists remote S3 URLs with failure atomicity.
 - T-114 verification: PHP 35708975936; MySQL 5.7 35708975982; MySQL 8.0 35708975920; release matrix 35708975924; rollback 35708975901.
 - T-112 through T-115 are now reconciled as completed in the task ledger.
+
+
+## 17. T-116 native duplicate-name cache repair
+
+- Replaced duplicate-prone native vod_repeat maintenance with VodRepeatRepairService.
+- Added dry-run/confirmed CLI repair and safe migration for both fresh and existing installations.
+- MySQL 5.7 and 8.0 both passed the dedicated Verify native duplicate-name repair step.
+- Verification: PHP 35716070199; MySQL 5.7 35716070241; MySQL 8.0 35716070254; release matrix 35716070342; rollback 35716070485.
+- T-116 status: DONE.
