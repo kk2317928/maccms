@@ -16,4 +16,5 @@ return [
     'app\\command\\MaccmsAnalytics',
     'app\\command\\MaccmsRepairContent',
     'app\\command\\MaccmsRepairVodRepeat',
+    'app\\command\\MaccmsRepairPublicIds',
 ];
