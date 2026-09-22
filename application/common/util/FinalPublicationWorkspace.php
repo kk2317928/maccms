@@ -100,7 +100,7 @@ class FinalPublicationWorkspace
         $blockers = [];
         $warnings = [];
         $publicId = trim((string) ($row['public_id'] ?? ''));
-        if (!preg_match('/^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$/', $publicId)) { $blockers[] = '缺少有效的六位公開識別碼。'; }
+        if (!preg_match('/^[A-Za-z0-9]{6}$/', $publicId)) { $blockers[] = '缺少有效的六位公開識別碼。'; }
         if ((int) ($row['merged_into_vod_id'] ?? 0) > 0) { $blockers[] = '已合併內容不可獨立發布。'; }
         if ((string) ($row['workflow_status'] ?? '') !== VodWorkflow::MANUAL_REVIEW) { $blockers[] = '內容不在人工審核狀態。'; }
         if (trim((string) ($row['vod_name'] ?? '')) === '') { $blockers[] = '缺少主要片名。'; }
