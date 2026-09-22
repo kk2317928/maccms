@@ -914,3 +914,12 @@ Next task: execute and record the fresh Web/browser smoke checklist before final
 - Duplicate state is visible as `not_run / queued / running / no_candidates / pending / merged / restored / failed`.
 - Restore conflict is fail-closed and covered on MySQL 5.7/8.0.
 - Verification: PHP `35711957325`; release matrix `35711957178`; rollback `35711957240`; MySQL 5.7 `35711938755`; MySQL 8.0 `35711945249`.
+
+
+### T-116 Native duplicate-name cache repair — `DONE`
+
+- Native `vod_repeat` maintenance now delegates to an idempotent repair service.
+- Dry-run inspection is mutation-free; confirmed rebuild excludes recycled videos and produces one cache row per duplicate title.
+- Migration creates the legacy cache when absent, removes duplicate cache rows and enforces unique `name1` semantics.
+- CLI: `maccms:repair-vod-repeat [--confirm]`.
+- GREEN evidence at `9ba5e61e2bbd99880e6aa8394a62f367340d8f01`: PHP `35716070199`, MySQL 5.7 `35716070241`, MySQL 8.0 `35716070254`, release matrix `35716070342`, rollback `35716070485`.
