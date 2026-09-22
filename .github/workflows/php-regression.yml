@@ -43,6 +43,9 @@ jobs:
           php -l tests/regression/migration_mysql_ddl.php
           php -l tests/regression/migration_contract.php
           php -l tests/regression/public_id_generator.php
+          php -l tests/regression/public_id_mixed_case.php
+          php -l application/common/util/PublicIdRepairService.php
+          php -l application/command/MaccmsRepairPublicIds.php
           php -l tests/regression/vod_ext_public_id.php
           php -l tests/regression/vod_workflow.php
           php -l application/common/util/ContentWorkflowCoordinator.php
