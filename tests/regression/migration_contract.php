@@ -57,4 +57,6 @@ if (preg_match('/\bmac_(?:vod_ext|meta_term|vod_meta_term|vod_field_state)\b/i',
     exit(1);
 }
 
+$repeatMigration=(string)@file_get_contents($root.'/application/data/migrations/20260921000100_vod_repeat_unique.sql');
+foreach(['vod_repeat','name1','UNIQUE'] as $needle){if(stripos($repeatMigration,$needle)===false){fwrite(STDERR,"FAIL: vod repeat migration missing {$needle}\n");exit(1);}}
 fwrite(STDOUT, "OK: foundation extension schema contract passed.\n");
