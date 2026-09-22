@@ -24,7 +24,7 @@ This document is a compact navigation baseline for implementation sessions. The 
 | `api_controllers` | 39 |
 | `index_controllers` | 24 |
 | `common_models` | 68 |
-| `common_utilities` | 159 |
+| `common_utilities` | 160 |
 
 Counting rule: direct `*.php` children only. Nested templates, validation classes, behaviors, extensions, vendor code, and framework code are intentionally excluded from these five figures.
 
@@ -44,7 +44,7 @@ The figures use newline counts equivalent to `wc -l`.
 | File | Lines | Reason for caution |
 |---|---:|---|
 | `application/common/model/Collect.php` | 3192 | Independent collection insert/update/merge flows |
-| `application/common/model/Vod.php` | 1033 | Core video query and persistence behavior |
+| `application/common/model/Vod.php` | 1012 | Core video query and persistence behavior |
 | `application/common/util/OpenApiSpec.php` | 1158 | Large legacy API specification surface |
 | `application/data/update/database.php` | 1520 | Monolithic historical schema/config upgrade path |
 
