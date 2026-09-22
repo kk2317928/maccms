@@ -892,11 +892,22 @@ Next task: execute and record the fresh Web/browser smoke checklist before final
 - GREEN: PHP `35654580118`, MySQL 5.7 `35653415952`, MySQL 8.0 `35653440038`, release matrix `35654400795`, rollback `35654400761`.
 - Final implementation head: `4f86c863cdee833df2d7f3e070b2c68a80acdaf9`.
 
-### T-113 Automatic AI/TMDB workflow and per-video controls — `IN_PROGRESS`
+### T-113 Automatic AI/TMDB workflow and per-video controls — `DONE`
 
 - Starting commit: `4f86c863cdee833df2d7f3e070b2c68a80acdaf9`.
-- Current step: write the failing workflow-status and per-video rerun contract.
+- Native writes dispatch AI work idempotently from persisted canonical fields; unchanged replay does not duplicate work.
+- Video editor exposes AI/TMDB status and per-video rerun controls; batch jobs support searchable video selection while raw `vod_id` input is retained only for recovery/diagnostics.
+- Verification at `721703d16b9e174fd22534e572f32a40da66137d`: PHP, Native video foundation, Release regression matrix and RC rollback rehearsal all passed.
+- Final T-113 regression wiring: `5a127f8895d6017b93525de5f5b2af0c08c6c282`.
 
+
+### T-114 TMDB poster hardened ingestion and S3 persistence — `DONE`
+
+- Reviewed TMDB poster adoption queues `tmdb_poster_ingest` rather than downloading inside the review transaction.
+- Hardened HTTP validates redirect targets, image bytes and size; only JPEG/PNG/WebP are accepted and staging names are random.
+- S3 failures are explicit and never masquerade as local-path success.
+- Successful ingestion updates `vod_pic / old_poster_s3 / poster_s3`; failed ingestion leaves all poster fields unchanged.
+- Verification at `f26161eab9d234a51bf700eee046403dfac90180`: PHP `35708975936`, MySQL 5.7 `35708975982`, MySQL 8.0 `35708975920`, release matrix `35708975924`, rollback `35708975901` all passed.
 
 ### T-115 Duplicate-state observability / merge & restore reliability — `DONE`
 
