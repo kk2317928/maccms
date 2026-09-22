@@ -110,7 +110,7 @@ class DuplicateReviewWorkspace
     }
     private function assertPublicId(string $publicId): void
     {
-        if (!preg_match('/^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$/', $publicId)) {
+        if (!preg_match('/^[A-Za-z0-9]{6}$/', $publicId)) {
             throw new RuntimeException('Duplicate video public identity is invalid.');
         }
     }
