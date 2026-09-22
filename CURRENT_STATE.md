@@ -247,3 +247,13 @@ Verified release gap at `231e1900cf41f26c2b33bd6cb362e41af4ede7ac`:
 - Documentation now covers automatic workflow, protected import, people/site-config DTOs, safe repair, merge restoration and failure diagnosis.
 - Verified implementation head `5bc9257b884c5d75f5a738170f458054d452f62d`: PHP `35572763658`, MySQL 5.7 `35572763659`, MySQL 8.0 `35572763735`, release matrix `35572763646`, rollback `35572763663`.
 - Automated acceptance permits only `headless-ai-v1.0.3-rc1`. Final `headless-ai-v1.0.3` remains blocked until every manual smoke case has recorded evidence.
+
+
+## 15. T-115 duplicate-state observability and reliability
+
+- Duplicate lifecycle status is now visible in the native video editor and duplicate workspace.
+- States: not_run, queued, running, no_candidates, pending, merged, restored, failed.
+- Conflict-aware restoration was exercised against real MySQL: a post-merge primary edit blocks restore without changing either video or the active snapshot.
+- Clean merge/restore round-trip is also verified.
+- Verification: PHP 35711957325; release matrix 35711957178; rollback 35711957240; MySQL 5.7 35711938755; MySQL 8.0 35711945249.
+- T-115 status: DONE.
