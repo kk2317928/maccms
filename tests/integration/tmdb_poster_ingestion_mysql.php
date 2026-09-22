@@ -2,8 +2,12 @@
 
 declare(strict_types=1);
 
+$database=(string)getenv('MACCMS_TEST_DATABASE');
+if(!preg_match('/^maccms_ci_[a-z0-9_]+$/',$database)){fwrite(STDERR,"FAIL: disposable database required\n");exit(1);}
 $root=dirname(__DIR__,2);
-require $root.'/tests/integration/mysql_bootstrap.php';
+define('APP_PATH',$root.'/application/'); define('ENTRANCE','command');
+$_SERVER['HTTP_HOST']='127.0.0.1'; $_SERVER['SCRIPT_NAME']='/tmdb-poster';
+require $root.'/thinkphp/base.php'; \think\App::initCommon();
 
 use app\common\util\ExternalImageIngestionService;
 use app\common\util\TmdbPosterJobHandler;
@@ -11,7 +15,7 @@ use app\common\util\FieldGovernance;
 
 function posterMysqlAssert($ok,string $msg):void{if(!$ok){fwrite(STDERR,"FAIL: {$msg}\n");exit(1);}}
 
-$vodId=(int)\think\Db::name('vod')->insertGetId(['type_id'=>0,'vod_name'=>'Poster fixture','vod_pic'=>'https://old.example/poster.jpg','vod_status'=>3,'vod_time'=>time(),'vod_time_add'=>time()]);
+$vodId=(int)\think\Db::name('vod')->insertGetId(['type_id'=>0,'vod_name'=>'Poster fixture','vod_pic'=>'https://old.example/poster.jpg','vod_status'=>3,'vod_content'=>'','vod_blurb'=>'','vod_time'=>time(),'vod_time_add'=>time()]);
 \app\common\util\VodExtensionService::ensure($vodId);
 \think\Db::name('vod_ext')->where('vod_id',$vodId)->update(['old_poster_s3'=>'https://older.example/poster.jpg','poster_s3'=>'https://old-s3.example/poster.jpg']);
 
