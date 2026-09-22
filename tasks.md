@@ -896,3 +896,10 @@ Next task: execute and record the fresh Web/browser smoke checklist before final
 
 - Starting commit: `4f86c863cdee833df2d7f3e070b2c68a80acdaf9`.
 - Current step: write the failing workflow-status and per-video rerun contract.
+
+
+### T-115 Duplicate-state observability / merge & restore reliability — `DONE`
+
+- Duplicate state is visible as `not_run / queued / running / no_candidates / pending / merged / restored / failed`.
+- Restore conflict is fail-closed and covered on MySQL 5.7/8.0.
+- Verification: PHP `35711957325`; release matrix `35711957178`; rollback `35711957240`; MySQL 5.7 `35711938755`; MySQL 8.0 `35711945249`.
