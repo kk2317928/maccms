@@ -5,6 +5,7 @@ namespace app\command;
 use app\common\util\ContentJobRepository;
 use app\common\util\ContentJobWorker;
 use app\common\util\TmdbReviewJobHandler;
+use app\common\util\TmdbPosterJobHandler;
 use app\common\util\AiNormalizationJobHandler;
 use app\common\util\AiNormalizationPipeline;
 use app\common\util\AiNormalizationProvider;
@@ -30,8 +31,9 @@ class MaccmsJobs extends Command
             ->addOption('worker', null, Option::VALUE_OPTIONAL, 'Stable worker identifier', 'cron-default');
     }
 
-    public static function handlerMap(callable $aiHandler, TmdbReviewJobHandler $tmdbHandler): array
+    public static function handlerMap(callable $aiHandler, TmdbReviewJobHandler $tmdbHandler, TmdbPosterJobHandler $posterHandler = null): array
     {
+        $posterHandler = $posterHandler ?: new TmdbPosterJobHandler();
         return [
             // Dotted names remain for jobs created before workflow coordination was introduced.
             'ai.normalize' => $aiHandler,
@@ -39,6 +41,7 @@ class MaccmsJobs extends Command
             'tmdb_match' => [$tmdbHandler, 'match'],
             'tmdb_review' => [$tmdbHandler, 'match'],
             'tmdb_manual_match' => [$tmdbHandler, 'manual'],
+            'tmdb_poster_ingest' => [$posterHandler, 'handle'],
         ];
     }
 
