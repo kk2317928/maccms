@@ -931,3 +931,12 @@ Next task: execute and record the fresh Web/browser smoke checklist before final
 - `vod_ext.public_id` uses binary/case-sensitive storage, historical rows can be inspected/repaired through the dedicated repair CLI, and canonical lookup, AI review, publication and native integration paths share the same identity contract.
 - RED→GREEN fixes covered strict-mode native fixtures plus remaining legacy uppercase-only validators in AI review and final publication.
 - Final GREEN evidence at `26b9c6aef1916e8e44091da2b3c25d30e144043d`: PHP `35753837296`, release matrix MySQL 5.7/8.0 `35753837310`, and rollback rehearsal `35753837388` passed.
+
+
+### T-118 Release package acceptance — `IN_PROGRESS`
+
+- Build the distributable ZIP from the integration branch rather than validating only a Git checkout.
+- Verify required runtime/install assets survive packaging, including `upload/`, Composer runtime dependencies, migrations, admin/static assets and command entrypoints.
+- Extract the package into a clean workspace and run package-level PHP/regression checks plus fresh-install/database acceptance on MySQL 5.7 and 8.0.
+- Exercise the installed package through native video creation, intelligent-content workflow, mixed-case public IDs and API v1 smoke boundaries.
+- Preserve the generated ZIP as CI evidence only after every package gate passes.
