@@ -1,0 +1,112 @@
+name: Release package acceptance
+
+on:
+  push:
+    branches:
+      - feature/headless-ai-v1
+    paths:
+      - '.github/workflows/release-package-acceptance.yml'
+      - 'application/**'
+      - 'addons/**'
+      - 'static_new/**'
+      - 'tests/**'
+      - 'vendor/**'
+      - 'upload/.gitkeep'
+      - 'composer.json'
+      - 'composer.lock'
+      - 'think'
+      - 'index.php'
+      - 'api.php'
+      - 'install.php'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        mysql:
+          - family: '5.7'
+            image: 'mysql:5.7'
+          - family: '8.0'
+            image: 'mysql:8.0'
+    services:
+      mysql:
+        image: ${{ matrix.mysql.image }}
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: maccms_ci_package
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=12
+    env:
+      MYSQL_PWD: root
+      MACCMS_TEST_DATABASE: maccms_ci_package
+      MACCMS_TEST_HOST: 127.0.0.1
+      MACCMS_TEST_PORT: 3306
+      MACCMS_TEST_USER: root
+      MACCMS_TEST_PASSWORD: root
+      MACCMS_TEST_MYSQL_FAMILY: ${{ matrix.mysql.family }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: pdo_mysql, mbstring
+          coverage: none
+      - name: Build distributable ZIP
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/maccms-package
+          git archive --format=zip --output=/tmp/maccms-package/maccms-headless-ai.zip HEAD
+          test -s /tmp/maccms-package/maccms-headless-ai.zip
+      - name: Extract clean package
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/maccms-package/extracted
+          unzip -q /tmp/maccms-package/maccms-headless-ai.zip -d /tmp/maccms-package/extracted
+          test -f /tmp/maccms-package/extracted/install.php
+          test -f /tmp/maccms-package/extracted/think
+          test -f /tmp/maccms-package/extracted/upload/.gitkeep
+          test -f /tmp/maccms-package/extracted/vendor/autoload.php
+          test -d /tmp/maccms-package/extracted/application/data/migrations
+      - name: Package PHP and policy smoke
+        working-directory: /tmp/maccms-package/extracted
+        run: |
+          php -l install.php
+          php -l think
+          php tests/regression/installed_feature_contract.php
+          php tests/regression/outbound_inventory.php --enforce
+          php tests/regression/public_id_mixed_case.php
+      - name: Install native schema and migrations from package
+        working-directory: /tmp/maccms-package/extracted
+        run: |
+          set -euo pipefail
+          sed -i "s/'database'        => 'maccms10'/'database'        => 'maccms_ci_package'/" application/database.php
+          mysql --protocol=tcp --host=127.0.0.1 --port=3306 --user=root --database=maccms_ci_package < application/install/sql/install.sql
+          php think maccms:migrate
+          output="$(php think maccms:migrate)"
+          echo "$output"
+          grep -q 'done, applied=0, skipped=23' <<< "$output"
+      - name: Package database acceptance
+        working-directory: /tmp/maccms-package/extracted
+        run: |
+          php tests/integration/mysql_foundation.php
+          php tests/integration/native_vod_paths.php
+          php tests/integration/content_repair_mysql.php
+          php tests/integration/content_lifecycle_mysql.php
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: maccms-headless-ai-${{ matrix.mysql.family }}
+          path: /tmp/maccms-package/maccms-headless-ai.zip
+          if-no-files-found: error
+          retention-days: 7
