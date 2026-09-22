@@ -59,8 +59,8 @@ class VodExt extends Base
 
     public static function findByPublicId(string $publicId): ?array
     {
-        $publicId = strtoupper(trim($publicId));
-        if (!preg_match('/^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$/', $publicId)) {
+        $publicId = trim($publicId);
+        if (!preg_match('/^[A-Za-z0-9]{6}$/', $publicId)) {
             return null;
         }
 
@@ -86,8 +86,8 @@ class VodExt extends Base
         callable $findByPublicId,
         callable $findByVodId
     ): ?array {
-        $requestedPublicId = strtoupper(trim($publicId));
-        if (!preg_match('/^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$/', $requestedPublicId)) {
+        $requestedPublicId = trim($publicId);
+        if (!preg_match('/^[A-Za-z0-9]{6}$/', $requestedPublicId)) {
             return null;
         }
 
@@ -110,9 +110,9 @@ class VodExt extends Base
             ? $requestedRow
             : $findByVodId($canonicalVodId);
         $canonicalPublicId = is_array($canonicalRow) && isset($canonicalRow['public_id'])
-            ? strtoupper(trim((string) $canonicalRow['public_id']))
+            ? trim((string) $canonicalRow['public_id'])
             : '';
-        if (!preg_match('/^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$/', $canonicalPublicId)) {
+        if (!preg_match('/^[A-Za-z0-9]{6}$/', $canonicalPublicId)) {
             throw new RuntimeException('Canonical video public ID is missing or invalid.');
         }
 
