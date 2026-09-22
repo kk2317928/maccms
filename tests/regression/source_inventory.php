@@ -59,7 +59,7 @@ $expectedCounts = [
     'api_controllers' => 39,
     'index_controllers' => 24,
     'common_models' => 68,
-    'common_utilities' => 159,
+    'common_utilities' => 160,
 ];
 
 foreach ($expectedCounts as $name => $expected) {
@@ -68,7 +68,7 @@ foreach ($expectedCounts as $name => $expected) {
 
 $lineCounts = [
     'application/common/model/Collect.php' => 3204,
-    'application/common/model/Vod.php' => 1033,
+    'application/common/model/Vod.php' => 1012,
     'application/common/util/OpenApiSpec.php' => 1158,
     'application/data/update/database.php' => 1520,
 ];
