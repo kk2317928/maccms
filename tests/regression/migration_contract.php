@@ -59,4 +59,6 @@ if (preg_match('/\bmac_(?:vod_ext|meta_term|vod_meta_term|vod_field_state)\b/i',
 
 $repeatMigration=(string)@file_get_contents($root.'/application/data/migrations/20260921000100_vod_repeat_unique.sql');
 foreach(['vod_repeat','name1','UNIQUE'] as $needle){if(stripos($repeatMigration,$needle)===false){fwrite(STDERR,"FAIL: vod repeat migration missing {$needle}\n");exit(1);}}
+$publicIdMigration=(string)@file_get_contents($root.'/application/data/migrations/20260921000200_public_id_mixed_case.sql');
+foreach(['CHAR(6)','ascii','ascii_bin'] as $needle){if(stripos($publicIdMigration,$needle)===false){fwrite(STDERR,"FAIL: mixed-case public ID migration missing {$needle}\n");exit(1);}}
 fwrite(STDOUT, "OK: foundation extension schema contract passed.\n");
