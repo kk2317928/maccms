@@ -34,7 +34,7 @@ $rowsByVodId = [
 ];
 
 $resolved = \app\common\model\VodExt::resolvePublicIdWithLookups(
-    ' ALAS22 ',
+    'ALAS22',
     function ($publicId) use ($rowsByPublicId) {
         return $rowsByPublicId[$publicId] ?? null;
     },
