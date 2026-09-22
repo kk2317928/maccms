@@ -26,19 +26,19 @@ if (strpos($s3, 'return $file_path;') !== false && strpos($s3, 'RuntimeException
 
 $png=base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=');
 $tmp=sys_get_temp_dir().'/maccms-poster-'.bin2hex(random_bytes(4)); @mkdir($tmp,0755,true);
-$http=new class($png) extends \\app\\common\\util\\HardenedHttpClient {
+$http=new class($png) extends \app\common\util\HardenedHttpClient {
     private $bytes; public function __construct($bytes){$this->bytes=$bytes;}
     public function get(string $url,array $options=[]):array{return ['status'=>200,'headers'=>['content-type'=>'image/png'],'body'=>$this->bytes];}
 };
 $uploaded=[];
-$svc=new \\app\\common\\util\\ExternalImageIngestionService($http,function(string $path)use(&$uploaded):string{$uploaded[]=$path;return 'https://cdn.example.test/'.$path;},$tmp);
+$svc=new \app\common\util\ExternalImageIngestionService($http,function(string $path)use(&$uploaded):string{$uploaded[]=$path;return 'https://cdn.example.test/'.$path;},$tmp);
 $result=$svc->ingest('https://image.tmdb.org/t/p/original/a.png','tmdb:movie:1');
-if($result['mime']!=='image/png'||strlen($result['sha256'])!==64||count($uploaded)!==1){fwrite(STDERR,"FAIL: valid PNG ingestion failed.\\n");exit(1);}
-if(preg_match('/[a-f0-9]{32}\\.png$/',$uploaded[0])!==1){fwrite(STDERR,"FAIL: staged image name is not random.\\n");exit(1);}
-$bad=new class extends \\app\\common\\util\\HardenedHttpClient {public function __construct(){} public function get(string $url,array $options=[]):array{return ['status'=>200,'headers'=>[],'body'=>'not-an-image'];}};
-try{(new \\app\\common\\util\\ExternalImageIngestionService($bad,fn($p)=>'https://cdn/'.$p,$tmp))->ingest('https://image.tmdb.org/x.jpg','tmdb:x');fwrite(STDERR,"FAIL: corrupt image accepted.\\n");exit(1);}catch(\\InvalidArgumentException $e){}
-$fail=new \\app\\common\\util\\ExternalImageIngestionService($http,function(string $p):string{throw new \\RuntimeException('secret signed url');},$tmp);
-try{$fail->ingest('https://image.tmdb.org/x.png','tmdb:x');fwrite(STDERR,"FAIL: upload failure accepted.\\n");exit(1);}catch(\\RuntimeException $e){if(strpos($e->getMessage(),'secret signed url')!==false){fwrite(STDERR,"FAIL: upload secret leaked.\\n");exit(1);}}
+if($result['mime']!=='image/png'||strlen($result['sha256'])!==64||count($uploaded)!==1){fwrite(STDERR,"FAIL: valid PNG ingestion failed.\n");exit(1);}
+if(preg_match('/[a-f0-9]{32}\\.png$/',$uploaded[0])!==1){fwrite(STDERR,"FAIL: staged image name is not random.\n");exit(1);}
+$bad=new class extends \app\common\util\HardenedHttpClient {public function __construct(){} public function get(string $url,array $options=[]):array{return ['status'=>200,'headers'=>[],'body'=>'not-an-image'];}};
+try{(new \app\common\util\ExternalImageIngestionService($bad,fn($p)=>'https://cdn/'.$p,$tmp))->ingest('https://image.tmdb.org/x.jpg','tmdb:x');fwrite(STDERR,"FAIL: corrupt image accepted.\n");exit(1);}catch(\InvalidArgumentException $e){}
+$fail=new \app\common\util\ExternalImageIngestionService($http,function(string $p):string{throw new \RuntimeException('secret signed url');},$tmp);
+try{$fail->ingest('https://image.tmdb.org/x.png','tmdb:x');fwrite(STDERR,"FAIL: upload failure accepted.\n");exit(1);}catch(\RuntimeException $e){if(strpos($e->getMessage(),'secret signed url')!==false){fwrite(STDERR,"FAIL: upload secret leaked.\n");exit(1);}}
 $httpSource=(string)file_get_contents($root.'/application/common/util/HardenedHttpClient.php');
-if(strpos($httpSource,'for ($hop = 0;')===false||strpos($httpSource,'$this->policy->validate($url, $allowedHosts)')===false){fwrite(STDERR,"FAIL: redirect target revalidation missing.\\n");exit(1);}
-fwrite(STDOUT, "PASS: hardened TMDB poster ingestion source and behavior contract.\\n");
+if(strpos($httpSource,'for ($hop = 0;')===false||strpos($httpSource,'$this->policy->validate($url, $allowedHosts)')===false){fwrite(STDERR,"FAIL: redirect target revalidation missing.\n");exit(1);}
+fwrite(STDOUT, "PASS: hardened TMDB poster ingestion source and behavior contract.\n");
