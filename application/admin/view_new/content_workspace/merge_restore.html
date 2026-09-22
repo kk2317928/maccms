@@ -2,9 +2,10 @@
 <div class="page-container p10">
     <input type="hidden" id="duplicate-token" value="{:mac_admin_csrf_token()}">
     <h2>重複內容比較、合併與還原</h2>
+    <p class="layui-word-aux">重複狀態：not_run＝尚未檢查；queued／running＝檢查中；no_candidates＝未發現候選；pending＝待人工判斷；merged＝已合併；restored＝已還原；failed＝處理失敗。任何 restore conflict 都會 fail-closed，不覆寫合併後的新資料。</p>
     <table class="layui-table"><thead><tr><th>候選</th><th>影片</th><th>分數</th><th>狀態</th><th>操作</th></tr></thead><tbody>
     {volist name="queue.rows" id="row"}
-    <tr><td>#{$row.duplicate_candidate_id}</td><td>#{$row.vod_id_low} / #{$row.vod_id_high}</td><td>{$row.score}</td><td>{$row.decision|htmlentities}</td><td><a class="layui-btn layui-btn-xs" href="{:url('content_workspace/merge_restore',['candidate_id'=>$row['duplicate_candidate_id']])}">比較</a>{if condition="$row.merge_snapshot_id gt 0"} <a class="layui-btn layui-btn-xs layui-btn-warm" href="{:url('content_workspace/merge_restore',['snapshot_id'=>$row['merge_snapshot_id']])}">Snapshot</a>{/if}</td></tr>
+    <tr><td>#{$row.duplicate_candidate_id}</td><td>#{$row.vod_id_low} / #{$row.vod_id_high}</td><td>{$row.score}</td><td>重複狀態：{$row.decision|htmlentities}{if condition="$row.snapshot_status eq 'restored'"} / restored{/if}</td><td><a class="layui-btn layui-btn-xs" href="{:url('content_workspace/merge_restore',['candidate_id'=>$row['duplicate_candidate_id']])}">比較</a>{if condition="$row.merge_snapshot_id gt 0"} <a class="layui-btn layui-btn-xs layui-btn-warm" href="{:url('content_workspace/merge_restore',['snapshot_id'=>$row['merge_snapshot_id']])}">Snapshot</a>{/if}</td></tr>
     {/volist}
     {empty name="queue.rows"}<tr><td colspan="5">目前沒有重複候選。</td></tr>{/empty}
     </tbody></table>
