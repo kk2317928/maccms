@@ -3,6 +3,7 @@ namespace app\common\extend\upload;
 
 use Aws\S3\S3Client;
 use Aws\Exception\AwsException;
+use RuntimeException;
 
 class S3
 {
@@ -40,7 +41,7 @@ class S3
         $s3 = new S3Client($options);
         $filePath = ROOT_PATH . $file_path;
         if (!is_file($filePath)) {
-            return $file_path;
+            throw new RuntimeException('S3 source file does not exist.');
         }
         try {
             $key = !empty($basepath) ? rtrim($basepath, '/') . '/' . ltrim($file_path, '/') : $file_path;
@@ -59,13 +60,16 @@ class S3
             }
             $result = $s3->putObject($put);
         } catch (AwsException $e) {
-            return $file_path;
+            throw new RuntimeException('S3 upload failed.', 0, $e);
         }
 
         empty($this->config['keep_local']) && @unlink($filePath);
         if (!empty($domain)) {
             return rtrim($domain, '/') . '/' . $bucket . '/' . $key;
         }
-        return isset($result['ObjectURL']) ? $result['ObjectURL'] : $file_path;
+        if (isset($result['ObjectURL']) && trim((string) $result['ObjectURL']) !== '') {
+            return (string) $result['ObjectURL'];
+        }
+        throw new RuntimeException('S3 upload completed without a remote object URL.');
     }
 }
