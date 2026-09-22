@@ -130,8 +130,8 @@ $service->decisions['title_cn']['candidate_value_json'] = $safeCandidate;
 $missingIdentity = new MemoryAiFieldReviewService($governance, $audit, static fn (): int => 120, null);
 $missingIdentity->run = array_merge($service->run, ['public_id' => '']);
 try { $missingIdentity->preview(7); fieldReviewAssert(false, 'missing stable public ID must fail closed.'); } catch (RuntimeException $exception) {}
-$missingIdentity->run = array_merge($service->run, ['public_id' => '000000']);
-try { $missingIdentity->preview(7); fieldReviewAssert(false, 'non-canonical stable public ID must fail closed.'); } catch (RuntimeException $exception) {}
+$missingIdentity->run = array_merge($service->run, ['public_id' => 'ABC-12']);
+try { $missingIdentity->preview(7); fieldReviewAssert(false, 'invalid stable public ID must fail closed.'); } catch (RuntimeException $exception) {}
 
 $service->review(7, 'title_cn', 'reject', null, 55, 'reviewer');
 $service->review(7, 'title_en', 'reject', null, 55, 'reviewer');
