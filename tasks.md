@@ -923,3 +923,11 @@ Next task: execute and record the fresh Web/browser smoke checklist before final
 - Migration creates the legacy cache when absent, removes duplicate cache rows and enforces unique `name1` semantics.
 - CLI: `maccms:repair-vod-repeat [--confirm]`.
 - GREEN evidence at `9ba5e61e2bbd99880e6aa8394a62f367340d8f01`: PHP `35716070199`, MySQL 5.7 `35716070241`, MySQL 8.0 `35716070254`, release matrix `35716070342`, rollback `35716070485`.
+
+
+### T-117 Mixed-case six-character public IDs — `DONE`
+
+- Public IDs use exactly six case-sensitive ASCII alphanumeric characters: `[A-Za-z0-9]{6}`; existing valid IDs retain exact case.
+- `vod_ext.public_id` uses binary/case-sensitive storage, historical rows can be inspected/repaired through the dedicated repair CLI, and canonical lookup, AI review, publication and native integration paths share the same identity contract.
+- RED→GREEN fixes covered strict-mode native fixtures plus remaining legacy uppercase-only validators in AI review and final publication.
+- Final GREEN evidence at `26b9c6aef1916e8e44091da2b3c25d30e144043d`: PHP `35753837296`, release matrix MySQL 5.7/8.0 `35753837310`, and rollback rehearsal `35753837388` passed.
