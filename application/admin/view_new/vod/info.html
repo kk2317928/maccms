@@ -758,6 +758,13 @@
                         </div>
                     </div>
 
+                    <fieldset class="layui-elem-field layui-field-title"><legend>重複內容狀態</legend></fieldset>
+                    <div class="layui-form-item"><label class="layui-form-label">重複狀態</label><div class="layui-input-block">
+                        <span class="layui-badge layui-bg-blue">{$duplicate_status.state|default='not_run'|htmlentities}</span>
+                        {if condition="!empty($duplicate_status.candidate.duplicate_candidate_id)"}<span class="layui-word-aux">Candidate #{$duplicate_status.candidate.duplicate_candidate_id}</span>{/if}
+                        {if condition="!empty($duplicate_status.snapshot.merge_snapshot_id)"}<span class="layui-word-aux">Snapshot #{$duplicate_status.snapshot.merge_snapshot_id} / {$duplicate_status.snapshot.status|default=''|htmlentities}</span>{/if}
+                        {if condition="$info.vod_id gt 0"}<a class="layui-btn layui-btn-xs layui-btn-primary" href="{:url('content_workspace/merge_restore')}">查看重複比較／合併／還原</a>{/if}
+                    </div></div>
                     <fieldset class="layui-elem-field layui-field-title">
                         <legend>自動分類／詞典</legend>
                     </fieldset>
