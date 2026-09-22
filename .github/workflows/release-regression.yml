@@ -90,7 +90,7 @@ jobs:
           set -e
           echo "$output"
           test "$status" -eq 0
-          grep -q 'done, applied=22, skipped=0' <<< "$output"
+          grep -q 'done, applied=23, skipped=0' <<< "$output"
 
       - name: Second migration run is idempotent
         run: |
@@ -100,7 +100,7 @@ jobs:
           set -e
           echo "$output"
           test "$status" -eq 0
-          grep -q 'done, applied=0, skipped=22' <<< "$output"
+          grep -q 'done, applied=0, skipped=23' <<< "$output"
 
       - name: Database and native-path integration
         run: |
