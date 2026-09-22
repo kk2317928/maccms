@@ -31,7 +31,7 @@ if (strpos($version, $expectedFamily . '.') !== 0) {
 }
 
 $ledger = $pdo->query('SELECT version, checksum FROM mac_schema_migration ORDER BY version')->fetchAll(PDO::FETCH_ASSOC);
-if (count($ledger) !== 22
+if (count($ledger) !== 23
     || $ledger[0]['version'] !== '20260918000100'
     || $ledger[1]['version'] !== '20260918000200'
     || $ledger[2]['version'] !== '20260918000300'
@@ -61,13 +61,15 @@ if (count($ledger) !== 22
     || $ledger[19]['version'] !== '20260920000700'
     || $ledger[20]['version'] !== '20260920000800'
     || $ledger[21]['version'] !== '20260921000100'
+    || $ledger[22]['version'] !== '20260921000200'
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[11]['checksum'])
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[12]['checksum'])
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[17]['checksum'])
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[18]['checksum'])
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[19]['checksum'])
     || !preg_match('/^[a-f0-9]{64}$/', $ledger[20]['checksum'])
-    || !preg_match('/^[a-f0-9]{64}$/', $ledger[21]['checksum'])) {
+    || !preg_match('/^[a-f0-9]{64}$/', $ledger[21]['checksum'])
+    || !preg_match('/^[a-f0-9]{64}$/', $ledger[22]['checksum'])) {
     fwrite(STDERR, "FAIL: migration ledger does not contain all expected checksummed versions.\n");
     exit(1);
 }
