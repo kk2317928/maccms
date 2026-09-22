@@ -35,7 +35,7 @@ class AiFieldReviewService
         if ($run === null || (string) ($run['validation_status'] ?? '') !== 'valid') {
             throw new RuntimeException('Valid AI run was not found.');
         }
-        if (!preg_match('/^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$/', (string) ($run['public_id'] ?? ''))) {
+        if (!preg_match('/^[A-Za-z0-9]{6}$/', (string) ($run['public_id'] ?? ''))) {
             throw new RuntimeException('AI run video identity is unavailable.');
         }
         $payload = json_decode((string) $run['raw_response_json'], true);
