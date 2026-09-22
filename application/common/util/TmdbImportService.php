@@ -7,10 +7,14 @@ use InvalidArgumentException;
 class TmdbImportService
 {
     private $taxonomySuggestions;
+    private $enqueue;
 
-    public function __construct($taxonomySuggestions = false)
+    public function __construct($taxonomySuggestions = false, callable $enqueue = null)
     {
         $this->taxonomySuggestions = $taxonomySuggestions === false ? new TaxonomySuggestionService() : $taxonomySuggestions;
+        $this->enqueue = $enqueue ?: static function (string $type, array $payload, string $key): array {
+            return (new ContentJobRepository())->enqueue($type, $payload, $key);
+        };
     }
 
     public function preview(int $vodId, array $candidate, FieldGovernance $fields): array
@@ -71,7 +75,16 @@ class TmdbImportService
                 $blocked[] = $field;
             }
         }
-        return ['applied' => $applied, 'blocked' => $blocked];
+        $posterJob = null;
+        if (in_array('vod_pic', $approvedFields, true) && !empty($mapped['vod_pic']) && !in_array('vod_pic', $blocked, true)) {
+            // Poster bytes are never downloaded inside the review transaction. The
+            // reviewed candidate only schedules the hardened ingestion worker.
+            $posterJob = call_user_func($this->enqueue, 'tmdb_poster_ingest', [
+                'vod_id' => $vodId, 'poster_url' => (string) $mapped['vod_pic'], 'source_ref' => $sourceRef,
+            ], 'video:' . $vodId . ':tmdb_poster:' . hash('sha256', (string) $mapped['vod_pic']));
+            $applied = array_values(array_diff($applied, ['vod_pic']));
+        }
+        return ['applied' => $applied, 'blocked' => $blocked, 'poster_job' => $posterJob];
     }
 
     private function mapCandidate(array $candidate): array
