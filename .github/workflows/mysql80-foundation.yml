@@ -32,6 +32,10 @@ on:
       - 'tests/integration/tmdb_poster_ingestion_mysql.php'
       - 'application/common/util/DuplicateWorkflowStatus.php'
       - 'tests/integration/duplicate_admin_actions_mysql.php'
+      - 'application/common/util/VodRepeatRepairService.php'
+      - 'application/command/MaccmsRepairVodRepeat.php'
+      - 'application/data/migrations/20260921000100_vod_repeat_unique.sql'
+      - 'tests/integration/vod_repeat_repair_mysql.php'
       - 'application/common/util/ContentImport*.php'
       - 'tests/integration/api_v1_import_mysql.php'
       - 'application/common/util/ContentAdminRoutePolicy.php'
@@ -95,6 +99,9 @@ jobs:
           php -l tests/integration/tmdb_poster_ingestion_mysql.php
           php -l application/common/util/DuplicateWorkflowStatus.php
           php -l tests/integration/duplicate_admin_actions_mysql.php
+          php -l application/common/util/VodRepeatRepairService.php
+          php -l application/command/MaccmsRepairVodRepeat.php
+          php -l tests/integration/vod_repeat_repair_mysql.php
       - name: Install native schema
         run: mysql --protocol=tcp --host=127.0.0.1 --port=3306 --user=root --password=root --database=maccms_ci_80 < application/install/sql/install.sql
       - name: First migration run
@@ -133,3 +140,5 @@ jobs:
         run: php tests/integration/tmdb_poster_ingestion_mysql.php
       - name: Verify duplicate admin actions
         run: php tests/integration/duplicate_admin_actions_mysql.php
+      - name: Verify native duplicate-name repair
+        run: php tests/integration/vod_repeat_repair_mysql.php
