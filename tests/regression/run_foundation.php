@@ -15,6 +15,7 @@ $tests = [
     'vod_extension_hook.php',
     'content_workflow_hooks.php',
     'content_repair_command.php',
+    'vod_repeat_repair.php',
     'taxonomy_dictionary.php',
 ];
 
