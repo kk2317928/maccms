@@ -1,6 +1,7 @@
 <?php
 namespace app\common\model;
 use think\Db;
+use app\common\util\VodRepeatRepairService;
 use think\Cache;
 use app\common\util\Pinyin;
 use app\common\util\MeilisearchService;
@@ -1001,33 +1002,11 @@ class Vod extends Base {
 
     public function cacheRepeatWithName($name)
     {
-        try{
-            Db::execute('delete from `' . config('database.prefix') . 'vod_repeat` where name1 =?', [$name]);
-            Db::execute('INSERT INTO `' . config('database.prefix') . 'vod_repeat` (SELECT min(vod_id)as id1,vod_name as name1 FROM ' . config('database.prefix') . 'vod WHERE vod_name = ? AND vod_recycle_time = 0 GROUP BY name1 HAVING COUNT(name1)>1)', [$name]);
-        }catch (\Exception $e){
-            Db::execute('DROP TABLE IF EXISTS ' . config('database.prefix') . 'vod_repeat');
-            Db::execute('CREATE TABLE `' . config('database.prefix') . 'vod_repeat` (`id1` int unsigned DEFAULT NULL, `name1` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT \'\') ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci');
-            Db::execute('ALTER TABLE `' . config('database.prefix') . 'vod_repeat` ADD INDEX `name1` (`name1`(100))');
-        }
-        Db::execute('INSERT INTO `' . config('database.prefix') . 'vod_repeat` (SELECT min(vod_id)as id1,vod_name as name1 FROM ' .
-            config('database.prefix') . 'vod WHERE vod_recycle_time = 0 GROUP BY name1 HAVING COUNT(name1)>1)');
-        Cache::set('vod_repeat_table_created_time',time());
+        return (new VodRepeatRepairService())->refreshName((string) $name);
     }
-    public function  createRepeatCache()
+    public function createRepeatCache()
     {
-        $prefix = config('database.prefix');
-        $tableName = $prefix . 'vod_repeat';
-        try{
-            Db::execute("TRUNCATE TABLE `{$tableName}`");
-        }catch (\Exception $e){
-            //创建表
-            Db::execute('DROP TABLE IF EXISTS ' . config('database.prefix') . 'vod_repeat');
-            Db::execute('CREATE TABLE `' . config('database.prefix') . 'vod_repeat` (`id1` int unsigned DEFAULT NULL, `name1` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT \'\') ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci');
-            Db::execute('ALTER TABLE `' . config('database.prefix') . 'vod_repeat` ADD INDEX `name1` (`name1`(100))');
-        }
-        Db::execute('INSERT INTO `' . config('database.prefix') . 'vod_repeat` (SELECT min(vod_id)as id1,vod_name as name1 FROM ' .
-            config('database.prefix') . 'vod WHERE vod_recycle_time = 0 GROUP BY name1 HAVING COUNT(name1)>1)');
-        Cache::set('vod_repeat_table_created_time',time());
+        return (new VodRepeatRepairService())->rebuild(true);
     }
 
 }
