@@ -36,6 +36,10 @@ on:
       - 'application/command/MaccmsRepairVodRepeat.php'
       - 'application/data/migrations/20260921000100_vod_repeat_unique.sql'
       - 'tests/integration/vod_repeat_repair_mysql.php'
+      - 'application/common/util/PublicIdRepairService.php'
+      - 'application/command/MaccmsRepairPublicIds.php'
+      - 'application/data/migrations/20260921000200_public_id_mixed_case.sql'
+      - 'tests/integration/public_id_mixed_case_mysql.php'
       - 'application/common/util/ContentImport*.php'
       - 'tests/integration/api_v1_import_mysql.php'
       - 'application/common/util/ContentAdminRoutePolicy.php'
@@ -102,6 +106,9 @@ jobs:
           php -l application/common/util/VodRepeatRepairService.php
           php -l application/command/MaccmsRepairVodRepeat.php
           php -l tests/integration/vod_repeat_repair_mysql.php
+          php -l application/common/util/PublicIdRepairService.php
+          php -l application/command/MaccmsRepairPublicIds.php
+          php -l tests/integration/public_id_mixed_case_mysql.php
       - name: Install native schema
         run: mysql --protocol=tcp --host=127.0.0.1 --port=3306 --user=root --password=root --database=maccms_ci_80 < application/install/sql/install.sql
       - name: First migration run
@@ -112,7 +119,7 @@ jobs:
           set -e
           echo "$output"
           test "$status" -eq 0
-          grep -q 'done, applied=22, skipped=0' <<< "$output"
+          grep -q 'done, applied=23, skipped=0' <<< "$output"
       - name: Second migration run is a no-op
         run: |
           set +e
@@ -121,7 +128,7 @@ jobs:
           set -e
           echo "$output"
           test "$status" -eq 0
-          grep -q 'done, applied=0, skipped=22' <<< "$output"
+          grep -q 'done, applied=0, skipped=23' <<< "$output"
       - name: Verify MySQL 8.0 schema invariants
         run: php tests/integration/mysql_foundation.php
       - name: Verify MySQL 8.0 content job lifecycle
@@ -142,3 +149,5 @@ jobs:
         run: php tests/integration/duplicate_admin_actions_mysql.php
       - name: Verify native duplicate-name repair
         run: php tests/integration/vod_repeat_repair_mysql.php
+      - name: Verify mixed-case public IDs
+        run: php tests/integration/public_id_mixed_case_mysql.php
