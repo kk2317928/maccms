@@ -284,6 +284,14 @@ class ContentWorkspace extends Base
     public function jobs()
     {
         $service = new ContentJobAdminService();
+        if (!request()->isPost() && trim((string) input('param.video_q/s', '')) !== '') {
+            $query = trim((string) input('param.video_q/s', ''));
+            $rows = Db::name('vod')->alias('v')->leftJoin('__VOD_EXT__ ve', 've.vod_id=v.vod_id')
+                ->field('v.vod_id,v.vod_name,ve.public_id')->where(function ($q) use ($query) {
+                    $q->where('v.vod_name', 'like', '%' . $query . '%')->whereOr('ve.public_id', $query);
+                })->order('v.vod_id desc')->limit(20)->select();
+            return json(['code' => 1, 'msg' => 'ok', 'data' => ['rows' => $rows ?: []]]);
+        }
         if (request()->isPost()) {
             $param = input('post.');
             $token = (string) ($param['__token__'] ?? '');
