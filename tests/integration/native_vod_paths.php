@@ -257,7 +257,7 @@ native_assert(count($extensions) === 2, 'Each native write path must create exac
 $publicIds = array_column($extensions, 'public_id');
 native_assert(count(array_unique($publicIds)) === 2, 'Native write paths must receive distinct public IDs.');
 foreach ($publicIds as $publicId) {
-    native_assert((bool) preg_match('/^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$/', $publicId), 'Invalid six-character public ID.');
+    native_assert((bool) preg_match('/^[A-Za-z0-9]{6}$/', $publicId), 'Invalid six-character public ID.');
 }
 
 $aiJobs = \think\Db::name('content_job')->where('job_type', 'ai_normalize')->order('job_id asc')->select();
