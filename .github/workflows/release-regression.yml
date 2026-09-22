@@ -1,4 +1,5 @@
 name: Release regression matrix
+# T-117 final verification retrigger after PHP regression GREEN.
 
 # T-111 final candidate gate: includes production-worker lifecycle and reversible merge/restore.
 
