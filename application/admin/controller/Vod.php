@@ -5,6 +5,7 @@ use app\common\util\VodPublishService;
 use app\common\util\VodExtensionAdminService;
 use app\common\util\VodTaxonomyPanel;
 use app\common\util\ContentWorkflowStatus;
+use app\common\util\DuplicateWorkflowStatus;
 use app\common\util\ContentAdminAudit;
 use think\Cache;
 use think\Db;
@@ -638,6 +639,9 @@ class Vod extends Base
             }
         }
         $this->assign('workflow_status', $workflowStatus);
+        $duplicateStatus = ['state'=>'not_run','candidate'=>[],'snapshot'=>[],'latest_job'=>[],'duplicate_checked_at'=>0];
+        if (!empty($info['vod_id'])) { try { $duplicateStatus = (new DuplicateWorkflowStatus())->forVideo((int) $info['vod_id']); } catch (\Throwable $exception) { \think\Log::error('Vod duplicate status failed vod_id=' . (int) $info['vod_id']); } }
+        $this->assign('duplicate_status', $duplicateStatus);
         $seoAiStatus = 0;
         if (!empty($info['vod_id'])) {
             $seoAi = model('SeoAiResult')->getByObject(1, intval($info['vod_id']));
