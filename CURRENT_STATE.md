@@ -1,7 +1,7 @@
 # MACCMS Headless AI — Current State
 
-Last updated: 2026-09-21
-State document version: 86
+Last updated: 2026-09-23
+State document version: 87
 Repository: `kk2317928/maccms`  
 Integration branch: `feature/headless-ai-v1`  
 Pinned upstream: `magicblack/maccms10@4466885edc38744c4a8cbfbea171546dfb67d84d`
@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-09 — official communication removal and release hardening.
 **Active checkpoint:** content automation and administrator repair.
-**Active task:** T-113 — automatic AI/TMDB workflow and per-video controls (`IN_PROGRESS`).
+**Active task:** none — T-117 final verification completed.
 **Starting commit:** T-112 completion head `4f86c863cdee833df2d7f3e070b2c68a80acdaf9`.
-**Last completed task:** T-112 — taxonomy dictionary and video-editor integration.
-**Last verification:** PHP `35654580118`, MySQL 5.7 `35653415952`, MySQL 8.0 `35653440038`, release matrix `35654400795`, and rollback `35654400761` passed.
-**Next action:** establish the T-113 per-video workflow status/rerun RED contract, then repair automatic dispatch and administrator controls.
+**Last completed task:** T-117 — mixed-case six-character public IDs.
+**Last verification:** PHP `35753837296`, release matrix MySQL 5.7/8.0 `35753837310`, and rollback rehearsal `35753837388` passed at `26b9c6aef1916e8e44091da2b3c25d30e144043d`.
+**Next action:** begin the next approved checkpoint/task; T-117 requires no further implementation.
 
 ## 1. Confirmed product direction
 
