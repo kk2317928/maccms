@@ -27,6 +27,9 @@ on:
       - 'tests/integration/content_lifecycle_mysql.php'
       - 'application/common/util/TaxonomyDictionaryService.php'
       - 'tests/integration/taxonomy_dictionary_mysql.php'
+      - 'application/common/util/ExternalImageIngestionService.php'
+      - 'application/common/util/TmdbPosterJobHandler.php'
+      - 'tests/integration/tmdb_poster_ingestion_mysql.php'
       - 'application/common/util/ContentImport*.php'
       - 'tests/integration/api_v1_import_mysql.php'
       - 'application/common/util/ContentAdminRoutePolicy.php'
@@ -85,6 +88,9 @@ jobs:
           php -l tests/integration/content_lifecycle_mysql.php
           php -l application/common/util/TaxonomyDictionaryService.php
           php -l tests/integration/taxonomy_dictionary_mysql.php
+          php -l application/common/util/ExternalImageIngestionService.php
+          php -l application/common/util/TmdbPosterJobHandler.php
+          php -l tests/integration/tmdb_poster_ingestion_mysql.php
       - name: Install native schema
         run: mysql --protocol=tcp --host=127.0.0.1 --port=3306 --user=root --password=root --database=maccms_ci_80 < application/install/sql/install.sql
       - name: First migration run
@@ -119,3 +125,5 @@ jobs:
         run: php tests/integration/taxonomy_dictionary_mysql.php
       - name: Verify complete content lifecycle
         run: php tests/integration/content_lifecycle_mysql.php
+      - name: Verify TMDB poster ingestion
+        run: php tests/integration/tmdb_poster_ingestion_mysql.php
