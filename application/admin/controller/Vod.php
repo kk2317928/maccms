@@ -572,6 +572,10 @@ class Vod extends Base
             $hasVodExt = array_key_exists('vod_ext', $param);
             $vodExt = $hasVodExt ? $param['vod_ext'] : null;
             unset($param['vod_ext']);
+            if (array_key_exists('public_id', $param)
+                || (is_array($vodExt) && array_key_exists('public_id', $vodExt))) {
+                return $this->error('公開識別碼建立後不可修改。');
+            }
             if ($hasVodExt && !is_array($vodExt)) {
                 return $this->error('vod_ext must be an object.');
             }
