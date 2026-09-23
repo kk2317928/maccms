@@ -6,6 +6,11 @@
     
     <form class="layui-form layui-form-pane" method="post" action="">
         <input type="hidden" name="vod_id" value="{$info.vod_id}">
+        <div class="layui-elem-quote">
+            <strong>公開識別碼：</strong>
+            {if condition="!empty($vod_ext.public_id)"}<code>{$vod_ext.public_id|htmlentities}</code>{else/}<span class="layui-word-aux">儲存影片後自動建立</span>{/if}
+            <span class="layui-word-aux">（固定六位大小寫英數，建立後不可修改）</span>
+        </div>
 
         <div class="layui-tab">
             <ul class="layui-tab-title ">
