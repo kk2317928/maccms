@@ -15,7 +15,7 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 **Active task:** none — T-118 automated package acceptance completed.
 **Starting commit:** T-112 completion head `4f86c863cdee833df2d7f3e070b2c68a80acdaf9`.
 **Last completed task:** T-118 — release package acceptance and administrator usability follow-up.
-**Last verification:** PHP `35753837296`, release matrix MySQL 5.7/8.0 `35753837310`, and rollback rehearsal `35753837388` passed at `26b9c6aef1916e8e44091da2b3c25d30e144043d`.
+**Last verification:** PHP `35892723201`, release matrix MySQL 5.7/8.0 `35892723169`, rollback `35892723209`, and extracted package MySQL 5.7/8.0 `35892723053` passed at `ed1b285c51c6e8ac636b2c56b242dc08187fd948`.
 **Next action:** execute and record fresh Web installer/browser smoke before deciding the final release tag.
 
 ## 1. Confirmed product direction
