@@ -45,6 +45,7 @@ class VodExtensionAdminService
     {
         $row = VodExt::ensureForVod($vodId);
         $result = array_merge(self::defaults(), array_intersect_key($row, self::defaults()));
+        $result['public_id'] = (string) ($row['public_id'] ?? '');
         $oldTitles = json_decode((string) ($row['old_titles_json'] ?? ''), true);
         $result['old_titles'] = is_array($oldTitles) ? implode("\n", array_map('strval', $oldTitles)) : '';
         return $result;
