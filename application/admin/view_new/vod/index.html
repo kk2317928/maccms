@@ -245,6 +245,7 @@
             <tr>
                 <th width="30"><input type="checkbox" lay-skin="primary" lay-filter="allChoose"></th>
                 <th width="60">{:lang('id')}</th>
+                <th width="110">公開識別碼</th>
                 <th id="table_th_vod_name">{:lang('name')}</th>
                 <th width="90">{:lang('admin/ai_seo/status_col')}</th>
                 <th width="50">{:lang('hits')}</th>
@@ -262,6 +263,7 @@
             <tr data-seo-status="{$vo.seo_ai_status|default=0}">
                 <td><input type="checkbox" name="ids[]" value="{$vo.vod_id}" class="layui-checkbox checkbox-ids" lay-skin="primary"></td>
                 <td>{$vo.vod_id}</td>
+                <td>{if condition="!empty($vo.public_id)"}<code>{$vo.public_id|htmlentities}</code>{else/}<span class="layui-word-aux">尚未建立</span>{/if}</td>
                 <td>
                     [{$vo.type.type_name}] <a target="_blank" class="layui-badge-rim vod-admin-name-link" href="{:mac_url_vod_detail($vo)}">{$vo.vod_name|mac_filter_xss|mac_restore_htmlfilter}</a>
                     {if condition="$vo.vod_status eq 0"} <span class="layui-badge">{:lang('reviewed_not')}</span>{/if}
