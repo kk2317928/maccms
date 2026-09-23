@@ -12,11 +12,11 @@ Read `AGENTS.md`, this file, and `tasks.md`. The repository remains pinned to th
 
 **Last completed checkpoint:** CP-09 — official communication removal and release hardening.
 **Active checkpoint:** content automation and administrator repair.
-**Active task:** T-118 — release package acceptance and administrator usability follow-up.
+**Active task:** none — T-118 automated package acceptance completed.
 **Starting commit:** T-112 completion head `4f86c863cdee833df2d7f3e070b2c68a80acdaf9`.
-**Last completed task:** T-117 — mixed-case six-character public IDs.
+**Last completed task:** T-118 — release package acceptance and administrator usability follow-up.
 **Last verification:** PHP `35753837296`, release matrix MySQL 5.7/8.0 `35753837310`, and rollback rehearsal `35753837388` passed at `26b9c6aef1916e8e44091da2b3c25d30e144043d`.
-**Next action:** obtain fresh PHP, release matrix, package and rollback verification for the current integration head; then complete T-118.
+**Next action:** execute and record fresh Web installer/browser smoke before deciding the final release tag.
 
 ## 1. Confirmed product direction
 
@@ -280,4 +280,4 @@ Verified release gap at `231e1900cf41f26c2b33bd6cb362e41af4ede7ac`:
 - Duplicate candidate listing now reads both video names and public IDs in one bounded query; its comparison, merge and restore actions keep existing authorization, confirmation and audit behavior.
 - The intelligent-content workspace links to the existing `system/configaicontent` AI Key form and the existing TMDB section of `system/configaisearch`. Configured status uses booleans only; neither key is assigned to the view. AI status accounts for the existing `use_ai_search_credentials` fallback.
 - The native video list reads public IDs for its current page in one query. The editor shows the stored ID as text and rejects any submitted public ID; `VodExtensionAdminService::load()` includes it only as read-only display data.
-- Code head before ledger updates: `1cf660a584c3308ee5d28fbd25dbe903320e08e7`. Verification for the subsequent head is UNVERIFIED because GitHub Actions jobs are failing before runner allocation; PHP run `35891307674` recorded no steps. A prior package workflow passed on `7b133b5f4c0096cf832542f87ad526bbdf9ef494`, not on these UI changes.
+- Runner allocation later recovered. At `ed1b285c51c6e8ac636b2c56b242dc08187fd948`, PHP regression `35892723201`, release matrix MySQL 5.7/8.0 `35892723169`, rollback `35892723209`, and extracted ZIP/package acceptance MySQL 5.7/8.0 `35892723053` passed. The corrected operator guide describes the existing backend AI and TMDB Key forms. Manual fresh Web/browser smoke remains NOT_RUN.
