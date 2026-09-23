@@ -65,8 +65,12 @@ class DuplicateReviewWorkspace
     {
         $rows = Db::name('content_duplicate_candidate')->alias('c')
             ->join($this->tablePrefix() . 'content_merge_snapshot s', 's.duplicate_candidate_id=c.duplicate_candidate_id', 'left')
+            ->join($this->tablePrefix() . 'vod vl', 'vl.vod_id=c.vod_id_low', 'left')
+            ->join($this->tablePrefix() . 'vod vr', 'vr.vod_id=c.vod_id_high', 'left')
+            ->join($this->tablePrefix() . 'vod_ext el', 'el.vod_id=c.vod_id_low', 'left')
+            ->join($this->tablePrefix() . 'vod_ext er', 'er.vod_id=c.vod_id_high', 'left')
             ->where('c.decision', 'in', ['pending', 'merged'])
-            ->field('c.*,s.merge_snapshot_id,s.status AS snapshot_status')
+            ->field('c.*,s.merge_snapshot_id,s.status AS snapshot_status,vl.vod_name AS left_name,vr.vod_name AS right_name,el.public_id AS left_public_id,er.public_id AS right_public_id')
             ->order("c.decision='pending' DESC,c.score desc,c.updated_at asc")->limit($offset, $limit)->select();
         return $rows ?: [];
     }
