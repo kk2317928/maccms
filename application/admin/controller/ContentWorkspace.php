@@ -35,12 +35,11 @@ class ContentWorkspace extends Base
         $config = config('maccms');
         $config = is_array($config) ? $config : [];
         $snapshot = (new ContentWorkspaceDashboard())->snapshot(ContentWorkspaceDashboard::optionsFromConfig($config));
-        $aiContent = $config['ai_content'] ?? [];
-        $aiSearch = $config['ai_search'] ?? [];
-        $tmdb = $aiSearch['external_sources']['sources']['tmdb'] ?? [];
-        $aiContent = is_array($aiContent) ? $aiContent : [];
-        $aiSearch = is_array($aiSearch) ? $aiSearch : [];
-        $tmdb = is_array($tmdb) ? $tmdb : [];
+        $aiContent = is_array($config['ai_content'] ?? null) ? $config['ai_content'] : [];
+        $aiSearch = is_array($config['ai_search'] ?? null) ? $config['ai_search'] : [];
+        $externalSources = is_array($aiSearch['external_sources'] ?? null) ? $aiSearch['external_sources'] : [];
+        $sources = is_array($externalSources['sources'] ?? null) ? $externalSources['sources'] : [];
+        $tmdb = is_array($sources['tmdb'] ?? null) ? $sources['tmdb'] : [];
         $aiKeySet = trim((string) ($aiContent['api_key'] ?? '')) !== ''
             || ((string) ($aiContent['use_ai_search_credentials'] ?? '0') === '1'
                 && trim((string) ($aiSearch['api_key'] ?? '')) !== '');
