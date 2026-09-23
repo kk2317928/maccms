@@ -15,6 +15,8 @@ $required = [
     'php think maccms:jobs',
     'php think maccms:analytics',
     'content_workspace/view',
+    'system/configaicontent',
+    'system/configaisearch',
     'title_tw',
     'title_cn',
     'title_en',
@@ -29,5 +31,9 @@ foreach ($required as $needle) {
         fwrite(STDERR, "FAIL: usage guide is missing: {$needle}\n");
         exit(1);
     }
+}
+if (strpos($content, '找不到 AI Key 輸入框是正常的') !== false) {
+    fwrite(STDERR, "FAIL: usage guide contradicts the existing AI Key form.\n");
+    exit(1);
 }
 fwrite(STDOUT, "OK: Traditional Chinese usage guide covers installation, operations and acceptance.\n");
