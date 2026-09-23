@@ -9,6 +9,14 @@
 <div class="page-container p10">
     <h2 style="margin-bottom:15px;">智能內容工作區</h2>
     <p style="margin-bottom:15px;"><a class="layui-btn layui-btn-sm" href="{:url('content_workspace/review')}">AI 待審欄位</a> <a class="layui-btn layui-btn-sm" href="{:url('content_workspace/merge_restore')}">重複內容比較、合併與還原</a> <a class="layui-btn layui-btn-sm" href="{:url('content_workspace/tmdb_review')}">TMDB 候選與手動配對</a> <a class="layui-btn layui-btn-sm layui-btn-normal" href="{:url('content_workspace/publish')}">最終驗證與發布</a> <a class="layui-btn layui-btn-sm" href="{:url('content_workspace/jobs')}">批量工作與失敗重試</a></p>
+    <div class="layui-card">
+        <div class="layui-card-header">AI／TMDB API Key 設定</div>
+        <div class="layui-card-body">
+            <p>智能內容 AI：{if condition="$ai_key_configured"}已設定{else/}未設定{/if}　<a class="layui-btn layui-btn-sm layui-btn-primary" href="{:url('system/configaicontent')}">輸入或更新 AI API Key</a></p>
+            <p>TMDB：{if condition="$tmdb_key_configured"}已設定{else/}未設定{/if}　<a class="layui-btn layui-btn-sm layui-btn-primary" href="{:url('system/configaisearch')}#tmdb-settings">輸入或更新 TMDB API Key</a></p>
+            <p class="layui-word-aux">請於設定頁的密碼欄位輸入新 Key；儲存時留空會保留現有 Key。實際修改仍需對應的系統設定權限。</p>
+        </div>
+    </div>
 
     <div class="workspace-grid">
         {volist name="dashboard.workflow_rows" id="workflow"}
