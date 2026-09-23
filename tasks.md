@@ -940,3 +940,8 @@ Next task: execute and record the fresh Web/browser smoke checklist before final
 - Extract the package into a clean workspace and run package-level PHP/regression checks plus fresh-install/database acceptance on MySQL 5.7 and 8.0.
 - Exercise the installed package through native video creation, intelligent-content workflow, mixed-case public IDs and API v1 smoke boundaries.
 - Preserve the generated ZIP as CI evidence only after every package gate passes.
+
+- Package acceptance previously passed on commit `7b133b5f4c0096cf832542f87ad526bbdf9ef494`: run `35754648430` built and extracted ZIPs and passed MySQL 5.7/8.0 acceptance. This is evidence for that commit only.
+- Administrator usability follow-up requested on 2026-09-23: duplicate candidate rows now include both titles and public IDs, the workspace links to existing AI content and TMDB Key forms with redacted configured status, and video list/edit pages display the generated public ID without an editable field. Native form POST rejects submitted `public_id`.
+- Follow-up code commits: `edf60e9ac02523f2d05899ccf787e5ac4d716fc2` through `1cf660a584c3308ee5d28fbd25dbe903320e08e7`.
+- Latest package and regression gates remain `UNVERIFIED` for this follow-up: GitHub Actions jobs fail before any step starts (example PHP run `35891307674`, empty steps and no runner name). Do not tag or publish a package from this head until the current commit passes.
