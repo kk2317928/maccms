@@ -159,7 +159,17 @@ class Vod extends Base
         $vodIds = array_column($res['list'], 'vod_id');
         $vodIdsWithRole = [];
         $vodSeoStatusMap = [];
+        $vodPublicIdMap = [];
         if (!empty($vodIds)) {
+            try {
+                $publicRows = Db::name('vod_ext')->field('vod_id,public_id')->where('vod_id', 'in', $vodIds)->select();
+                foreach ((array)$publicRows as $publicRow) {
+                    $vodPublicIdMap[(int)$publicRow['vod_id']] = (string)$publicRow['public_id'];
+                }
+            } catch (\Throwable $exception) {
+                // An older installation may not have run the extension migration yet.
+                \think\Log::error('Vod public ID list lookup failed class=' . get_class($exception));
+            }
             $roleData = Db::name('role')
                 ->where('role_rid', 'in', $vodIds)
                 ->where('role_rid', '>', 0)
@@ -186,6 +196,7 @@ class Vod extends Base
             // 标记是否有角色数据
             $v['vod_role'] = isset($vodIdsWithRole[$v['vod_id']]) ? 1 : 0;
             $v['seo_ai_status'] = isset($vodSeoStatusMap[$v['vod_id']]) ? intval($vodSeoStatusMap[$v['vod_id']]) : 0;
+            $v['public_id'] = isset($vodPublicIdMap[$v['vod_id']]) ? $vodPublicIdMap[$v['vod_id']] : '';
         }
 
         $this->assign('list',$res['list']);
